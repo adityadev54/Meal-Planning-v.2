@@ -1,0 +1,1620 @@
+@page
+@model Meal_Planning.Areas.Identity.Pages.Meals.SavedMealsModel
+@{
+    ViewData["Title"] = "Saved Meal Plans";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="min-h-screen bg-gradient-to-b from-[#c9a227]/5 to-white py-10 px-4">
+    <!-- Modern decorative elements -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-20 -left-20 w-64 h-64 bg-[#c9a227]/10 rounded-full opacity-40"></div>
+        <div class="absolute top-1/4 right-0 w-96 h-96 bg-[#c9a227]/20 rounded-full blur-3xl opacity-20"></div>
+        <div class="absolute bottom-0 left-1/3 w-80 h-80 bg-[#c9a227]/30 rounded-full blur-2xl opacity-10"></div>
+        <svg class="absolute top-20 right-10 text-[#c9a227]/20 opacity-20 w-24 h-24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <div class="max-w-5xl mx-auto relative z-10">
+        <!-- Modern Header with subtle animation -->
+        <div class="flex flex-col items-center mb-12 fade-in-header">
+            <div class="bg-gradient-to-br from-[#c9a227]/10 to-[#c9a227]/20 p-5 rounded-full shadow-lg border border-[#c9a227]/30 mb-5 transform hover:scale-105 transition-all duration-300">
+                <i class="fas fa-utensils text-[#c9a227] text-3xl"></i>
+            </div>
+            <h2 class="text-4xl font-bold text-gray-800 mb-3 text-center tracking-tight">Your Meal Plans</h2>
+            <p class="text-gray-600 max-w-md text-center text-lg">Access, manage and share your personalized meal schedules</p>
+            <div class="h-1 w-24 bg-[#c9a227] rounded-full mt-4"></div>
+        </div>
+
+        @if (Model.SavedMealPlans == null || !Model.SavedMealPlans.Any())
+        {
+            <div class="flex flex-col items-center justify-center mt-16 bg-white p-12 rounded-3xl border border-[#c9a227]/10 shadow-lg fade-in-up">
+                <img src="/assets/empty-state.svg" alt="No meal plans" class="w-40 h-40 mb-6 opacity-80" onerror="this.src='/assets/empty-plate.png'; this.onerror=null;"/>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">No saved meal plans yet</h3>
+                <p class="text-gray-600 text-center max-w-sm mb-8">Create your first meal plan to have it appear here for easy access</p>
+                <a href="/MealPlan/MealPlanForm" class="inline-flex items-center bg-[#c9a227] hover:bg-[#b48e22] text-white font-semibold py-3 px-6 rounded-xl text-base shadow-md transition-all transform hover:scale-105 group">
+                    Create Your First Meal Plan
+                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Mobile-Optimized Search and Filter Controls -->
+            <div class="mb-6 md:mb-10 fade-in-up">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+                    <h3 class="text-xl font-bold text-gray-700 flex items-center gap-2">
+                        <i class="fas fa-list-ul text-[#c9a227]"></i> Your Saved Plans
+                    </h3>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
+                        <div class="relative w-full sm:w-64">
+                            <input type="text" id="mealPlanSearch" placeholder="Search meal plans..." 
+                                   class="w-full pl-10 pr-4 py-3 sm:py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#c9a227]/30 focus:border-[#c9a227] transition-all duration-300" />
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <div class="hidden sm:block absolute mt-1 text-xs text-gray-500 font-normal">
+                                <span class="flex items-center"><i class="fas fa-lightbulb text-[#c9a227] mr-1"></i> Search by date, meal type, or ingredients</span>
+                            </div>
+                        </div>
+                        <button type="button" id="filterToggle" 
+                                aria-expanded="false" 
+                                aria-controls="filterPanel"
+                                class="bg-white border-2 border-[#c9a227]/20 hover:bg-[#c9a227]/5 active:bg-[#c9a227]/10 text-gray-700 rounded-lg p-3 sm:p-2 transition-all duration-200 focus:ring-2 focus:ring-[#c9a227]/30 touch-manipulation shadow-sm">
+                            <i class="fas fa-sliders-h text-[#c9a227]"></i>
+                            <span class="ml-2 sm:hidden font-medium">Filters</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile-Optimized Expandable Filter Panel -->
+                <form method="get" id="filterPanel" class="bg-white border border-gray-100 rounded-xl p-4 sm:p-6 shadow-lg mb-6 sm:mb-8 transform transition-all duration-300 origin-top scale-y-0 h-0 opacity-0">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                        <div>
+                            <label for="sort" class="block text-sm font-medium text-gray-700 mb-2">Sort by</label>
+                            <div class="relative">
+                                <select id="sort" name="sort" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-[#c9a227]/30 focus:border-[#c9a227] appearance-none touch-manipulation text-base sm:text-sm">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="meals">Most Meals</option>
+                                    <option value="name">Name (A-Z)</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Filter by Date Range</label>
+                            <div class="relative">
+                                <input type="date" id="date" name="date" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-[#c9a227]/30 focus:border-[#c9a227] touch-manipulation text-base sm:text-sm" />
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="far fa-calendar text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="mealType" class="block text-sm font-medium text-gray-700 mb-2">Meal Type</label>
+                            <div class="relative">
+                                <select id="mealType" name="mealType" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-[#c9a227]/30 focus:border-[#c9a227] appearance-none touch-manipulation text-base sm:text-sm">
+                                    <option value="">All Types</option>
+                                    <option value="breakfast">Breakfast</option>
+                                    <option value="lunch">Lunch</option>
+                                    <option value="dinner">Dinner</option>
+                                    <option value="snack">Snacks</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row sm:justify-end mt-4 sm:mt-6 gap-3">
+                        <button type="reset" class="w-full sm:w-auto px-4 py-3 sm:py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation">
+                            <span class="flex items-center justify-center gap-2">
+                                <i class="fas fa-undo-alt"></i> Reset
+                            </span>
+                        </button>
+                        <button type="submit" class="w-full sm:w-auto bg-[#c9a227] hover:bg-[#b48e22] active:bg-[#a48020] text-white font-medium rounded-lg px-6 py-3 sm:py-2 shadow transition-all flex items-center justify-center gap-2 touch-manipulation">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Mobile-Optimized Meal cards grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 meal-grid">
+                @foreach (var plan in Model.SavedMealPlans)
+                {
+                    <div class="meal-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl border border-gray-100 flex flex-col fade-in-card touch-manipulation cursor-pointer" 
+                         data-id="@plan.PlanID" id="meal-card-@plan.PlanID">
+                        <!-- Card header with status indicator -->
+                        <div class="bg-gradient-to-r from-[#c9a227] to-[#d9b237] px-4 sm:px-5 py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                    <i class="fas fa-utensils text-white"></i>
+                                </div>
+                                <span class="font-semibold text-white">Meal Plan</span>
+                            </div>
+                            <span class="bg-white/20 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+                                @CountMeals(plan.PlanData ?? string.Empty) meals
+                            </span>
+                        </div>
+                        
+                        <!-- Card body -->
+                        <div class="p-5 flex-grow">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-12 h-12 rounded-full bg-[#c9a227]/10 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-calendar-day text-[#c9a227]"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Generated on</p>
+                                    <h3 class="text-lg font-bold text-gray-800">@plan.GeneratedAt.ToLocalTime().ToString("MMMM dd, yyyy")</h3>
+                                </div>
+                            </div>
+                            
+                            <!-- Preview of meal types -->
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                @{
+                                    var mealTypes = GetMealTypes(plan.PlanData ?? string.Empty);
+                                    foreach (var mealType in mealTypes.Take(3))
+                                    {
+                                        <span class="inline-flex items-center bg-[#c9a227]/5 text-[#c9a227] text-xs rounded-full px-2.5 py-1">
+                                            <i class="fas fa-@GetMealTypeIcon(mealType) mr-1"></i>
+                                            @mealType
+                                        </span>
+                                    }
+                                    if (mealTypes.Count > 3)
+                                    {
+                                        <span class="inline-flex items-center bg-gray-100 text-gray-700 text-xs rounded-full px-2.5 py-1">
+                                            +@(mealTypes.Count - 3) more
+                                        </span>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        
+                        <!-- Card footer with action button -->
+                        <div class="px-5 py-3 bg-gray-50 flex items-center justify-between border-t border-gray-100">
+                            <span class="text-gray-500 text-sm">@TimeAgo(plan.GeneratedAt)</span>
+                            <button class="text-[#c9a227] hover:text-[#b48e22] font-medium text-sm flex items-center gap-1 group">
+                                View Details
+                                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Redesigned Detail View with Full-Screen Modal -->
+            @foreach (var plan in Model.SavedMealPlans)
+            {
+                <div id="detail-view-@plan.PlanID" class="fixed inset-0 z-50 hidden">
+                    <!-- Backdrop with blur effect -->
+                    <div class="absolute inset-0 bg-gray-400/70 backdrop-blur-sm" onclick="closeDetailedView('@plan.PlanID')"></div>
+                    
+                    <!-- Mobile-Optimized Modal Content -->
+                    <div class="absolute inset-0 sm:inset-4 sm:mt-8 md:inset-16 bg-white rounded-none sm:rounded-2xl shadow-2xl flex flex-col opacity-0 transform scale-95 transition-all duration-300 max-h-full">
+                        <!-- Mobile-Friendly Header with navigation options -->
+                        <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100">
+                            <div class="flex items-center gap-2 sm:gap-3">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#f8f3e3] flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-calendar-day text-[#c9a227]"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900">Meal Plan Details</h3>
+                                    <p class="text-xs sm:text-sm text-gray-500">Created on @plan.GeneratedAt.ToLocalTime().ToString("MMM dd, yyyy")</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-1 sm:gap-2">
+                                <button class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors" 
+                                        title="Print" onclick="printMealPlan('@plan.PlanID'); event.stopPropagation();">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                                <button class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors" 
+                                        title="Share" onclick="shareMealPlan('@plan.PlanID'); event.stopPropagation();">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                <button class="ml-1 sm:ml-2 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors" 
+                                        onclick="closeDetailedView('@plan.PlanID'); event.stopPropagation();" aria-label="Close">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile-Optimized Content Area with Tabs -->
+                        <div class="flex-grow flex flex-col overflow-hidden">
+                            <!-- Tab Navigation - horizontal scrolling on mobile, vertical on desktop -->
+                            <div class="p-2 sm:p-4 md:w-56 md:border-r border-gray-100 flex md:flex-col gap-2 overflow-x-auto scrollbar-thin bg-gray-50 md:bg-white">
+                                <button class="tab-button active whitespace-nowrap min-w-[100px] w-full text-center sm:text-left px-3 sm:px-4 py-2 sm:py-3 rounded-lg flex items-center justify-center sm:justify-start gap-2 sm:gap-3 text-gray-900 bg-[#f8f3e3] font-medium text-sm sm:text-base"
+                                        onclick="switchTab('@plan.PlanID', 'overview'); event.stopPropagation();">
+                                    <i class="fas fa-th-large text-[#c9a227]"></i>
+                                    <span>Overview</span>
+                                </button>
+                                <button class="tab-button whitespace-nowrap min-w-[100px] w-full text-center sm:text-left px-3 sm:px-4 py-2 sm:py-3 rounded-lg flex items-center justify-center sm:justify-start gap-2 sm:gap-3 text-gray-600 hover:bg-gray-100 text-sm sm:text-base"
+                                        onclick="switchTab('@plan.PlanID', 'calendar'); event.stopPropagation();">
+                                    <i class="fas fa-calendar-week text-gray-400"></i>
+                                    <span>Calendar</span>
+                                </button>
+                                <button class="tab-button whitespace-nowrap min-w-[100px] w-full text-center sm:text-left px-3 sm:px-4 py-2 sm:py-3 rounded-lg flex items-center justify-center sm:justify-start gap-2 sm:gap-3 text-gray-600 hover:bg-gray-100 text-sm sm:text-base"
+                                        onclick="switchTab('@plan.PlanID', 'grocery'); event.stopPropagation();">
+                                    <i class="fas fa-shopping-basket text-gray-400"></i>
+                                    <span>Grocery</span>
+                                </button>
+                                <button class="tab-button whitespace-nowrap min-w-[100px] w-full text-center sm:text-left px-3 sm:px-4 py-2 sm:py-3 rounded-lg flex items-center justify-center sm:justify-start gap-2 sm:gap-3 text-gray-600 hover:bg-gray-100 text-sm sm:text-base"
+                                        onclick="switchTab('@plan.PlanID', 'nutritional'); event.stopPropagation();">
+                                    <i class="fas fa-chart-pie text-gray-400"></i>
+                                    <span>Nutrition</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Mobile-Optimized Tab Content -->
+                            <div class="flex-grow overflow-y-auto p-3 sm:p-6 relative">
+                                <!-- Overview Tab - Default Active -->
+                                <div id="@plan.PlanID-overview" class="tab-content active">
+                                    <div class="flex flex-wrap items-center justify-between mb-4 gap-2">
+                                        <h4 class="text-lg font-bold text-gray-800">Your Meal Schedule</h4>
+                                        <div class="text-sm text-gray-500">
+                                            <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                                <i class="fas fa-check-circle mr-1"></i> Active Plan
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Mobile-Optimized Meal Plan Metrics -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6">
+                                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-3 sm:p-4 rounded-xl border border-green-100 shadow-sm">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-utensils text-green-500 text-lg"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-xl sm:text-2xl font-bold text-gray-800">@(plan.ParsedDays.Sum(d => d.Meals.Count))</div>
+                                                    <div class="text-xs sm:text-sm text-gray-500">Total Meals</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 shadow-sm">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                                                    <i class="fas fa-calendar-day text-blue-500 text-lg"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-2xl font-bold text-gray-800">@plan.ParsedDays.Count</div>
+                                                    <div class="text-sm text-gray-500">Days Planned</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-gradient-to-r from-purple-50 to-fuchsia-50 p-4 rounded-xl border border-purple-100 shadow-sm">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                                                    <i class="fas fa-chart-pie text-purple-500 text-lg"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-2xl font-bold text-gray-800">@GetMealTypes(plan.PlanData).Count</div>
+                                                    <div class="text-sm text-gray-500">Meal Types</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Day Headers -->
+                                    <div class="grid grid-cols-1 lg:grid-cols-7 gap-4 mb-6 hide-on-print">
+                                        @{
+                                            string[] weekdays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                                            foreach (var day in weekdays)
+                                            {
+                                                <div class="bg-[#f8f3e3] text-[#c9a227] rounded-lg p-3 text-center font-medium">
+                                                    @day
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                    
+                                    @if (plan.ParsedDays.Any())
+                                    {
+                                        <div class="space-y-6">
+                                            @foreach (var day in plan.ParsedDays)
+                                            {
+                                                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm print-item">
+                                                    <div class="bg-gradient-to-r from-[#c9a227] to-[#e5c867] px-4 py-3 border-b border-[#e0ca82]">
+                                                        <h5 class="font-semibold text-white flex items-center">
+                                                            <i class="fas fa-calendar-day mr-2"></i>
+                                                            @day.Day
+                                                        </h5>
+                                                    </div>
+                                                    <div class="divide-y divide-gray-100">
+                                                        @foreach (var meal in day.Meals)
+                                                        {
+                                                            <div class="p-4 hover:bg-[#f8f3e3] transition-colors meal-item">
+                                                                <div class="flex items-start gap-4">
+                                                                    <div class="w-12 h-12 rounded-full bg-[#f8f3e3] flex items-center justify-center flex-shrink-0">
+                                                                        <i class="fas fa-@GetMealTypeIcon(meal.Meal) text-[#c9a227] text-lg"></i>
+                                                                    </div>
+                                                                    <div class="flex-grow">
+                                                                        <div class="flex justify-between items-center mb-2">
+                                                                            <span class="font-medium text-gray-700 capitalize">@meal.Meal</span>
+                                                                            <div class="flex gap-1">
+                                                                                <button class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors">
+                                                                                    <i class="fas fa-heart text-sm"></i>
+                                                                                </button>
+                                                                                <button class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors">
+                                                                                    <i class="fas fa-sync-alt text-sm"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="text-gray-600">@meal.Food</div>
+                                                                        
+                                                                        @if (!string.IsNullOrEmpty(GetNutritionalInfo(meal.Food)))
+                                                                        {
+                                                                            <div class="mt-3 flex gap-3">
+                                                                                @foreach (var info in GetNutritionalInfo(meal.Food).Split(','))
+                                                                                {
+                                                                                    <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                                                                                        @info.Trim()
+                                                                                    </span>
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 print-item">
+                                            <pre class="text-gray-700 whitespace-pre-wrap font-mono text-sm">@plan.PlanData</pre>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <!-- Calendar Tab -->
+                                <div id="@plan.PlanID-calendar" class="tab-content hidden">
+                                    <div class="mb-4 flex items-center justify-between">
+                                        <h4 class="text-lg font-bold text-gray-800">Calendar View</h4>
+                                        <div class="flex items-center gap-2">
+                                            <button class="px-3 py-1 bg-white border border-gray-200 rounded-md text-sm text-gray-600 hover:bg-gray-50">
+                                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                                            </button>
+                                            <span class="font-medium">July 2025</span>
+                                            <button class="px-3 py-1 bg-white border border-gray-200 rounded-md text-sm text-gray-600 hover:bg-gray-50">
+                                                Next <i class="fas fa-chevron-right ml-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                        <!-- Calendar header -->
+                                        <div class="grid grid-cols-7 bg-gray-50 border-b border-gray-200 text-center">
+                                            @foreach (var day in new[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" })
+                                            {
+                                                <div class="py-2 font-medium text-gray-700">@day</div>
+                                            }
+                                        </div>
+                                        
+                                        <!-- Calendar grid -->
+                                        <div class="grid grid-cols-7 grid-rows-5 gap-px bg-gray-200">
+                                            @{
+                                                // Mock calendar data for illustration
+                                                // In a real app, this would be dynamically generated
+                                                var startDay = 0; // 0 = Sunday offset
+                                                var daysInMonth = 31;
+                                                
+                                                // First week padding
+                                                for (int i = 0; i < startDay; i++)
+                                                {
+                                                    <div class="bg-white p-2 h-24 text-gray-400 text-sm"></div>
+                                                }
+                                                
+                                                // Calendar days
+                                                for (int day = 1; day <= daysInMonth; day++)
+                                                {
+                                                    var isToday = day == 5; // Assuming today is the 5th for demo
+                                                    var hasMeal = day % 3 == 0 || day == 5; // Just for visual variety
+                                                    
+                                                    <div class="bg-white p-2 h-24 relative @(isToday ? "ring-2 ring-[#c9a227] ring-inset" : "")">
+                                                        <div class="flex justify-between items-start mb-2">
+                                                            <span class="@(isToday ? "bg-[#c9a227] text-white" : "text-gray-700") rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">@day</span>
+                                                            @if (hasMeal)
+                                                            {
+                                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-1.5 py-0.5 rounded-md">
+                                                                    <i class="fas fa-check-circle text-xs"></i>
+                                                                </span>
+                                                            }
+                                                        </div>
+                                                        
+                                                        @if (hasMeal)
+                                                        {
+                                                            <div class="space-y-1">
+                                                                <div class="bg-[#f8f3e3] text-[#c9a227] text-xs rounded px-1.5 py-0.5 truncate">Breakfast</div>
+                                                                <div class="bg-blue-100 text-blue-800 text-xs rounded px-1.5 py-0.5 truncate">Lunch</div>
+                                                                <div class="bg-purple-100 text-purple-800 text-xs rounded px-1.5 py-0.5 truncate">Dinner</div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                                
+                                                // Last week padding
+                                                var remainingCells = 7 - ((startDay + daysInMonth) % 7);
+                                                if (remainingCells < 7)
+                                                {
+                                                    for (int i = 0; i < remainingCells; i++)
+                                                    {
+                                                        <div class="bg-white p-2 h-24 text-gray-400 text-sm"></div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4 text-sm text-gray-500 flex justify-center items-center">
+                                        <i class="fas fa-info-circle mr-2"></i> Click on a day to view detailed meal information
+                                    </div>
+                                </div>
+                                
+                                <!-- Grocery Tab -->
+                                <div id="@plan.PlanID-grocery" class="tab-content hidden">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="text-lg font-bold text-gray-800">Grocery List</h4>
+                                        @* <div class="flex items-center gap-2">
+                                            <button class="px-3 py-1 flex items-center gap-1 bg-[#f8f3e3] text-[#c9a227] rounded-md text-sm hover:bg-[#efdfa6]">
+                                                <i class="fas fa-print"></i> Print List
+                                            </button>
+                                            <button class="px-3 py-1 flex items-center gap-1 bg-green-100 text-green-700 rounded-md text-sm hover:bg-green-200">
+                                                <i class="fas fa-share-alt"></i> Share List
+                                            </button>
+                                        </div> *@
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Left Column - Produce and Grains -->
+                                        <div>
+                                            <!-- Produce category -->
+                                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                                                <div class="bg-gradient-to-r from-green-500 to-green-400 px-4 py-3 border-b border-green-300">
+                                                    <h5 class="font-semibold text-white flex items-center">
+                                                        <i class="fas fa-leaf mr-2"></i>
+                                                        Produce
+                                                    </h5>
+                                                </div>
+                                                
+                                                <div class="divide-y divide-gray-100">
+                                                    @foreach (var item in Model.GetGroceryItems(plan.PlanData, "produce"))
+                                                    {
+                                                        <div class="p-3 hover:bg-gray-50 transition-colors flex items-center">
+                                                            <input type="checkbox" id="item-@item.GetHashCode()" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-500 mr-3">
+                                                            <label for="item-@item.GetHashCode()" class="text-gray-700 select-none">@item</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Grains & Bakery category -->
+                                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mt-4">
+                                                <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 px-4 py-3 border-b border-yellow-300">
+                                                    <h5 class="font-semibold text-white flex items-center">
+                                                        <i class="fas fa-bread-slice mr-2"></i>
+                                                        Grains & Bakery
+                                                    </h5>
+                                                </div>
+                                                
+                                                <div class="divide-y divide-gray-100">
+                                                    @foreach (var item in Model.GetGroceryItems(plan.PlanData, "grains"))
+                                                    {
+                                                        <div class="p-3 hover:bg-gray-50 transition-colors flex items-center">
+                                                            <input type="checkbox" id="item-@item.GetHashCode()" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-500 mr-3">
+                                                            <label for="item-@item.GetHashCode()" class="text-gray-700 select-none">@item</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Right Column - Proteins and Other Items -->
+                                        <div>
+                                            <!-- Protein category -->
+                                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                                                <div class="bg-gradient-to-r from-red-500 to-red-400 px-4 py-3 border-b border-red-300">
+                                                    <h5 class="font-semibold text-white flex items-center">
+                                                        <i class="fas fa-drumstick-bite mr-2"></i>
+                                                        Protein
+                                                    </h5>
+                                                </div>
+                                                
+                                                <div class="divide-y divide-gray-100">
+                                                    @foreach (var item in Model.GetGroceryItems(plan.PlanData, "proteins"))
+                                                    {
+                                                        <div class="p-3 hover:bg-gray-50 transition-colors flex items-center">
+                                                            <input type="checkbox" id="item-@item.GetHashCode()" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-500 mr-3">
+                                                            <label for="item-@item.GetHashCode()" class="text-gray-700 select-none">@item</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Dairy category -->
+                                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mt-4">
+                                                <div class="bg-gradient-to-r from-blue-500 to-blue-400 px-4 py-3 border-b border-blue-300">
+                                                    <h5 class="font-semibold text-white flex items-center">
+                                                        <i class="fas fa-cheese mr-2"></i>
+                                                        Dairy
+                                                    </h5>
+                                                </div>
+                                                
+                                                <div class="divide-y divide-gray-100">
+                                                    @foreach (var item in Model.GetGroceryItems(plan.PlanData, "dairy"))
+                                                    {
+                                                        <div class="p-3 hover:bg-gray-50 transition-colors flex items-center">
+                                                            <input type="checkbox" id="item-@item.GetHashCode()" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-500 mr-3">
+                                                            <label for="item-@item.GetHashCode()" class="text-gray-700 select-none">@item</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Spices & Condiments category -->
+                                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mt-4">
+                                                <div class="bg-gradient-to-r from-purple-500 to-purple-400 px-4 py-3 border-b border-purple-300">
+                                                    <h5 class="font-semibold text-white flex items-center">
+                                                        <i class="fas fa-mortar-pestle mr-2"></i>
+                                                        Spices & Condiments
+                                                    </h5>
+                                                </div>
+                                                
+                                                <div class="divide-y divide-gray-100">
+                                                    @foreach (var item in Model.GetGroceryItems(plan.PlanData, "spices"))
+                                                    {
+                                                        <div class="p-3 hover:bg-gray-50 transition-colors flex items-center">
+                                                            <input type="checkbox" id="item-@item.GetHashCode()" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-500 mr-3">
+                                                            <label for="item-@item.GetHashCode()" class="text-gray-700 select-none">@item</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Shopping progress -->
+                                    <div class="mt-6 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm p-5">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <h5 class="font-semibold text-gray-800">Shopping Progress</h5>
+                                            <span class="text-sm text-gray-500 shopping-progress-text">0 of 0 items checked</span>
+                                        </div>
+                                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500 shopping-progress-bar" style="width: 0%"></div>
+                                        </div>
+                                        
+                                        <div class="mt-4 flex justify-end gap-2">
+                                            <button class="px-3 py-1.5 flex items-center gap-1 bg-amber-100 text-amber-700 rounded-md text-sm hover:bg-amber-200 clear-all-btn">
+                                                <i class="fas fa-times-circle mr-1"></i> Clear All
+                                            </button>
+                                            <button class="px-3 py-1.5 flex items-center gap-1 bg-amber-500 text-white rounded-md text-sm hover:bg-amber-600 check-all-btn">
+                                                <i class="fas fa-check-circle mr-1"></i> Check All
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-6">
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-medium text-gray-700">Add Custom Item:</span>
+                                            <div class="relative flex-grow">
+                                                <input type="text" placeholder="Enter item name..." class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-300 focus:border-orange-300" />
+                                                <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-600">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Nutritional Tab -->
+                                <div id="@plan.PlanID-nutritional" class="tab-content hidden">
+                                    <div class="mb-4 flex items-center justify-between">
+                                        <h4 class="text-lg font-bold text-gray-800">Nutritional Analysis</h4>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm text-amber-600">AI-Generated Estimate</span>
+                                        </div>
+                                    </div>
+                                    
+                                    @{
+                                        var nutrition = Model.GetNutritionalSummary(plan.PlanData);
+                                    }
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Macronutrient Breakdown -->
+                                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                                            <div class="bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-3 border-b border-amber-300">
+                                                <h5 class="font-semibold text-white flex items-center">
+                                                    <i class="fas fa-chart-pie mr-2"></i>
+                                                    Macronutrient Distribution
+                                                </h5>
+                                            </div>
+                                            
+                                            <div class="p-6">
+                                                <!-- Visual representation of macronutrients -->
+                                                <div class="flex justify-center mb-8">
+                                                    <!-- Simple visual chart using colored divs -->
+                                                    <div class="w-48 h-48 rounded-full border-8 border-gray-100 relative">
+                                                        <!-- Protein segment -->
+                                                        <div class="absolute inset-0" style="clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%)">
+                                                            <div class="w-full h-full bg-red-400"></div>
+                                                        </div>
+                                                        
+                                                        <!-- Carbs segment -->
+                                                        <div class="absolute inset-0" style="clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%)">
+                                                            <div class="w-full h-full bg-yellow-400"></div>
+                                                        </div>
+                                                        
+                                                        <!-- Fat segment -->
+                                                        <div class="absolute inset-0" style="clip-path: polygon(50% 50%, 50% 100%, 0% 100%, 0% 50%, 0% 0%, 50% 0%)">
+                                                            <div class="w-full h-full bg-blue-400"></div>
+                                                        </div>
+                                                        
+                                                        <!-- Center circle -->
+                                                        <div class="absolute w-16 h-16 bg-white rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center text-sm font-medium text-gray-700">
+                                                            Balanced
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Legend -->
+                                                <div class="grid grid-cols-3 gap-4">
+                                                    <div class="flex flex-col items-center">
+                                                        <div class="flex items-center gap-2 mb-1">
+                                                            <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                                                            <span class="text-sm font-medium text-gray-700">Protein</span>
+                                                        </div>
+                                                        <span class="text-lg font-bold text-gray-800">@(nutrition?.ProteinCaloriePercentage ?? 30)%</span>
+                                                    </div>
+                                                    <div class="flex flex-col items-center">
+                                                        <div class="flex items-center gap-2 mb-1">
+                                                            <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                                            <span class="text-sm font-medium text-gray-700">Carbs</span>
+                                                        </div>
+                                                        <span class="text-lg font-bold text-gray-800">@(nutrition?.CarbCaloriePercentage ?? 45)%</span>
+                                                    </div>
+                                                    <div class="flex flex-col items-center">
+                                                        <div class="flex items-center gap-2 mb-1">
+                                                            <div class="w-3 h-3 bg-blue-400 rounded-full"></div>
+                                                            <span class="text-sm font-medium text-gray-700">Fats</span>
+                                                        </div>
+                                                        <span class="text-lg font-bold text-gray-800">@(nutrition?.FatCaloriePercentage ?? 25)%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mt-6 md:mt-0">
+                                            <div class="bg-gradient-to-r from-green-500 to-green-400 px-4 py-3 border-b border-green-300">
+                                                <h5 class="font-semibold text-white flex items-center">
+                                                    <i class="fas fa-leaf mr-2"></i>
+                                                    Key Nutrients
+                                                </h5>
+                                            </div>
+                                            
+                                            <div class="p-4">
+                                                <div class="space-y-4">
+                                                    <!-- Fiber -->
+                                                    <div>
+                                                        <div class="flex justify-between mb-1">
+                                                            <span class="text-sm font-medium text-gray-700">Fiber</span>
+                                                            <span class="text-sm font-medium text-gray-700">85%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                                            <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Vitamin C -->
+                                                    <div>
+                                                        <div class="flex justify-between mb-1">
+                                                            <span class="text-sm font-medium text-gray-700">Vitamin C</span>
+                                                            <span class="text-sm font-medium text-gray-700">90%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                                            <div class="bg-orange-500 h-2 rounded-full" style="width: 90%"></div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Calcium -->
+                                                    <div>
+                                                        <div class="flex justify-between mb-1">
+                                                            <span class="text-sm font-medium text-gray-700">Calcium</span>
+                                                            <span class="text-sm font-medium text-gray-700">70%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Iron -->
+                                                    <div>
+                                                        <div class="flex justify-between mb-1">
+                                                            <span class="text-sm font-medium text-gray-700">Iron</span>
+                                                            <span class="text-sm font-medium text-gray-700">65%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                                            <div class="bg-red-500 h-2 rounded-full" style="width: 65%"></div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Vitamin D -->
+                                                    <div>
+                                                        <div class="flex justify-between mb-1">
+                                                            <span class="text-sm font-medium text-gray-700">Vitamin D</span>
+                                                            <span class="text-sm font-medium text-gray-700">55%</span>
+                                                        </div>
+                                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                                            <div class="bg-purple-500 h-2 rounded-full" style="width: 55%"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Right column with daily values and calories -->
+                                        <div>
+                                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                                                <div class="bg-gradient-to-r from-blue-500 to-blue-400 px-4 py-3 border-b border-blue-300">
+                                                    <h5 class="font-semibold text-white flex items-center">
+                                                        <i class="fas fa-fire-alt mr-2"></i>
+                                                        Daily Calorie Analysis
+                                                    </h5>
+                                                </div>
+                                                
+                                                <div class="p-6">
+                                                    <div class="flex justify-center mb-6">
+                                                        <div class="w-40 h-40 rounded-full bg-gray-100 border-8 border-blue-100 flex flex-col items-center justify-center">
+                                                            <span class="text-3xl font-bold text-blue-500">@(nutrition?.AverageCaloriesPerDay ?? 1850)</span>
+                                                            <span class="text-sm text-gray-500">avg. calories/day</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="grid grid-cols-2 gap-4 text-center">
+                                                        <div class="bg-gray-50 rounded-lg p-3">
+                                                            <span class="block text-sm text-gray-500">Breakfast</span>
+                                                            <span class="block text-lg font-semibold text-gray-800">450 cal</span>
+                                                        </div>
+                                                        <div class="bg-gray-50 rounded-lg p-3">
+                                                            <span class="block text-sm text-gray-500">Lunch</span>
+                                                            <span class="block text-lg font-semibold text-gray-800">650 cal</span>
+                                                        </div>
+                                                        <div class="bg-gray-50 rounded-lg p-3">
+                                                            <span class="block text-sm text-gray-500">Dinner</span>
+                                                            <span class="block text-lg font-semibold text-gray-800">550 cal</span>
+                                                        </div>
+                                                        <div class="bg-gray-50 rounded-lg p-3">
+                                                            <span class="block text-sm text-gray-500">Snacks</span>
+                                                            <span class="block text-lg font-semibold text-gray-800">200 cal</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm mt-6">
+                                                <div class="bg-gradient-to-r from-orange-500 to-orange-400 px-4 py-3 border-b border-orange-300">
+                                                    <h5 class="font-semibold text-white flex items-center">
+                                                        <i class="fas fa-lightbulb mr-2"></i>
+                                                        Nutrition Tips
+                                                    </h5>
+                                                </div>
+                                                
+                                                <div class="p-4">
+                                                    <ul class="space-y-3 text-gray-700">
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                                            <span>This meal plan provides a balanced distribution of macronutrients for energy and recovery.</span>
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                                            <span>Rich in fiber from whole grains, fruits and vegetables for digestive health.</span>
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-exclamation-circle text-yellow-500 mt-1"></i>
+                                                            <span>Consider adding more vitamin D sources such as fatty fish or fortified foods.</span>
+                                                        </li>
+                                                        <li class="flex items-start gap-2">
+                                                            <i class="fas fa-lightbulb text-blue-500 mt-1"></i>
+                                                            <span>Drinking water between meals can help with digestion and nutrient absorption.</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Footer -->
+                        <div class="p-4 border-t border-gray-100 flex justify-between items-center">
+                            <button class="text-gray-500 hover:text-gray-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+                                <i class="far fa-trash-alt mr-1"></i> Delete
+                            </button>
+                            <button class="bg-[#c9a227] hover:bg-[#b48e22] text-white font-medium rounded-lg px-6 py-2 shadow transition-colors flex items-center gap-2"
+                                    onclick="closeDetailedView('@plan.PlanID')">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            <!-- Mobile Add Button - Fixed at the bottom -->
+            <div class="fixed bottom-6 right-6 md:hidden">
+                <a href="/Areas/Identity/Pages/Meals/MealPlans/CreateMealPlan" class="flex items-center justify-center w-14 h-14 bg-[#c9a227] hover:bg-[#b48e22] text-white rounded-full shadow-lg transition-colors" style="box-shadow: 0 0 15px rgba(201, 162, 39, 0.3);">
+                    <i class="fas fa-plus text-lg"></i>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    private int CountMeals(string planData)
+    {
+        if (string.IsNullOrEmpty(planData)) return 0;
+        return System.Text.RegularExpressions.Regex.Matches(planData, @"(Breakfast|Lunch|Dinner)\s*[:-]", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Count;
+    }
+    
+    private string GetMealTypeIcon(string mealType)
+    {
+        switch (mealType.ToLower())
+        {
+            case "breakfast": return "sun";
+            case "lunch": return "cloud-sun";
+            case "dinner": return "moon";
+            case "snack": return "cookie";
+            default: return "utensils";
+        }
+    }
+    
+    private string GetNutritionalInfo(string food)
+    {
+        // This would ideally come from a database or API
+        // For now, we'll return mock data based on some keywords in the food description
+        var foodLower = food.ToLower();
+        
+        if (foodLower.Contains("salad") || foodLower.Contains("vegetable") || foodLower.Contains("greens"))
+            return "Low Calorie, High Fiber, Vitamin A";
+        else if (foodLower.Contains("chicken") || foodLower.Contains("turkey") || foodLower.Contains("lean meat"))
+            return "High Protein, Low Fat, Vitamin B12";
+        else if (foodLower.Contains("fish") || foodLower.Contains("salmon") || foodLower.Contains("tuna"))
+            return "Omega-3, Protein, Vitamin D";
+        else if (foodLower.Contains("rice") || foodLower.Contains("pasta") || foodLower.Contains("bread"))
+            return "Carbohydrates, Energy";
+        else if (foodLower.Contains("yogurt") || foodLower.Contains("milk") || foodLower.Contains("cheese"))
+            return "Calcium, Protein, Probiotics";
+        else if (foodLower.Contains("fruit") || foodLower.Contains("berry") || foodLower.Contains("apple"))
+            return "Vitamin C, Antioxidants, Fiber";
+        
+        // Default nutritional info
+        return "Balanced Meal";
+    }
+    
+    private List<string> GetGroceryItems(string planData, string category)
+    {
+        // This would ideally parse the meal plan data and extract ingredients
+        // For now, we'll return mock grocery items based on category
+        if (string.IsNullOrEmpty(planData)) return new List<string>();
+        
+        var planLower = planData.ToLower();
+        var result = new List<string>();
+        
+        switch (category.ToLower())
+        {
+            case "produce":
+                result.Add("Spinach");
+                result.Add("Tomatoes");
+                result.Add("Onions");
+                result.Add("Bell peppers");
+                result.Add("Carrots");
+                result.Add("Broccoli");
+                result.Add("Lettuce");
+                
+                if (planLower.Contains("salad"))
+                    result.Add("Mixed greens");
+                if (planLower.Contains("potato"))
+                    result.Add("Potatoes");
+                if (planLower.Contains("avocado"))
+                    result.Add("Avocados");
+                break;
+                
+            case "grains":
+                result.Add("Whole wheat bread");
+                result.Add("Brown rice");
+                result.Add("Pasta");
+                result.Add("Oatmeal");
+                
+                if (planLower.Contains("quinoa"))
+                    result.Add("Quinoa");
+                if (planLower.Contains("tortilla"))
+                    result.Add("Corn tortillas");
+                break;
+                
+            case "protein":
+                result.Add("Chicken breast");
+                result.Add("Ground turkey");
+                result.Add("Eggs");
+                result.Add("Tofu");
+                
+                if (planLower.Contains("fish") || planLower.Contains("salmon"))
+                    result.Add("Salmon fillets");
+                if (planLower.Contains("beef") || planLower.Contains("steak"))
+                    result.Add("Lean beef");
+                break;
+                
+            case "other":
+                result.Add("Olive oil");
+                result.Add("Salt & Pepper");
+                result.Add("Garlic");
+                result.Add("Milk");
+                result.Add("Yogurt");
+                
+                if (planLower.Contains("cheese"))
+                    result.Add("Cheddar cheese");
+                if (planLower.Contains("nuts"))
+                    result.Add("Mixed nuts");
+                break;
+        }
+        
+        return result;
+    }
+    
+    private List<string> GetMealTypes(string planData)
+    {
+        if (string.IsNullOrEmpty(planData))
+        {
+            return new List<string>();
+        }
+        
+        var matches = System.Text.RegularExpressions.Regex.Matches(planData, @"(breakfast|lunch|dinner|snack)[:\s-]", 
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase)
+            .Cast<System.Text.RegularExpressions.Match>()
+            .Select(m => char.ToUpper(m.Groups[1].Value[0]) + m.Groups[1].Value.Substring(1).ToLower())
+            .Distinct()
+            .ToList();
+            
+        return matches;
+    }
+    
+    private string TimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.Now - dateTime;
+        
+        if (timeSpan.TotalDays > 365)
+        {
+            int years = (int)(timeSpan.TotalDays / 365);
+            return years == 1 ? "1 year ago" : $"{years} years ago";
+        }
+        if (timeSpan.TotalDays > 30)
+        {
+            int months = (int)(timeSpan.TotalDays / 30);
+            return months == 1 ? "1 month ago" : $"{months} months ago";
+        }
+        if (timeSpan.TotalDays > 7)
+        {
+            int weeks = (int)(timeSpan.TotalDays / 7);
+            return weeks == 1 ? "1 week ago" : $"{weeks} weeks ago";
+        }
+        if (timeSpan.TotalDays >= 1)
+        {
+            int days = (int)timeSpan.TotalDays;
+            return days == 1 ? "1 day ago" : $"{days} days ago";
+        }
+        if (timeSpan.TotalHours >= 1)
+        {
+            int hours = (int)timeSpan.TotalHours;
+            return hours == 1 ? "1 hour ago" : $"{hours} hours ago";
+        }
+        if (timeSpan.TotalMinutes >= 1)
+        {
+            int minutes = (int)timeSpan.TotalMinutes;
+            return minutes == 1 ? "1 minute ago" : $"{minutes} minutes ago";
+        }
+        
+        return "Just now";
+    }
+}
+
+@section Scripts {
+    <script>
+        // Fix 5: Page initialization check
+        window.addEventListener('load', function() {
+            console.log("Window fully loaded - checking functionality");
+            
+            // Check filter toggle
+            const filterToggle = document.getElementById('filterToggle');
+            if (filterToggle) {
+                console.log("Filter toggle found on page load");
+                // Force re-initialization if needed
+                if (!filterToggle.onclick) {
+                    console.warn("Filter toggle missing click handler, re-initializing");
+                    initializeFilterToggle();
+                }
+            }
+            
+            // Check meal cards
+            const mealCards = document.querySelectorAll('.meal-card');
+            if (mealCards.length > 0) {
+                console.log(`Found ${mealCards.length} meal cards on page load`);
+                
+                // Test click handlers
+                mealCards.forEach(card => {
+                    if (!card.onclick) {
+                        const planId = card.getAttribute('data-id');
+                        if (planId) {
+                            console.warn("Card missing click handler, re-initializing:", planId);
+                            card.onclick = () => openDetailedView(planId);
+                        }
+                    }
+                });
+            }
+        });
+        
+        // Helper function to initialize filter toggle
+        function initializeFilterToggle() {
+            const filterToggle = document.getElementById('filterToggle');
+            const filterPanel = document.getElementById('filterPanel');
+            
+            if (filterToggle && filterPanel) {
+                let isPanelVisible = false;
+                filterToggle.onclick = function() {
+                    isPanelVisible = !isPanelVisible;
+                    filterPanel.style.display = 'block';
+                    
+                    if (isPanelVisible) {
+                        filterPanel.style.height = 'auto';
+                        filterPanel.classList.remove('h-0', 'scale-y-0', 'opacity-0');
+                        filterToggle.setAttribute('aria-expanded', 'true');
+                    } else {
+                        filterPanel.classList.add('h-0', 'scale-y-0', 'opacity-0');
+                        filterPanel.style.height = '0px';
+                        filterToggle.setAttribute('aria-expanded', 'false');
+                    }
+                };
+            }
+        }
+        // Fix 3: Completely rewritten detailed view function with better error handling
+        function openDetailedView(planId) {
+            console.log("Opening detail view for:", planId);
+            
+            try {
+                const modalId = `detail-view-${planId}`;
+                console.log("Looking for modal:", modalId);
+                const modal = document.getElementById(modalId);
+                
+                if (!modal) {
+                    console.error("Modal not found:", modalId);
+                    alert("Could not open detail view. Please try again.");
+                    return;
+                }
+                
+                // Remove hidden class to show the modal
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                
+                // Get and animate the modal content
+                const content = modal.querySelector('.bg-white');
+                if (content) {
+                    // Ensure we start from the right state
+                    content.classList.add('opacity-0', 'scale-95');
+                    
+                    // Force a reflow to ensure the animation works
+                    void content.offsetWidth;
+                    
+                    // Add the animation classes
+                    setTimeout(() => {
+                        content.classList.remove('opacity-0', 'scale-95');
+                        content.classList.add('opacity-100', 'scale-100');
+                    }, 10);
+                } else {
+                    console.warn("Could not find modal content for animation");
+                }
+                
+                console.log("Detail view opened successfully");
+            } catch (error) {
+                console.error("Error opening detail view:", error);
+            }
+        }
+        
+        // Mobile UX enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Improve touch responsiveness on mobile
+            const mealCards = document.querySelectorAll('.meal-card');
+            mealCards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.classList.add('bg-gray-50');
+                });
+                card.addEventListener('touchend', function() {
+                    this.classList.remove('bg-gray-50');
+                    setTimeout(() => {
+                        this.classList.remove('bg-gray-50');
+                    }, 300);
+                });
+            });
+    
+            // Detect scroll position to enhance mobile UX
+            const searchBar = document.getElementById('mealPlanSearch');
+            if (searchBar) {
+                let lastScrollTop = 0;
+                window.addEventListener('scroll', function() {
+                    let st = window.pageYOffset || document.documentElement.scrollTop;
+                    if (st > lastScrollTop && st > 150) {
+                        // Scrolling down - minimize search bar on mobile
+                        searchBar.classList.add('search-minimized');
+                    } else if (st < 50 || st < lastScrollTop) {
+                        // Scrolling up - show search bar
+                        searchBar.classList.remove('search-minimized');
+                    }
+                    lastScrollTop = st <= 0 ? 0 : st;
+                }, false);
+            }
+    
+            // Improve modal accessibility and touch handling
+            const detailViews = document.querySelectorAll('[id^="detail-view-"]');
+            detailViews.forEach(modal => {
+                // Allow tapping on modal content without closing
+                const modalContent = modal.querySelector('.bg-white');
+                if (modalContent) {
+                    modalContent.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                }
+            });
+        });
+        
+        // Print meal plan function - creates a clean print view
+        function printMealPlan(planId) {
+            // Create a separate print-friendly version
+            const modalContent = document.querySelector(`#detail-view-${planId} .absolute.inset-4`);
+            if (!modalContent) return;
+            
+            // Create print container if it doesn't exist
+            let printContainer = document.getElementById('print-container');
+            if (!printContainer) {
+                printContainer = document.createElement('div');
+                printContainer.id = 'print-container';
+                printContainer.className = 'print-container';
+                document.body.appendChild(printContainer);
+            }
+            
+            // Extract plan data
+            const planTitle = document.querySelector(`#detail-view-${planId} h3`).innerText || 'Meal Plan';
+            const planDate = document.querySelector(`#detail-view-${planId} .text-sm.text-gray-500`).innerText || '';
+            
+            // Get content to print
+            const overview = document.getElementById(`${planId}-overview`);
+            if (!overview) return;
+            
+            // Create print content
+            printContainer.innerHTML = `
+                <div class="print-header">
+                    <h1 class="text-3xl font-bold">${planTitle}</h1>
+                    <p class="text-gray-600">${planDate}</p>
+                </div>
+                
+                <div class="print-content">
+                    ${overview.innerHTML}
+                </div>
+                
+                <div class="print-footer mt-8 text-center text-gray-500 text-sm pt-4 border-t border-gray-200">
+                    <p>Meal plan generated by Meal Planning App • Printed on ${new Date().toLocaleDateString()}</p>
+                </div>
+            `;
+            
+            // Remove any unnecessary elements from print view
+            const noPrintElements = printContainer.querySelectorAll('button, .hide-on-print');
+            noPrintElements.forEach(el => el.remove());
+            
+            // Print
+            window.print();
+        }
+        
+        // Share meal plan function
+        function shareMealPlan(planId) {
+            // This would integrate with Web Share API
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Meal Plan',
+                    text: 'Check out my personalized meal plan!',
+                    url: window.location.href
+                })
+                .catch(err => {
+                    console.error('Share failed:', err);
+                    alert('Share feature will be available soon! You can copy the URL for now.');
+                });
+            } else {
+                alert('Share feature will be available soon! You can copy the URL for now.');
+            }
+        }
+        
+        // Share meal plan function
+        function shareMealPlan(planId) {
+            // This would ideally use the Web Share API or create a shareable link
+            alert('Share feature will be available soon! You can copy the URL for now.');
+        }
+        
+        // Edit meal plan function
+        function editMealPlan(planId) {
+            // Navigate to edit page
+            window.location.href = `/MealPlan/EditMealPlan?id=${planId}`;
+        }
+        
+        // Fix 4: Improved modal closing function
+        function closeDetailedView(planId) {
+            console.log("Closing detail view for:", planId);
+            
+            try {
+                const modalId = `detail-view-${planId}`;
+                const modal = document.getElementById(modalId);
+                
+                if (!modal) {
+                    console.error("Modal not found when closing:", modalId);
+                    return;
+                }
+                
+                // Animate the content out
+                const content = modal.querySelector('.bg-white');
+                if (content) {
+                    content.classList.remove('opacity-100', 'scale-100');
+                    content.classList.add('opacity-0', 'scale-95');
+                }
+                
+                // Hide modal after animation completes
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = ''; // Restore scrolling
+                    console.log("Detail view closed");
+                }, 300);
+            } catch (error) {
+                console.error("Error closing detail view:", error);
+                // Fallback handling in case of error
+                const modal = document.getElementById(`detail-view-${planId}`);
+                if (modal) modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Switch between tabs in the detail view
+        function switchTab(planId, tabName) {
+            // Hide all tab contents
+            document.querySelectorAll(`#detail-view-${planId} .tab-content`).forEach(tab => {
+                tab.classList.add('hidden');
+                tab.classList.remove('active');
+            });
+            
+            // Show the selected tab content
+            const selectedTab = document.getElementById(`${planId}-${tabName}`);
+            if (selectedTab) {
+                selectedTab.classList.remove('hidden');
+                selectedTab.classList.add('active');
+            }
+            
+            // Update active state on tab buttons
+            document.querySelectorAll(`#detail-view-${planId} .tab-button`).forEach(button => {
+                button.classList.remove('active', 'bg-orange-100', 'text-gray-900', 'font-medium');
+                button.classList.add('text-gray-600');
+                const icon = button.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('text-orange-500');
+                    icon.classList.add('text-gray-400');
+                }
+            });
+            
+            // Set active state on the clicked button
+            const clickedButton = Array.from(document.querySelectorAll(`#detail-view-${planId} .tab-button`))
+                .find(button => button.getAttribute('onclick').includes(`switchTab('${planId}', '${tabName}')`));
+            
+            if (clickedButton) {
+                clickedButton.classList.add('active', 'bg-orange-100', 'text-gray-900', 'font-medium');
+                clickedButton.classList.remove('text-gray-600');
+                const icon = clickedButton.querySelector('i');
+                if (icon) {
+                    icon.classList.add('text-orange-500');
+                    icon.classList.remove('text-gray-400');
+                }
+            }
+        }
+        
+        // Escape key handler for all modals
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                document.querySelectorAll('[id^="detail-view-"]').forEach(function(modal) {
+                    if (!modal.classList.contains('hidden')) {
+                        const planId = modal.id.replace('detail-view-', '');
+                        closeDetailedView(planId);
+                    }
+                });
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded");
+            
+            // Fix 1: Completely rewritten filter panel toggle with direct DOM manipulation
+            const filterToggle = document.getElementById('filterToggle');
+            const filterPanel = document.getElementById('filterPanel');
+            
+            if (filterToggle && filterPanel) {
+                console.log("Filter toggle and panel found");
+                
+                // Reset to a known state
+                filterPanel.classList.add('h-0', 'scale-y-0', 'opacity-0');
+                filterPanel.classList.remove('hidden');
+                filterPanel.style.display = 'block';
+                filterPanel.style.height = '0px';
+                filterToggle.setAttribute('aria-expanded', 'false');
+                
+                let isPanelVisible = false;
+                
+                // Use direct event listener with simpler logic
+                filterToggle.onclick = function(e) {
+                    e.preventDefault();
+                    console.log("Filter toggle clicked");
+                    
+                    isPanelVisible = !isPanelVisible;
+                    
+                    if (isPanelVisible) {
+                        // Show panel
+                        filterPanel.classList.remove('h-0', 'scale-y-0', 'opacity-0');
+                        filterPanel.style.height = 'auto';
+                        filterToggle.setAttribute('aria-expanded', 'true');
+                        filterToggle.classList.add('bg-orange-50');
+                        console.log("Panel should be visible now");
+                    } else {
+                        // Hide panel
+                        filterPanel.classList.add('h-0', 'scale-y-0', 'opacity-0');
+                        filterPanel.style.height = '0px';
+                        filterToggle.setAttribute('aria-expanded', 'false');
+                        filterToggle.classList.remove('bg-orange-50');
+                        console.log("Panel should be hidden now");
+                    }
+                };
+            } else {
+                console.error("Critical error: Filter toggle or panel not found", {
+                    filterToggleExists: !!filterToggle,
+                    filterPanelExists: !!filterPanel,
+                    filterToggleId: filterToggle ? filterToggle.id : 'not found',
+                    filterPanelId: filterPanel ? filterPanel.id : 'not found'
+                });
+            }
+            
+            // Fix 2: Improved meal card click handling for detail views
+            const mealCards = document.querySelectorAll('.meal-card');
+            mealCards.forEach((card, index) => {
+                // Add staggered animation
+                setTimeout(() => {
+                    card.classList.add('animate-in');
+                }, 50 * index);
+                
+                // Add explicit click handler for better touch device support
+                const planId = card.getAttribute('data-id');
+                if (planId) {
+                    card.onclick = function(e) {
+                        e.preventDefault();
+                        console.log("Opening detail view for plan:", planId);
+                        openDetailedView(planId);
+                    };
+                    
+                    // Add extra touch support
+                    card.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        openDetailedView(planId);
+                    });
+                } else {
+                    console.warn("Card missing plan ID:", card);
+                }
+            });
+        });
+    </script>
+    <style>
+        /* Checkbox gold theme */
+        input[type="checkbox"] {
+            color: #c9a227 !important;
+        }
+        input[type="checkbox"]:focus {
+            --tw-ring-color: #c9a227 !important;
+        }
+        
+        /* Modern card styles */
+        .meal-card {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        
+        .meal-card.animate-in {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .meal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Mobile optimizations */
+        input, select, button {
+            font-size: 16px; /* Prevents iOS zoom on focus */
+        }
+        
+        .touch-manipulation {
+            touch-action: manipulation; /* Removes 300ms delay on mobile */
+        }
+        
+        #filterPanel {
+            max-height: 100vh; /* Prevent overflow issues when expanded */
+            z-index: 30; /* Ensure panel appears above other content */
+        }
+        
+        /* Tab styling */
+        .tab-content {
+            transition: opacity 0.3s ease;
+        }
+        
+        .tab-content.active {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        /* Print styles */
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .print-container, .print-container * {
+                visibility: visible;
+            }
+            
+            .print-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            
+            .no-print, 
+            button, 
+            .fixed,
+            nav,
+            footer,
+            .hide-on-print {
+                display: none !important;
+            }
+            
+            .print-item {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+            
+            .print-header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+        
+        /* Animations */
+        @* Keyframes need to be escaped in Razor *@
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @@keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in-card {
+            animation: fadeInUp 0.5s ease-out forwards;
+            animation-delay: calc(var(--index) * 100ms);
+        }
+        
+        .fade-in-header {
+            animation: fadeInDown 0.7s ease-out forwards;
+        }
+        
+        @@keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar styling */
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #E5E7EB;
+            border-radius: 2px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background-color: #D1D5DB;
+        }
+        
+        /* Select styling */
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23c9a227' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        /* Mobile-specific enhancements */
+        @@media (max-width: 640px) {
+            .search-minimized {
+                transform: translateY(-100%);
+                opacity: 0;
+                pointer-events: none;
+            }
+            
+            #mealPlanSearch {
+                transition: transform 0.3s ease, opacity 0.3s ease;
+            }
+            
+            /* Improved touch target sizes */
+            button, a {
+                min-height: 44px;
+            }
+            
+            /* Improved scrolling */
+            .touch-manipulation {
+                touch-action: manipulation;
+            }
+            
+            /* Prevent content from getting hidden under fixed elements */
+            .meal-grid {
+                padding-bottom: 80px;
+            }
+            
+            /* Enhanced mobile modal */
+            [id^="detail-view-"] .bg-white {
+                border-radius: 0 !important;
+            }
+            
+            /* Hide scrollbars on mobile */
+            .scrollbar-thin {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            
+            .scrollbar-thin::-webkit-scrollbar {
+                display: none;
+            }
+            
+            /* Make tab buttons more touch-friendly */
+            .tab-button {
+                padding: 12px !important;
+            }
+        }
+    </style>
+}

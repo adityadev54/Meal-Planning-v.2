@@ -1,0 +1,775 @@
+﻿@page
+@model Meal_Planning.Areas.Identity.Pages.Account.Profile.ProfileModel
+@{
+    ViewData["Title"] = "My Meal Planner Profile";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<div class="min-h-screen bg-gradient-to-br from-[#f8f3e3] to-white font-lato text-gray-900 pt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <!-- Profile Card (Left Column) -->
+                    <div class="lg:col-span-1 animate-slide-up">
+                        <div class="rounded-2xl shadow-md border border-gray-100 bg-white flex flex-col overflow-hidden h-full">
+                            <!-- Profile Header -->
+                            <div class="flex flex-col items-center gap-4 px-6 pt-8 pb-6 bg-gradient-to-b from-[#f8f3e3] to-[#efdfa6]">
+                                <div class="w-28 h-28 rounded-full bg-gradient-to-br from-[#e5c867] to-[#c9a227] border-4 border-[#e0ca82] flex items-center justify-center text-4xl font-extrabold text-white shadow-lg">
+                                    @Model.Profile.FirstName?.Substring(0, 1)@Model.Profile.LastName?.Substring(0, 1)
+                                </div>
+                                <div class="text-center">
+                                    <h2 class="text-2xl font-bold text-gray-800">@Model.Profile.FirstName @Model.Profile.LastName</h2>
+                                    <p class="text-[#c9a227] font-medium text-base mt-1">@Model.Profile.Email</p>
+                                </div>
+                                <!-- Badges -->
+                                <div class="flex flex-wrap gap-2 justify-center mt-2">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <span class="bg-[#f8f3e3] text-[#c9a227] text-xs font-semibold px-3 py-1 rounded-full border border-[#e0ca82] flex items-center gap-1.5">
+                                            <i data-lucide="chef-hat" class="w-3.5 h-3.5"></i> Admin
+                                        </span>
+                                    }
+                                    @if (User.IsInRole("Developer"))
+                                    {
+                                        <span class="bg-[#f8f3e3] text-[#c9a227] text-xs font-semibold px-3 py-1 rounded-full border border-[#e0ca82] flex items-center gap-1.5">
+                                            <i data-lucide="utensils-crossed" class="w-3.5 h-3.5"></i> Developer
+                                        </span>
+                                    }
+                                    <span class="bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-200 flex items-center gap-1.5">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Meal Planner
+                                    </span>
+                                </div>
+                            </div>
+                            <!-- Profile Details -->
+                            <div class="px-6 py-5 border-t border-gray-100">
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Member Since</span>
+                                        <span class="font-semibold text-gray-800">@Model.Profile.AccountCreated?.ToString("MMMM yyyy") ?? "N/A"</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Meal Plan</span>
+                                        <span class="font-semibold">
+                                            @if (Model.SubscriptionStatus == "Active")
+                                            {
+                                                <span class="text-green-600 flex items-center">
+                                                    <i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1"></i>
+                                                    @Model.SubscriptionPlanName
+                                                </span>
+                                            }
+                                            else if (Model.TrialActive)
+                                            {
+                                                <span class="text-orange-500 flex items-center">
+                                                    <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i>
+                                                    Free Trial (@Model.TrialDaysLeft days left)
+                                                </span>
+                                            }
+                                            else 
+                                            {
+                                                <span class="text-red-500 flex items-center">
+                                                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 mr-1"></i>
+                                                    Inactive
+                                                </span>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Last Login</span>
+                                        <span class="font-semibold text-gray-800">@Model.Profile.LastLogin?.ToLocalTime().ToString("MMM dd, yyyy") ?? "N/A"</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Profile Actions -->
+                            <div class="mt-auto px-6 py-4 border-t border-gray-100 bg-[#f8f3e3]">
+                                <div class="flex flex-col gap-2">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="/Areas/Identity/Pages/Account/Admins/ManageRoles" class="flex items-center justify-center gap-1.5 bg-white border border-gray-100 text-gray-700 text-xs font-semibold rounded-lg px-3 py-2 hover:bg-gray-50 transition-all shadow-sm">
+                                            <i data-lucide="chef-hat" class="w-4 h-4 text-[#c9a227]"></i> Admin Tools
+                                        </a>
+                                    }
+                                    @if (User.IsInRole("Developer"))
+                                    {
+                                        <a href="/Areas/Identity/Pages/Account/Devs/developer" class="flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#e5c867] to-[#c9a227] text-white text-xs font-semibold rounded-lg px-3 py-2 hover:from-[#c9a227] hover:to-[#b48e22] transition-all shadow-md">
+                                            <i data-lucide="utensils-crossed" class="w-4 h-4"></i> Dev Tools
+                                        </a>
+                                    }
+                                    <a href="/Areas/Identity/Pages/Feedback/Submit" class="flex items-center justify-center gap-1.5 bg-white border border-gray-100 text-gray-700 text-xs font-semibold rounded-lg px-3 py-2 hover:bg-gray-50 transition-all shadow-sm">
+                                        <i data-lucide="message-circle" class="w-4 h-4 text-[#c9a227]"></i> Feedback
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content (Right Column) -->
+                    <div class="lg:col-span-2 space-y-8 animate-slide-up">
+                        <!-- Personal Information Section -->
+                        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                            <div class="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f8f3e3] to-white flex items-center gap-3">
+                                <i data-lucide="user" class="w-6 h-6 text-[#c9a227]"></i>
+                                <h3 class="text-2xl font-bold text-gray-800">My Profile</h3>
+                            </div>
+                            <form id="profileForm" method="post" asp-page-handler="UpdateProfile" autocomplete="off" class="p-8">
+                                <!-- Core Profile Information -->
+                                <div class="mb-8">
+                                    <h4 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                                        <i data-lucide="user-circle" class="w-5 h-5 text-[#c9a227] mr-2"></i>
+                                        Essential Information
+                                    </h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- First Name -->
+                                    <div class="space-y-1">
+                                        <label asp-for="Profile.FirstName" class="block text-sm font-semibold text-gray-700"></label>
+                                        <div class="relative">
+                                            <input asp-for="Profile.FirstName" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                            </button>
+                                            <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <span asp-validation-for="Profile.FirstName" class="text-xs text-red-600"></span>
+                                        </div>
+                                    </div>
+                                    <!-- Last Name -->
+                                    <div class="space-y-1">
+                                        <label asp-for="Profile.LastName" class="block text-sm font-semibold text-gray-700"></label>
+                                        <div class="relative">
+                                            <input asp-for="Profile.LastName" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                            </button>
+                                            <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <span asp-validation-for="Profile.LastName" class="text-xs text-red-600"></span>
+                                        </div>
+                                    </div>
+                                    <!-- Email -->
+                                    <div class="space-y-1">
+                                        <label asp-for="Profile.Email" class="block text-sm font-semibold text-gray-700"></label>
+                                        <div class="relative">
+                                            <input asp-for="Profile.Email" type="email" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                            </button>
+                                            <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <span asp-validation-for="Profile.Email" class="text-xs text-red-600"></span>
+                                        </div>
+                                    </div>
+                                    <!-- Birth Date -->
+                                    <div class="space-y-1">
+                                        <label asp-for="Profile.BirthDate" class="block text-sm font-semibold text-gray-700"></label>
+                                        <div class="relative">
+                                            <input asp-for="Profile.BirthDate" type="date" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                            </button>
+                                            <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <span asp-validation-for="Profile.BirthDate" class="text-xs text-red-600"></span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contact Information Section (Collapsible) -->
+                                <div class="mb-8">
+                                    <button type="button" class="section-toggle w-full flex items-center justify-between text-lg font-semibold text-gray-700 mb-4 group" data-target="contactInfoSection">
+                                        <div class="flex items-center">
+                                            <i data-lucide="map-pin" class="w-5 h-5 text-[#c9a227] mr-2"></i>
+                                            Contact Information
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 group-hover:text-orange-600 transition-transform toggle-icon"></i>
+                                    </button>
+                                    <div id="contactInfoSection" class="section-content">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <!-- Address -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.Address" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.Address" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                    <span asp-validation-for="Profile.Address" class="text-xs text-red-600"></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- City -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.City" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.City" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                    <span asp-validation-for="Profile.City" class="text-xs text-red-600"></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Country -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.Country" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.Country" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                    <span asp-validation-for="Profile.Country" class="text-xs text-red-600"></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Zip/Postal Code -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.ZipCode" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.ZipCode" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                    <span asp-validation-for="Profile.ZipCode" class="text-xs text-red-600"></span>
+                                                </div>
+                                            </div>
+                                    <!-- Phone Number -->
+                                    <div class="space-y-1">
+                                        <label asp-for="Profile.PhoneNumber" class="block text-sm font-semibold text-gray-700"></label>
+                                        <div class="relative">
+                                            <input asp-for="Profile.PhoneNumber" type="tel" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" readonly />
+                                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                            </button>
+                                            <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                                </button>
+                                                <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                            <span asp-validation-for="Profile.PhoneNumber" class="text-xs text-red-600"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Cooking Preferences Section (Collapsible) -->
+                                <div class="mb-8">
+                                    <button type="button" class="section-toggle w-full flex items-center justify-between text-lg font-semibold text-gray-700 mb-4 group" data-target="cookingPrefSection">
+                                        <div class="flex items-center">
+                                            <i data-lucide="utensils" class="w-5 h-5 text-[#c9a227] mr-2"></i>
+                                            Cooking Preferences
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 group-hover:text-orange-600 transition-transform toggle-icon"></i>
+                                    </button>
+                                    <div id="cookingPrefSection" class="section-content">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <!-- Language Preference -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.LanguagePreference" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <select asp-for="Profile.LanguagePreference" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" disabled>
+                                                        <option value="en-US">English (US)</option>
+                                                        <option value="es-ES">Spanish (ES)</option>
+                                                        <option value="fr-FR">French (FR)</option>
+                                                        <option value="de-DE">German (DE)</option>
+                                                    </select>
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Preferred Cuisines -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.PreferredCuisines" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.PreferredCuisines" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" placeholder="Italian, Mexican, Thai, etc." readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">Separate multiple cuisines with commas</p>
+                                            </div>
+                                            
+                                            <!-- Cooking Skill Level -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.CookingSkillLevel" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <select asp-for="Profile.CookingSkillLevel" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" disabled>
+                                                        <option value="Beginner">Beginner</option>
+                                                        <option value="Intermediate">Intermediate</option>
+                                                        <option value="Advanced">Advanced</option>
+                                                        <option value="Professional">Professional</option>
+                                                    </select>
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Average Cooking Time -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.AverageCookingTime" class="block text-sm font-semibold text-gray-700"></label>
+                                                <div class="relative">
+                                                    <div class="relative">
+                                                        <input asp-for="Profile.AverageCookingTime" type="number" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" min="0" readonly />
+                                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+                                                            <span>minutes</span>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="absolute right-20 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-28 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Dietary Restrictions -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.DietaryRestrictions" class="block text-sm font-semibold text-gray-700">Dietary Restrictions</label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.DietaryRestrictions" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" placeholder="Vegetarian, Vegan, Gluten-free, etc." readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">Separate multiple restrictions with commas</p>
+                                            </div>
+                                            
+                                            <!-- Allergies -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.Allergies" class="block text-sm font-semibold text-gray-700">Food Allergies</label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.Allergies" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" placeholder="Peanuts, Shellfish, Dairy, etc." readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">Separate multiple allergies with commas</p>
+                                            </div>
+                                            
+                                            <!-- Health Conditions -->
+                                            <div class="space-y-1">
+                                                <label asp-for="Profile.HealthConditions" class="block text-sm font-semibold text-gray-700">Health Conditions</label>
+                                                <div class="relative">
+                                                    <input asp-for="Profile.HealthConditions" type="text" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" placeholder="Diabetes, Hypertension, etc." readonly />
+                                                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 edit-btn p-1.5 rounded-full hover:bg-orange-50">
+                                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <div class="absolute right-10 top-1/2 -translate-y-1/2 flex gap-1 hidden action-buttons">
+                                                        <button type="button" class="text-green-700 hover:bg-green-50 p-1.5 rounded-full save-btn">
+                                                            <i data-lucide="check" class="w-4 h-4"></i>
+                                                        </button>
+                                                        <button type="button" class="text-red-600 hover:bg-gray-100 p-1.5 rounded-full cancel-btn">
+                                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">Separate multiple conditions with commas</p>
+                                            </div>
+
+                                            <!-- Newsletter Subscription -->
+                                            <div class="space-y-1 flex items-center col-span-2 mt-4">
+                                                <input asp-for="Profile.Newsletter" type="checkbox" class="h-5 w-5 text-[#c9a227] rounded border-gray-300 focus:ring-[#c9a227]" />
+                                                <label asp-for="Profile.Newsletter" class="ml-2 block text-sm font-semibold text-gray-700">Subscribe to newsletter</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-10 flex justify-end">
+                                    <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-[#c9a227] to-[#e5c867] hover:from-[#b48e22] hover:to-[#c9a227] text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all hover:shadow-lg">
+                                        <i data-lucide="save" class="w-4 h-4"></i> Save Changes
+                                    </button>
+                                </div>
+                                @if (!ViewData.ModelState.IsValid)
+                                {
+                                    <div class="mt-6 p-4 bg-orange-50 text-red-600 rounded-lg border border-red-100">
+                                        <div class="flex items-start gap-3">
+                                            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0"></i>
+                                            <div class="text-sm">
+                                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                                {
+                                                    <div>@error.ErrorMessage</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @if (ViewData["Message"] != null)
+                                {
+                                    <div class="mt-6 flex items-center gap-2 text-green-700 text-sm font-semibold">
+                                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                        <span>@ViewData["Message"]</span>
+                                    </div>
+                                }
+                            </form>
+                        </div>
+                        <!-- Change Password Section -->
+                        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                            <div class="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f8f3e3] to-white flex items-center gap-3">
+                                <i data-lucide="lock" class="w-6 h-6 text-[#c9a227]"></i>
+                                <h3 class="text-2xl font-bold text-gray-800">Password & Security</h3>
+                            </div>
+                            <div class="mb-8">
+                                <button type="button" id="passwordToggle" class="w-full flex items-center justify-between text-lg font-semibold text-gray-700 px-8 py-4 group">
+                                    <div class="flex items-center">
+                                        <i data-lucide="key" class="w-5 h-5 text-[#c9a227] mr-2"></i>
+                                        Change Password
+                                    </div>
+                                    <i data-lucide="chevron-down" id="passwordArrow" class="w-5 h-5 text-gray-400 group-hover:text-orange-600 transition-transform"></i>
+                                </button>
+                                <div id="passwordForm" class="hidden px-8 pt-2 pb-6">
+                                <form method="post" asp-page-handler="ChangePassword" autocomplete="off" class="space-y-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="space-y-1">
+                                            <label asp-for="ChangePassword.OldPassword" class="block text-sm font-semibold text-gray-700"></label>
+                                            <div class="relative">
+                                                <input asp-for="ChangePassword.OldPassword" type="password" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" />
+                                                <span asp-validation-for="ChangePassword.OldPassword" class="text-xs text-red-600"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label asp-for="ChangePassword.NewPassword" class="block text-sm font-semibold text-gray-700"></label>
+                                            <div class="relative">
+                                                <input asp-for="ChangePassword.NewPassword" type="password" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" />
+                                                <span asp-validation-for="ChangePassword.NewPassword" class="text-xs text-red-600"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1 md:col-span-2">
+                                            <label asp-for="ChangePassword.ConfirmPassword" class="block text-sm font-semibold text-gray-700"></label>
+                                            <div class="relative">
+                                                <input asp-for="ChangePassword.ConfirmPassword" type="password" class="w-full px-4 py-2.5 bg-orange-50 border border-gray-100 rounded-lg focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all text-gray-900 font-lato" />
+                                                <span asp-validation-for="ChangePassword.ConfirmPassword" class="text-xs text-red-600"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="submit" class="flex items-center gap-2 bg-gradient-to-r from-[#c9a227] to-[#e5c867] hover:from-[#b48e22] hover:to-[#c9a227] text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all hover:shadow-lg">
+                                            <i data-lucide="key" class="w-4 h-4"></i> Update Password
+                                        </button>
+                                    </div>
+                                    @if (ViewData["PasswordMessage"] != null)
+                                    {
+                                        <div class="flex items-center gap-2 text-green-700 text-sm font-semibold">
+                                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                            <span>@ViewData["PasswordMessage"]</span>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+        <style>
+            /* Gold color scheme */
+            :root {
+                --primary: #c9a227;
+                --primary-light: #f8f3e3;
+                --primary-lighter: #efdfa6;
+                --primary-dark: #b48e22;
+                --focus-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
+            }
+            
+            .font-lato { font-family: 'Lato', Arial, sans-serif; }
+            .shadow-md { box-shadow: 0 4px 24px 0 rgba(0,0,0,0.06); }
+            .animate-slide-up { opacity: 0; transform: translateY(20px); animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+            @@keyframes slideUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+            input, button, a { transition: all 0.2s ease; }
+            .edit-btn:hover { transform: scale(1.1); }
+            
+            /* Update input field styles */
+            input[type="text"], 
+            input[type="email"], 
+            input[type="date"], 
+            input[type="number"], 
+            input[type="password"], 
+            input[type="tel"], 
+            select, 
+            textarea {
+                background-color: var(--primary-light) !important;
+            }
+            
+            input:focus, 
+            select:focus, 
+            textarea:focus {
+                --tw-ring-color: var(--primary) !important;
+                border-color: var(--primary) !important;
+            }
+            
+            input[type="checkbox"] {
+                color: var(--primary) !important;
+            }
+            
+            .hover\:text-orange-600:hover {
+                color: var(--primary-dark) !important;
+            }
+            
+            .hover\:bg-orange-50:hover {
+                background-color: var(--primary-light) !important;
+            }
+            
+            /* Section toggle styles */
+            .section-toggle {
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+                transition: all 0.2s ease;
+            }
+            
+            .section-toggle:hover {
+                background-color: rgba(201, 162, 39, 0.05);
+            }
+            
+            .toggle-icon {
+                transition: transform 0.3s ease;
+            }
+            
+            .section-content {
+                padding: 1rem 0;
+                transition: opacity 0.3s ease, height 0.3s ease;
+            }
+        </style>
+    <script>
+        lucide.createIcons();
+        
+        // Enhanced inline edit functionality
+        document.addEventListener('click', function(e) {
+            // Edit button clicked
+            if (e.target.closest('.edit-btn')) {
+                const btn = e.target.closest('.edit-btn');
+                const fieldGroup = btn.closest('.relative');
+                const input = fieldGroup.querySelector('input') || fieldGroup.querySelector('select');
+                const actionButtons = fieldGroup.querySelector('.action-buttons');
+                
+                if (input.tagName === 'SELECT') {
+                    input.removeAttribute('disabled');
+                } else {
+                    input.removeAttribute('readonly');
+                }
+                
+                input.classList.remove('bg-orange-50');
+                input.classList.add('bg-white', 'ring-1', 'ring-orange-400');
+                btn.classList.add('hidden');
+                actionButtons.classList.remove('hidden');
+                
+                // Store original value
+                input.dataset.originalValue = input.value;
+                input.focus();
+            }
+            
+            // Save button clicked
+            if (e.target.closest('.save-btn')) {
+                const btn = e.target.closest('.save-btn');
+                const fieldGroup = btn.closest('.relative');
+                const input = fieldGroup.querySelector('input') || fieldGroup.querySelector('select');
+                const editBtn = fieldGroup.querySelector('.edit-btn');
+                const actionButtons = fieldGroup.querySelector('.action-buttons');
+                
+                if (input.tagName === 'SELECT') {
+                    input.setAttribute('disabled', 'disabled');
+                } else {
+                    input.setAttribute('readonly', 'readonly');
+                }
+                
+                input.classList.add('bg-orange-50');
+                input.classList.remove('bg-white', 'ring-1', 'ring-orange-400');
+                editBtn.classList.remove('hidden');
+                actionButtons.classList.add('hidden');
+            }
+            
+            // Cancel button clicked
+            if (e.target.closest('.cancel-btn')) {
+                const btn = e.target.closest('.cancel-btn');
+                const fieldGroup = btn.closest('.relative');
+                const input = fieldGroup.querySelector('input') || fieldGroup.querySelector('select');
+                const editBtn = fieldGroup.querySelector('.edit-btn');
+                const actionButtons = fieldGroup.querySelector('.action-buttons');
+                
+                input.value = input.dataset.originalValue;
+                
+                if (input.tagName === 'SELECT') {
+                    input.setAttribute('disabled', 'disabled');
+                } else {
+                    input.setAttribute('readonly', 'readonly');
+                }
+                
+                input.classList.add('bg-[#f8f3e3]');
+                input.classList.remove('bg-white', 'ring-1', 'ring-[#c9a227]');
+                editBtn.classList.remove('hidden');
+                actionButtons.classList.add('hidden');
+            }
+        });
+        
+        // Section toggles for collapsible sections
+        function setupSectionToggles() {
+            // Get all section toggles
+            const sectionToggles = document.querySelectorAll('.section-toggle');
+            
+            // Set up each toggle
+            sectionToggles.forEach(toggle => {
+                const targetId = toggle.getAttribute('data-target');
+                const targetSection = document.getElementById(targetId);
+                const toggleIcon = toggle.querySelector('.toggle-icon');
+                
+                // Initialize sections - essential info open, others closed
+                if (targetId === 'contactInfoSection' || targetId === 'cookingPrefSection') {
+                    targetSection.classList.add('hidden');
+                    toggleIcon.style.transform = 'rotate(0deg)';
+                }
+                
+                // Add click event
+                toggle.addEventListener('click', function() {
+                    const isHidden = targetSection.classList.toggle('hidden');
+                    toggleIcon.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+                });
+            });
+        }
+        
+        // Initialize section toggles
+        setupSectionToggles();
+        
+        // Password section toggle - Simple implementation
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordForm = document.getElementById('passwordForm');
+        const passwordArrow = document.getElementById('passwordArrow');
+        
+        if (passwordToggle && passwordForm && passwordArrow) {
+            // Check if force password change is needed
+            const forcePasswordChange = @(Json.Serialize(Model.ForcePasswordChange));
+            
+            if (forcePasswordChange) {
+                // Automatically show password form if password change is required
+                passwordForm.classList.remove('hidden');
+                passwordArrow.style.transform = 'rotate(180deg)';
+            }
+            
+            // Simple toggle without animations to prevent immediate closure
+            passwordToggle.addEventListener('click', function(e) {
+                // Prevent any event bubbling issues
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (passwordForm.classList.contains('hidden')) {
+                    // Show the form
+                    passwordForm.classList.remove('hidden');
+                    passwordArrow.style.transform = 'rotate(180deg)';
+                } else {
+                    // Hide the form
+                    passwordForm.classList.add('hidden');
+                    passwordArrow.style.transform = 'rotate(0deg)';
+                }
+            });
+        } else {
+            console.error('Password form elements not found in the DOM');
+        }
+    </script>
+}

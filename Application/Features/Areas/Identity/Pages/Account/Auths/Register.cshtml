@@ -1,0 +1,485 @@
+﻿@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Account.Auths.RegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>@ViewData["Title"] - GetMoving</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f8f3e3',
+                            100: '#f0e8c9', 
+                            200: '#e5c867',
+                            300: '#d4ae38',
+                            400: '#c9a227',
+                            500: '#c9a227',
+                            600: '#b48e22',
+                            700: '#9e7b1e',
+                            800: '#856519',
+                            900: '#6a5014',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 5s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .login-bg {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23c9a227' fill-opacity='0.05'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .custom-shape-divider-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+        .custom-shape-divider-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+        .custom-shape-divider-bottom .shape-fill {
+            fill: #FFFFFF;
+        }
+        .badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: linear-gradient(135deg, #c9a227 0%, #d4ae38 100%);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transform: rotate(-3deg);
+            z-index: 10;
+        }
+        .animate-fade-in {
+            opacity: 0;
+            transition: opacity 0.8s ease-out;
+        }
+    </style>
+</head>
+
+<body class="login-bg min-h-screen bg-gradient-to-b from-white to-brand-50 text-gray-800">
+    <div class="min-h-screen flex flex-col justify-center items-center py-6 px-4">
+        <!-- Header with Logo -->
+        <div class="w-full max-w-3xl mx-auto">
+            <div class="flex flex-col items-center mb-8">
+                <img src="~/assets/getmoving1000.png" alt="GetMoving Logo" class="h-16 w-auto mb-4" />
+                <h1 class="text-3xl font-bold text-brand-700 mb-2 text-center">Join GetMoving</h1>
+                <p class="text-gray-600 text-sm mb-4 text-center max-w-lg">
+                    Create your account to unlock personalized meal plans, fitness routines, and exclusive member benefits.
+                </p>
+            </div>
+            
+            <!-- Registration Form Container -->
+            <div class="flex-grow flex items-center justify-center">
+                <div class="w-full max-w-3xl bg-white p-8 rounded-xl shadow-lg border border-brand-100">
+                    <!-- Form Header -->
+                    <div class="mb-8 text-center">
+                        <h2 class="text-2xl font-bold text-brand-700 mb-2">Create Your Account</h2>
+                        <p class="text-gray-600">Fill in your details below to get started</p>
+                    </div>
+
+                    <!-- Validation Summary -->
+                    <div asp-validation-summary="ModelOnly" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg" role="alert">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="alert-circle" class="h-5 w-5 text-red-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <ul class="text-sm text-red-700"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-6 animate-fade-in">
+                        <!-- First Name and Last Name -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label asp-for="Input.FirstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="user" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input asp-for="Input.FirstName" 
+                                           class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm" 
+                                           placeholder="John" />
+                                </div>
+                                <span asp-validation-for="Input.FirstName" class="text-sm text-red-600 block"></span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label asp-for="Input.LastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="user" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input asp-for="Input.LastName" 
+                                           class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm" 
+                                           placeholder="Doe" />
+                                </div>
+                                <span asp-validation-for="Input.LastName" class="text-sm text-red-600 block"></span>
+                            </div>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="space-y-2">
+                            <label asp-for="Input.Email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="mail" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <input asp-for="Input.Email" 
+                                       class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm" 
+                                       placeholder="you@example.com" 
+                                       autocomplete="username" 
+                                       aria-required="true" />
+                            </div>
+                            <span asp-validation-for="Input.Email" class="text-sm text-red-600 block"></span>
+                        </div>
+
+                        <!-- Password Fields -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label asp-for="Input.Password" class="block text-sm font-medium text-gray-700">Password</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="lock" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input asp-for="Input.Password" 
+                                           type="password" 
+                                           class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm" 
+                                           placeholder="••••••••" 
+                                           autocomplete="new-password" 
+                                           aria-required="true" />
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <button type="button" class="password-toggle text-gray-400 hover:text-gray-600 focus:outline-none" aria-label="Toggle password visibility">
+                                            <i data-lucide="eye" class="h-5 w-5 hidden show-icon"></i>
+                                            <i data-lucide="eye-off" class="h-5 w-5 hide-icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="Input.Password" class="text-sm text-red-600 block"></span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label asp-for="Input.ConfirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="lock" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input asp-for="Input.ConfirmPassword" 
+                                           type="password" 
+                                           class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm" 
+                                           placeholder="••••••••" 
+                                           autocomplete="new-password" 
+                                           aria-required="true" />
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <button type="button" class="confirm-password-toggle text-gray-400 hover:text-gray-600 focus:outline-none" aria-label="Toggle password visibility">
+                                            <i data-lucide="eye" class="h-5 w-5 hidden show-icon"></i>
+                                            <i data-lucide="eye-off" class="h-5 w-5 hide-icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-sm text-red-600 block"></span>
+                            </div>
+                        </div>
+
+                        <!-- Birth Date -->
+                        <div class="space-y-2">
+                            <label asp-for="Input.BirthDate" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="calendar" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <input asp-for="Input.BirthDate"
+                                       type="date"
+                                       class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm" />
+                            </div>
+                            <span asp-validation-for="Input.BirthDate" class="text-sm text-red-600 block"></span>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="space-y-2">
+                            <label asp-for="Input.PhoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="phone" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <input asp-for="Input.PhoneNumber"
+                                       class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm"
+                                       placeholder="+1 (555) 123-4567"
+                                       autocomplete="tel" />
+                            </div>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-sm text-red-600 block"></span>
+                        </div>
+
+                        <!-- Address and Zip Code -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label asp-for="Input.Address" class="block text-sm font-medium text-gray-700">Address</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="home" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input asp-for="Input.Address"
+                                           class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm"
+                                           placeholder="123 Main St" />
+                                </div>
+                                <span asp-validation-for="Input.Address" class="text-sm text-red-600 block"></span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label asp-for="Input.ZipCode" class="block text-sm font-medium text-gray-700">Zip Code</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="map-pin" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input asp-for="Input.ZipCode"
+                                           class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white sm:text-sm"
+                                           placeholder="12345" />
+                                </div>
+                                <span asp-validation-for="Input.ZipCode" class="text-sm text-red-600 block"></span>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="terms" name="terms" type="checkbox" required
+                                       class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="terms" class="text-gray-600">
+                                    I agree to the 
+                                    <a href="#" class="text-brand-600 hover:text-brand-500">Terms and Conditions</a> 
+                                    and 
+                                    <a href="#" class="text-brand-600 hover:text-brand-500">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Register Button -->
+                        <div>
+                            <button id="registerSubmit" 
+                                    type="submit" 
+                                    class="w-full flex justify-center items-center px-4 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-all transform hover:scale-[1.02]">
+                                <span class="button-text">Create Account</span>
+                                <i data-lucide="loader-circle" class="ml-2 h-5 w-5 animate-spin hidden button-loader"></i>
+                            </button>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="relative my-6">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-4 bg-white text-gray-500">or sign up with</span>
+                            </div>
+                        </div>
+
+                        <!-- Social Registration Buttons -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" class="w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path>
+                                </svg>
+                            </button>
+                            <button type="button" class="w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Login Link -->
+                        <p class="mt-6 text-center text-sm text-gray-500">
+                            Already have an account?
+                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="font-medium text-brand-600 hover:text-brand-500 transition-colors">
+                                Sign in here
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Links -->
+        <div class="w-full max-w-3xl mx-auto mt-8">
+            <div class="flex justify-center mb-2">
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-gray-500">
+                    <a href="/Home/Privacy" class="hover:text-brand-600 transition-colors">Privacy Policy</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="/Home/Terms" class="hover:text-brand-600 transition-colors">Terms of Service</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="/Home/Contact" class="hover:text-brand-600 transition-colors">Contact Support</a>
+                </div>
+            </div>
+            <div class="text-center text-xs text-gray-400">© 2025 GetMoving. All rights reserved.</div>
+        </div>
+    </div>
+    
+    <!-- Floating Feature Badge (Mobile Only) -->
+    <div class="fixed bottom-4 right-4 animate-float md:hidden">
+        <div class="bg-gradient-to-r from-brand-600 to-brand-500 text-white p-4 rounded-full shadow-lg flex items-center justify-center">
+            <i data-lucide="user-plus" class="h-6 w-6"></i>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+        
+        // Password Toggle for main password
+        const toggleButton = document.querySelector('.password-toggle');
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                const input = document.getElementById('Input_Password');
+                const showIcon = toggleButton.querySelector('.show-icon');
+                const hideIcon = toggleButton.querySelector('.hide-icon');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    showIcon.classList.remove('hidden');
+                    hideIcon.classList.add('hidden');
+                } else {
+                    input.type = 'password';
+                    showIcon.classList.add('hidden');
+                    hideIcon.classList.remove('hidden');
+                }
+            });
+        }
+        
+        // Password Toggle for confirm password
+        const confirmToggleButton = document.querySelector('.confirm-password-toggle');
+        if (confirmToggleButton) {
+            confirmToggleButton.addEventListener('click', () => {
+                const input = document.getElementById('Input_ConfirmPassword');
+                const showIcon = confirmToggleButton.querySelector('.show-icon');
+                const hideIcon = confirmToggleButton.querySelector('.hide-icon');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    showIcon.classList.remove('hidden');
+                    hideIcon.classList.add('hidden');
+                } else {
+                    input.type = 'password';
+                    showIcon.classList.add('hidden');
+                    hideIcon.classList.remove('hidden');
+                }
+            });
+        }
+        
+        // Form Submission Loading State
+        const form = document.getElementById('registerForm');
+        if (form) {
+            form.addEventListener('submit', () => {
+                const button = document.getElementById('registerSubmit');
+                const text = button.querySelector('.button-text');
+                const loader = button.querySelector('.button-loader');
+                
+                if (button && text && loader) {
+                    text.textContent = 'Creating account...';
+                    loader.classList.remove('hidden');
+                    button.disabled = true;
+                    
+                    // This timeout is just for demo purposes
+                    // In production, the page will redirect on successful registration
+                    setTimeout(() => {
+                        text.textContent = 'Create Account';
+                        loader.classList.add('hidden');
+                        button.disabled = false;
+                    }, 3000);
+                }
+            });
+        }
+        
+        // Add staggered animated entrance for form elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fade in the form
+            const form = document.getElementById('registerForm');
+            if (form) {
+                setTimeout(() => {
+                    form.style.opacity = '1';
+                }, 100);
+            }
+            
+            // Animate form sections with staggered delay
+            const formSections = document.querySelectorAll('#registerForm > div');
+            formSections.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(15px)';
+                el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, 150 + (index * 60)); // Faster staggered animation
+            });
+            
+            // Highlight fields on focus
+            const inputFields = document.querySelectorAll('input:not([type="checkbox"])');
+            inputFields.forEach(field => {
+                field.addEventListener('focus', () => {
+                    field.closest('.relative').classList.add('ring-1', 'ring-brand-300', 'ring-offset-1');
+                });
+                field.addEventListener('blur', () => {
+                    field.closest('.relative').classList.remove('ring-1', 'ring-brand-300', 'ring-offset-1');
+                });
+            });
+        });
+        
+        // Improve mobile experience by scrolling to fields when validation errors occur
+        $('input').on('invalid', function() {
+            // Find the first invalid field
+            const firstInvalid = $('input:invalid').first();
+            if (firstInvalid.length) {
+                // Smooth scroll to the invalid field
+                $('html, body').animate({
+                    scrollTop: firstInvalid.offset().top - 100
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>

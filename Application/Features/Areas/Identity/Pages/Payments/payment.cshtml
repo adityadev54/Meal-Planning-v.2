@@ -1,0 +1,416 @@
+@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Payments.PaymentModel
+@{
+    ViewData["Title"] = "Complete Your Payment";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<div class="min-h-screen food-pattern bg-gradient-to-b from-[#f8f3e3] to-[#f0e8c9] py-8">
+    <div class="max-w-2xl mx-auto px-4">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-[#c9a227] relative">
+            <div class="border-b border-[#f0e8c9] bg-[#f8f3e3] p-4 flex items-center">
+                <i data-lucide="utensils" class="w-6 h-6 text-[#c9a227] mr-3"></i>
+                <h1 class="text-xl font-bold text-[#b48e22]">Complete Your Meal Plan</h1>
+            </div>
+                    
+            <div class="p-6">
+                <!-- Order Summary -->
+                <div class="mb-6 bg-white rounded-lg p-4 border border-[#e5c867] relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16">
+                        <div class="absolute transform rotate-45 bg-[#c9a227] text-white text-xs font-bold py-1 right-[-35px] top-[15px] w-[120px] text-center">
+                            @Model.PlanName
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="font-bold text-[#b48e22] flex items-center">
+                            <i data-lucide="chef-hat" class="w-5 h-5 mr-2 text-[#c9a227]"></i>
+                            @Model.PlanName Meal Plan
+                        </h2>
+                        <span class="bg-[#f8f3e3] text-[#b48e22] px-3 py-1 rounded-lg text-sm font-medium">
+                            $@Model.Amount.ToString("0.00")/month
+                        </span>
+                    </div>
+                    <div class="flex items-center text-sm text-[#c9a227] mt-2">
+                        <i data-lucide="check-circle" class="w-4 h-4 mr-2 text-green-500"></i>
+                        <span>7-day free trial included</span>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <form id="payment-form" method="post" asp-page-handler="ConfirmPayment">
+                    <input type="hidden" name="planId" value="@Model.PlanId" />
+                    <input type="hidden" name="billing" value="monthly" />
+                    <input type="hidden" name="paymentIntentId" value="@Model.PaymentIntentId" />
+                    
+                    <div class="relative mb-6 pb-6 border-b border-[#f0e8c9]">
+                        <h3 class="font-bold text-[#b48e22] mb-4 flex items-center">
+                            <i data-lucide="credit-card" class="w-5 h-5 mr-2 text-[#c9a227]"></i>
+                            Payment Details
+                        </h3>
+                        <!-- Small decorative food icons -->
+                        <div class="absolute right-0 top-0 opacity-10">
+                            <i data-lucide="salad" class="w-8 h-8 text-[#c9a227]"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Card Number Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-[#b48e22] mb-1">Card Number</label>
+                            <div class="relative">
+                                <input type="text" name="cardNumber" id="cardNumber" 
+                                    class="w-full border border-[#e5c867] bg-[#f8f3e3]/30 rounded-md p-3 pl-10 focus:ring-[#c9a227] focus:border-[#c9a227] text-[#b48e22]" 
+                                    placeholder="1234 5678 9012 3456" 
+                                    maxlength="19"
+                                    required />
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="credit-card" class="w-5 h-5 text-[#c9a227]"></i>
+                                </div>
+                                <div id="card-brand" class="absolute inset-y-0 right-0 pr-3 flex items-center hidden">
+                                    <img src="" alt="card brand" class="h-6" id="card-brand-img">
+                                </div>
+                            </div>
+                            <p class="mt-1 text-xs text-red-500 hidden" id="card-number-error"></p>
+                        </div>
+
+                        <!-- Cardholder Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-[#b48e22] mb-1">Cardholder Name</label>
+                            <input type="text" name="cardName" 
+                                class="w-full border border-[#e5c867] bg-[#f8f3e3]/30 rounded-md p-3 focus:ring-[#c9a227] focus:border-[#c9a227] text-[#b48e22]" 
+                                placeholder="Name on card" 
+                                value="@Model.UserDetails?.FullName"
+                                required />
+                        </div>
+
+                        <!-- Expiry and CVC -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-[#b48e22] mb-1">Expiry Date</label>
+                                <input type="text" name="expiry" id="expiry" 
+                                    class="w-full border border-[#e5c867] bg-[#f8f3e3]/30 rounded-md p-3 focus:ring-[#c9a227] focus:border-[#c9a227] text-[#b48e22]" 
+                                    placeholder="MM/YY" 
+                                    maxlength="5"
+                                    required />
+                                <p class="mt-1 text-xs text-red-500 hidden" id="expiry-error"></p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#b48e22] mb-1">Security Code</label>
+                                <div class="relative">
+                                    <input type="text" name="cvc" id="cvc" 
+                                        class="w-full border border-[#e5c867] bg-[#f8f3e3]/30 rounded-md p-3 pr-10 focus:ring-[#c9a227] focus:border-[#c9a227] text-[#b48e22]" 
+                                        placeholder="CVC" 
+                                        maxlength="4"
+                                        required />
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <i data-lucide="help-circle" class="w-5 h-5 text-[#c9a227] cursor-pointer tooltip" 
+                                            title="3 or 4 digit code on back of card"></i>
+                                    </div>
+                                </div>
+                                <p class="mt-1 text-xs text-red-500 hidden" id="cvc-error"></p>
+                            </div>
+                        </div>
+
+                        <!-- Payment Security -->
+                        <div class="flex items-start pt-2">
+                            <div class="flex items-center h-5">
+                                <input id="save-card" name="saveCard" type="checkbox" class="focus:ring-[#c9a227] h-4 w-4 text-[#c9a227] border-[#e5c867] rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="save-card" class="font-medium text-[#b48e22]">Save card for future payments</label>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        @if (ViewData["ErrorMessage"] != null)
+                        {
+                            <div class="p-3 bg-red-50 text-red-700 rounded-md border border-red-200 flex items-start mt-4">
+                                <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mr-2 flex-shrink-0"></i>
+                                <span class="text-sm">@ViewData["ErrorMessage"]</span>
+                            </div>
+                        }
+
+                        <!-- Payment Button -->
+                        <div class="pt-5">
+                            <button type="submit" id="submit-button" 
+                                    class="w-full py-3 bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#b48e22] hover:to-[#9e7b1e] text-white font-bold rounded-md flex items-center justify-center transition-all duration-200 shadow-md">
+                                <i data-lucide="chef-hat" class="w-5 h-5 text-white mr-2"></i>
+                                <span class="confirm-text">Start Your Meal Plan - $@Model.Amount.ToString("0.00")</span>
+                                <i data-lucide="loader-circle" class="w-5 h-5 text-white animate-spin hidden confirm-loader ml-2"></i>
+                            </button>
+                            <div class="mt-3 text-xs text-[#b48e22] flex items-center justify-center bg-[#f8f3e3] p-2 rounded-md border border-[#e5c867]">
+                                <i data-lucide="lock" class="w-3 h-3 mr-1 text-[#c9a227]"></i> 
+                                <span>Secure payment - your delicious meals are just a click away</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                    </div>
+                
+                <!-- Billing Information (Meal Themed) -->
+                <div class="mt-6 bg-white rounded-lg p-5 border border-[#e5c867] relative overflow-hidden">
+                    <!-- Decorative food icons -->
+                    <div class="absolute -right-4 -bottom-4 opacity-5">
+                        <i data-lucide="soup" class="w-20 h-20 text-[#c9a227]"></i>
+                    </div>
+                
+                    <h3 class="font-bold text-[#b48e22] mb-3 flex items-center">
+                        <i data-lucide="map-pin" class="w-4 h-4 mr-2 text-[#c9a227]"></i>
+                        Delivery Details
+                    </h3>
+                    
+                    @if (Model.UserDetails != null)
+                    {
+                        <div class="space-y-2 text-sm relative z-10">
+                            <div class="flex justify-between">
+                                <span class="text-[#c9a227]">Name</span>
+                                <span class="font-medium text-[#b48e22]">@Model.UserDetails.FullName</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#c9a227]">Email</span>
+                                <span class="font-medium text-[#b48e22]">@Model.UserDetails.Email</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#c9a227]">Address</span>
+                                <span class="font-medium text-[#b48e22]">@Model.UserDetails.AddressLine1</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.UserDetails.AddressLine2))
+                            {
+                                <div class="flex justify-between">
+                                    <span class="text-[#c9a227]"></span>
+                                    <span class="font-medium text-[#b48e22]">@Model.UserDetails.AddressLine2</span>
+                                </div>
+                            }
+                            <div class="flex justify-between">
+                                <span class="text-[#c9a227]">City</span>
+                                <span class="font-medium text-[#b48e22]">@Model.UserDetails.City</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#c9a227]">Postal Code</span>
+                                <span class="font-medium text-[#b48e22]">@Model.UserDetails.PostalCode</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[#c9a227]">Country</span>
+                                <span class="font-medium text-[#b48e22]">@Model.UserDetails.Country</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-right">
+                            <a href="/Account/Manage/Address" class="text-xs text-[#c9a227] hover:text-[#b48e22] font-medium inline-flex items-center">
+                                <i data-lucide="edit" class="w-3 h-3 mr-1"></i> Update address
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <p class="text-sm text-[#c9a227]">No address information found</p>
+                            <a href="/Account/Manage/Address" class="mt-2 text-xs text-[#c9a227] hover:text-[#b48e22] font-medium inline-flex items-center">
+                                <i data-lucide="plus" class="w-3 h-3 mr-1"></i> Add address
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal (Meal Themed) -->
+<div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative overflow-hidden border-t-4 border-[#c9a227]">
+        <!-- Decorative elements -->
+        <div class="absolute -right-8 -top-8 opacity-5">
+            <i data-lucide="salad" class="w-24 h-24 text-[#c9a227]"></i>
+        </div>
+        <div class="absolute -left-8 -bottom-8 opacity-5">
+            <i data-lucide="soup" class="w-24 h-24 text-[#c9a227]"></i>
+        </div>
+        
+        <div class="text-center relative z-10">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-[#f8f3e3] mb-4 border-2 border-[#e5c867]">
+                <i data-lucide="chef-hat" class="w-8 h-8 text-[#c9a227]"></i>
+            </div>
+            <h3 class="text-xl font-bold text-[#b48e22] mb-2">Your Meal Plan is Ready!</h3>
+            <p class="text-sm text-[#c9a227] mb-4">Your subscription to the @Model.PlanName plan is now active. Get ready for delicious, personalized meals!</p>
+            
+            <div class="bg-[#f8f3e3] p-4 rounded-md mb-5 border border-[#e5c867]">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm text-[#c9a227]">Order number</span>
+                    <span class="text-sm font-medium text-[#b48e22]">#@(new Random().Next(100000, 999999))</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-sm text-[#c9a227]">Next billing date</span>
+                    <span class="text-sm font-medium text-[#b48e22]">@DateTime.Now.AddMonths(1).ToString("MMM d, yyyy")</span>
+                </div>
+            </div>
+            
+            <div class="flex flex-col space-y-3">
+                <button id="close-modal" class="w-full py-3 bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#b48e22] hover:to-[#9e7b1e] text-white font-bold rounded-md shadow-md flex items-center justify-center">
+                    <i data-lucide="list-checks" class="w-5 h-5 mr-2"></i>
+                    Go to My Meal Plans
+                </button>
+                <a href="/Meals" class="text-sm text-[#c9a227] hover:text-[#b48e22] inline-flex items-center justify-center bg-[#f8f3e3] p-2 rounded-md border border-[#e5c867] transition-colors duration-200">
+                    <i data-lucide="utensils" class="w-4 h-4 mr-1"></i> Browse Recipes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .tooltip {
+            position: relative;
+        }
+        .tooltip:before {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #b48e22;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+        .tooltip:hover:before {
+            opacity: 1;
+            visibility: visible;
+            bottom: calc(100% + 5px);
+        }
+        
+        /* Food-themed decorative elements */
+        .food-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' fill='%23c9a227' fill-opacity='0.06' fill-rule='nonzero'/%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+    
+    <script>
+        // Initialize all Lucide icons, including food icons
+        lucide.createIcons({
+            icons: {
+                utensils: lucide.Utensils,
+                chefHat: lucide.ChefHat,
+                soup: lucide.Soup,
+                salad: lucide.Salad
+            }
+        });
+        
+        // Format card number with spaces
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s+/g, '');
+            if (value.length > 0) {
+                value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
+            }
+            e.target.value = value;
+            detectCardType(value.replace(/\s/g, ''));
+        });
+
+        // Format expiry date
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Simple card type detection
+        function detectCardType(cardNumber) {
+            const cardBrand = document.getElementById('card-brand');
+            const cardBrandImg = document.getElementById('card-brand-img');
+            
+            cardBrand.classList.add('hidden');
+            
+            if (/^4/.test(cardNumber)) {
+                cardBrandImg.src = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visa/visa-original.svg';
+                cardBrand.classList.remove('hidden');
+            } else if (/^5[1-5]/.test(cardNumber)) {
+                cardBrandImg.src = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mastercard/mastercard-original.svg';
+                cardBrand.classList.remove('hidden');
+            } else if (/^3[47]/.test(cardNumber)) {
+                cardBrandImg.src = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/americanexpress/americanexpress-original.svg';
+                cardBrand.classList.remove('hidden');
+            } else if (/^6(?:011|5)/.test(cardNumber)) {
+                cardBrandImg.src = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/discover/discover-original.svg';
+                cardBrand.classList.remove('hidden');
+            }
+        }
+
+        // Form validation and submission
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = submitButton.querySelector('.confirm-text');
+        const buttonLoader = submitButton.querySelector('.confirm-loader');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Reset error messages
+            document.querySelectorAll('[id$="-error"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Basic validation
+            let isValid = true;
+            const cardNumber = form.querySelector('input[name="cardNumber"]').value.replace(/\s/g, '');
+            const expiry = form.querySelector('input[name="expiry"]').value;
+            const cvc = form.querySelector('input[name="cvc"]').value;
+            
+            // Card number validation
+            if (!/^\d{16}$/.test(cardNumber)) {
+                document.getElementById('card-number-error').textContent = 'Please enter a valid 16-digit card number';
+                document.getElementById('card-number-error').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            // Expiry validation
+            if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                document.getElementById('expiry-error').textContent = 'Please enter a valid expiry date (MM/YY)';
+                document.getElementById('expiry-error').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            // CVC validation
+            if (!/^\d{3,4}$/.test(cvc)) {
+                document.getElementById('cvc-error').textContent = 'Please enter a valid security code';
+                document.getElementById('cvc-error').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Show loading state
+                buttonText.classList.add('hidden');
+                buttonLoader.classList.remove('hidden');
+                submitButton.disabled = true;
+                
+                // In a real app, you would submit the form to the server
+                // For this example, we're just showing the success modal after a delay
+                setTimeout(() => {
+                    document.getElementById('success-modal').classList.remove('hidden');
+                    
+                    // Reset button state
+                    buttonText.classList.remove('hidden');
+                    buttonLoader.classList.add('hidden');
+                    submitButton.disabled = false;
+                }, 1500);
+                
+                // Uncomment this to actually submit the form to the server
+                // form.submit();
+            }
+        });
+        
+        // Close success modal and redirect
+        document.getElementById('close-modal').addEventListener('click', function() {
+            document.getElementById('success-modal').classList.add('hidden');
+            window.location.href = '/Meals/Plans';
+        });
+    </script>
+}

@@ -1,0 +1,307 @@
+/* Calendar component styling and functionality fixes */
+document.addEventListener('DOMContentLoaded', function() {
+    // Fixes for edit icon
+    const editButtons = document.querySelectorAll('[onclick^="editMealPlan"]');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+        });
+    });
+    
+    // Calendar month navigation
+    const prevMonthBtn = document.querySelectorAll('.calendar-nav-prev');
+    const nextMonthBtn = document.querySelectorAll('.calendar-nav-next');
+    const monthDisplay = document.querySelectorAll('.calendar-month-display');
+    
+    if (prevMonthBtn && nextMonthBtn && monthDisplay) {
+        // Current date tracking
+        let currentDate = new Date();
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                        'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        // Initial display
+        monthDisplay.forEach(display => {
+            display.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        });
+        
+        // Month navigation handlers
+        prevMonthBtn.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                
+                // Update all month displays
+                monthDisplay.forEach(display => {
+                    display.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+                });
+                
+                // Refresh calendar data
+                refreshCalendarData(currentDate);
+            });
+        });
+        
+        nextMonthBtn.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                
+                // Update all month displays
+                monthDisplay.forEach(display => {
+                    display.textContent = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+                });
+                
+                // Refresh calendar data
+                refreshCalendarData(currentDate);
+            });
+        });
+    }
+    
+    // Fix grocery list print/share issues
+    document.querySelectorAll('[onclick^="printMealPlan"]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const planId = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+            printMealPlan(planId);
+        });
+    });
+    
+    document.querySelectorAll('[onclick^="shareMealPlan"]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const planId = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+            shareMealPlan(planId);
+        });
+    });
+    
+    // Improved print functionality
+    window.printMealPlan = function(planId) {
+        const modal = document.getElementById(`detail-view-${planId}`);
+        if (!modal) return;
+        
+        // Determine which tab is active
+        let activeTab = modal.querySelector('.tab-content.active');
+        if (!activeTab) {
+            activeTab = document.getElementById(`${planId}-overview`);
+        }
+        
+        if (!activeTab) return;
+        
+        // Create print container if it doesn't exist
+        let printContainer = document.getElementById('print-container');
+        if (!printContainer) {
+            printContainer = document.createElement('div');
+            printContainer.id = 'print-container';
+            printContainer.className = 'print-container p-8';
+            document.body.appendChild(printContainer);
+        }
+        
+        // Get content to print
+        const planTitle = modal.querySelector('h3')?.textContent || 'Meal Plan';
+        const planDate = modal.querySelector('.text-sm.text-gray-500')?.textContent || '';
+        
+        // Create print content based on which tab is active
+        const activeTabId = activeTab.id.split('-')[1];
+        
+        if (activeTabId === 'grocery') {
+            // Special formatting for grocery list
+            printContainer.innerHTML = `
+                <div class="print-header mb-8">
+                    <h1 class="text-3xl font-bold text-center">${planTitle} - Grocery List</h1>
+                    <p class="text-gray-600 text-center">${planDate}</p>
+                </div>
+                
+                <div class="print-content">
+                    ${activeTab.innerHTML}
+                </div>
+                
+                <div class="print-footer mt-8 text-center text-gray-500 text-sm pt-4 border-t border-gray-200">
+                    <p>Generated by Meal Planning App • Printed on ${new Date().toLocaleDateString()}</p>
+                </div>
+            `;
+        } else {
+            // Default print layout
+            printContainer.innerHTML = `
+                <div class="print-header mb-8">
+                    <h1 class="text-3xl font-bold text-center">${planTitle}</h1>
+                    <p class="text-gray-600 text-center">${planDate}</p>
+                </div>
+                
+                <div class="print-content">
+                    ${activeTab.innerHTML}
+                </div>
+                
+                <div class="print-footer mt-8 text-center text-gray-500 text-sm pt-4 border-t border-gray-200">
+                    <p>Generated by Meal Planning App • Printed on ${new Date().toLocaleDateString()}</p>
+                </div>
+            `;
+        }
+        
+        // Remove any unnecessary elements from print view
+        const noPrintElements = printContainer.querySelectorAll('button, .hide-on-print, .no-print');
+        noPrintElements.forEach(el => {
+            el.remove();
+        });
+        
+        // Add bottom margin to meal items for better print spacing
+        const mealItems = printContainer.querySelectorAll('.meal-item');
+        mealItems.forEach(item => {
+            item.style.marginBottom = '15px';
+        });
+        
+        // Print
+        window.print();
+    };
+    
+    // Fix calendar scroll for data in blocks
+    const calendarCells = document.querySelectorAll('.calendar-cell');
+    if (calendarCells) {
+        calendarCells.forEach(cell => {
+            // Make cell content scrollable if overflow
+            if (cell.scrollHeight > cell.clientHeight) {
+                cell.classList.add('overflow-y-auto');
+                cell.classList.add('scrollbar-thin');
+            }
+        });
+    }
+});
+
+// Helper function to refresh calendar data
+function refreshCalendarData(date) {
+    // Get first day of month and total days
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    
+    // Generate calendar grid
+    const calendarGrid = document.querySelectorAll('.calendar-grid');
+    if (!calendarGrid) return;
+    
+    calendarGrid.forEach(grid => {
+        // Clear existing calendar
+        grid.innerHTML = '';
+        
+        // Create header row
+        const headerRow = document.createElement('div');
+        headerRow.className = 'grid grid-cols-7 bg-gray-50 border-b border-gray-200 text-center';
+        
+        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'py-2 font-medium text-gray-700';
+            dayElement.textContent = day;
+            headerRow.appendChild(dayElement);
+        });
+        
+        grid.appendChild(headerRow);
+        
+        // Create calendar cells
+        const cellsContainer = document.createElement('div');
+        cellsContainer.className = 'grid grid-cols-7 gap-px bg-gray-200';
+        
+        // Add empty cells for days before first of month
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'bg-white p-2 h-24 text-gray-400 text-sm';
+            cellsContainer.appendChild(emptyCell);
+        }
+        
+        // Add cells for each day of month
+        const today = new Date();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const isToday = 
+                date.getFullYear() === today.getFullYear() && 
+                date.getMonth() === today.getMonth() && 
+                day === today.getDate();
+                
+            const cell = document.createElement('div');
+            cell.className = `bg-white p-2 h-24 relative calendar-cell ${isToday ? "ring-2 ring-orange-500 ring-inset" : ""}`;
+            
+            // Date display
+            const dateDisplay = document.createElement('div');
+            dateDisplay.className = 'flex justify-between items-start mb-2';
+            
+            const dateNumber = document.createElement('span');
+            dateNumber.className = `${isToday ? "bg-orange-500 text-white" : "text-gray-700"} rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium`;
+            dateNumber.textContent = day;
+            
+            dateDisplay.appendChild(dateNumber);
+            cell.appendChild(dateDisplay);
+            
+            // Check if we have meal data for this date
+            const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
+            fetchMealsForDate(currentDate, meals => {
+                if (meals && meals.length > 0) {
+                    const mealContainer = document.createElement('div');
+                    mealContainer.className = 'space-y-1 overflow-y-auto max-h-16 scrollbar-thin';
+                    
+                    meals.forEach(meal => {
+                        const mealItem = document.createElement('div');
+                        mealItem.className = `bg-${getMealColor(meal.type)}-100 text-${getMealColor(meal.type)}-800 text-xs rounded px-1.5 py-0.5 truncate`;
+                        mealItem.textContent = meal.type;
+                        mealContainer.appendChild(mealItem);
+                    });
+                    
+                    cell.appendChild(mealContainer);
+                }
+            });
+            
+            cellsContainer.appendChild(cell);
+        }
+        
+        // Add empty cells for days after end of month
+        const remainingCells = 7 - ((firstDay + daysInMonth) % 7);
+        if (remainingCells < 7) {
+            for (let i = 0; i < remainingCells; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'bg-white p-2 h-24 text-gray-400 text-sm';
+                cellsContainer.appendChild(emptyCell);
+            }
+        }
+        
+        grid.appendChild(cellsContainer);
+    });
+}
+
+// Helper function to get meal color based on type
+function getMealColor(mealType) {
+    switch ((mealType || '').toLowerCase()) {
+        case 'breakfast': return 'orange';
+        case 'lunch': return 'blue';
+        case 'dinner': return 'purple';
+        case 'snack': return 'green';
+        default: return 'gray';
+    }
+}
+
+// Mock function to fetch meal data for a specific date
+// In a real app, this would call an API or access stored data
+function fetchMealsForDate(date, callback) {
+    // Simulate API call with setTimeout
+    setTimeout(() => {
+        // For demo, return mock data for some dates
+        const mockMeals = {
+            '2025-07-01': [
+                { type: 'Breakfast', name: 'Oatmeal' },
+                { type: 'Lunch', name: 'Salad' },
+                { type: 'Dinner', name: 'Grilled Chicken' }
+            ],
+            '2025-07-05': [
+                { type: 'Breakfast', name: 'Eggs Benedict' },
+                { type: 'Lunch', name: 'Sandwich' },
+                { type: 'Dinner', name: 'Salmon' },
+                { type: 'Snack', name: 'Fruit' }
+            ],
+            '2025-07-10': [
+                { type: 'Breakfast', name: 'Smoothie Bowl' },
+                { type: 'Dinner', name: 'Pasta' }
+            ],
+            '2025-07-15': [
+                { type: 'Lunch', name: 'Soup' },
+                { type: 'Dinner', name: 'Stir Fry' }
+            ]
+        };
+        
+        const dateString = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        callback(mockMeals[dateString] || []);
+    }, 50);
+}

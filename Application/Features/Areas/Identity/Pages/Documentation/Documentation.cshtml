@@ -1,0 +1,549 @@
+@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Documentation.DocumentationModel
+@{
+    ViewData["Title"] = "GetMoving Meals Documentation";
+}
+
+<!-- Load Alpine.js -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<div class="min-h-screen bg-gradient-to-b from-[#f8f3e3] to-[#f0e8c9] pt-16">
+    <!-- Fixed Navigation Sidebar -->
+    <!-- Mobile Navigation Dropdown -->
+    <div class="lg:hidden sticky top-0 z-40 bg-gradient-to-r from-[#c9a227] to-[#b48e22] shadow-md">
+        <div class="container mx-auto px-4 py-3">
+            <div x-data="{ open: false }" class="relative">
+                <button @@click="open = !open" class="w-full flex items-center justify-between text-white px-4 py-2 rounded-lg focus:outline-none">
+                    <span class="font-medium text-lg">Jump to Section</span>
+                    <svg :class="{'rotate-180': open}" class="w-5 h-5 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div x-show="open" @@click.away="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="absolute left-0 mt-2 w-full bg-white rounded-md shadow-lg z-50">
+                    <div class="py-1">
+                        <a href="#getting-started" class="block px-4 py-2 text-[#b48e22] hover:bg-[#f8f3e3]" @@click="open = false">Getting Started</a>
+                        <a href="#meal-planning" class="block px-4 py-2 text-[#b48e22] hover:bg-[#f8f3e3]" @@click="open = false">Meal Planning</a>
+                        <a href="#account-settings" class="block px-4 py-2 text-[#b48e22] hover:bg-[#f8f3e3]" @@click="open = false">Account Settings</a>
+                        <a href="#troubleshooting" class="block px-4 py-2 text-[#b48e22] hover:bg-[#f8f3e3]" @@click="open = false">Troubleshooting</a>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <a href="#help-section" class="block px-4 py-2 text-[#b48e22] hover:bg-[#f8f3e3]" @@click="open = false">Need Help?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Navigation Sidebar -->
+    <div class="hidden lg:block fixed left-4 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-xl p-4 z-10 border border-[#e5c867]">
+        <div class="text-center mb-3">
+            <span class="text-xl font-bold text-[#c9a227]">Quick Nav</span>
+        </div>
+        <div class="space-y-2">
+            <a href="#getting-started" class="flex items-center p-2 rounded-lg hover:bg-[#f8f3e3] transition group">
+                <span class="bg-[#c9a227] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 group-hover:bg-[#b48e22] transition">1</span>
+                <span class="text-gray-700 group-hover:text-[#b48e22]">Getting Started</span>
+            </a>
+            <a href="#meal-planning" class="flex items-center p-2 rounded-lg hover:bg-[#f8f3e3] transition group">
+                <span class="bg-[#c9a227] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 group-hover:bg-[#b48e22] transition">2</span>
+                <span class="text-gray-700 group-hover:text-[#b48e22]">Meal Planning</span>
+            </a>
+            <a href="#account-settings" class="flex items-center p-2 rounded-lg hover:bg-[#f8f3e3] transition group">
+                <span class="bg-[#c9a227] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 group-hover:bg-[#b48e22] transition">3</span>
+                <span class="text-gray-700 group-hover:text-[#b48e22]">Account Settings</span>
+            </a>
+            <a href="#troubleshooting" class="flex items-center p-2 rounded-lg hover:bg-[#f8f3e3] transition group">
+                <span class="bg-[#c9a227] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 group-hover:bg-[#b48e22] transition">4</span>
+                <span class="text-gray-700 group-hover:text-[#b48e22]">Troubleshooting</span>
+            </a>
+            <div class="border-t border-gray-200 my-2 pt-2">
+                <a href="#help-section" class="flex items-center p-2 rounded-lg hover:bg-[#f8f3e3] transition group">
+                    <span class="bg-[#f0e8c9] text-[#b48e22] rounded-full p-1 mr-2 group-hover:bg-[#e5c867] transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </span>
+                    <span class="text-[#b48e22]">Need Help?</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Main Header -->
+        <div class="text-center mb-12 max-w-3xl mx-auto">
+            <div class="flex justify-center mb-5">
+                <div class="w-40 md:w-60">
+                    <!-- GetMoving Logo -->
+                    <div class="text-center">
+                        <span class="text-4xl md:text-5xl font-black" style="color: #c9a227;">GET</span>
+                        <span class="text-4xl md:text-5xl font-black text-gray-800">MOVING</span>
+                    </div>
+                </div>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">Meal Planning Essentials</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Quick video guides to help you get the most out of GetMoving Meals
+            </p>
+            
+            <div class="mt-6 inline-block bg-[#f8f3e3] rounded-lg px-4 py-2 border border-[#e5c867]">
+                <p class="text-[#b48e22] font-medium flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                    </svg>
+                    Last updated: @DateTime.Now.ToString("MMMM d, yyyy")
+                </p>
+            </div>
+        </div>
+
+        <!-- Video Topic Quick Navigation -->
+        <div class="mb-10 max-w-lg mx-auto">
+            <div class="bg-white shadow-md rounded-xl overflow-hidden border border-[#e5c867]">
+                <div class="bg-[#f8f3e3] p-4 flex justify-between items-center">
+                    <h2 class="font-bold text-gray-800">Find Your Topic</h2>
+                    <button id="jumpToBtn" class="bg-[#c9a227] hover:bg-[#b48e22] text-white px-4 py-2 rounded-lg transition font-medium">Jump to Video</button>
+                </div>
+                <div class="p-4">
+                    <select id="videoSelector" class="w-full rounded-lg border-[#e5c867] focus:border-[#c9a227] focus:ring focus:ring-[#e5c867] focus:ring-opacity-50 text-gray-700 py-2 px-4 bg-white">
+                        <option value="">Select a topic...</option>
+                        <option value="getting-started">Getting Started with GetMoving Meals (4:32)</option>
+                        <option value="meal-planning">Creating Your Perfect Meal Plan (5:48)</option>
+                        <option value="account-settings">Managing Your Account & Preferences (3:15)</option>
+                        <option value="troubleshooting">Troubleshooting Common Issues (4:05)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script for Jump to Feature -->
+        <script>
+            document.getElementById('jumpToBtn').addEventListener('click', function() {
+                const selector = document.getElementById('videoSelector');
+                const targetId = selector.value;
+                if (targetId) {
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        // Smooth scroll to the element
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        
+                        // Highlight the video for a moment
+                        targetElement.querySelector('.bg-white').classList.add('ring', 'ring-[#c9a227]', 'ring-opacity-75');
+                        setTimeout(() => {
+                            targetElement.querySelector('.bg-white').classList.remove('ring', 'ring-[#c9a227]', 'ring-opacity-75');
+                        }, 2000);
+                    }
+                }
+            });
+        </script>
+        
+        <!-- Main Video Container -->
+        <div class="max-w-5xl mx-auto">
+            <!-- Getting Started Video -->
+            <section id="getting-started" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/getting-started-thumb.jpg">
+                            <source src="/assets/videos/getting-started.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Getting Started with GetMoving Meals</h2>
+                            <span class="bg-[#f8f3e3] text-[#b48e22] text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                4:32
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            This video covers the basics of using the GetMoving Meals application, from signing up to navigating the main dashboard. Perfect for first-time users who want to quickly understand how the platform works.
+                        </p>
+                        
+                        <div class="bg-[#f8f3e3] rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-[#b48e22] mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Introduction</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:45</span>
+                                    <span class="text-gray-700">Account Creation</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:30</span>
+                                    <span class="text-gray-700">Dashboard Overview</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:50</span>
+                                    <span class="text-gray-700">Setting Preferences</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#b48e22] hover:to-[#9e7b1e] text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Meal Planning Video -->
+            <section id="meal-planning" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/meal-planning-thumb.jpg">
+                            <source src="/assets/videos/meal-planning.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Creating Your Perfect Meal Plan</h2>
+                            <span class="bg-[#f8f3e3] text-[#b48e22] text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                5:48
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            Learn how to create personalized meal plans that match your dietary preferences, nutritional goals, and schedule. This video shows the full meal planning process from start to finish.
+                        </p>
+                        
+                        <div class="bg-[#f8f3e3] rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-[#b48e22] mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Meal Plan Overview</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:10</span>
+                                    <span class="text-gray-700">Setting Dietary Preferences</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:25</span>
+                                    <span class="text-gray-700">Generating Your Plan</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">4:15</span>
+                                    <span class="text-gray-700">Editing & Customizing</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#b48e22] hover:to-[#9e7b1e] text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Settings Video -->
+            <section id="account-settings" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/account-settings-thumb.jpg">
+                            <source src="/assets/videos/account-settings.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Managing Your Account & Preferences</h2>
+                            <span class="bg-[#f8f3e3] text-[#b48e22] text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                3:15
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            Learn how to customize your account settings, update your dietary preferences, manage payment information, and set up notification preferences for the best experience.
+                        </p>
+                        
+                        <div class="bg-[#f8f3e3] rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-[#b48e22] mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Profile Settings</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:55</span>
+                                    <span class="text-gray-700">Subscription Management</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:40</span>
+                                    <span class="text-gray-700">Dietary Preferences</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:25</span>
+                                    <span class="text-gray-700">Notifications & Alerts</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#b48e22] hover:to-[#9e7b1e] text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Troubleshooting Video -->
+            <section id="troubleshooting" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/troubleshooting-thumb.jpg">
+                            <source src="/assets/videos/troubleshooting.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Troubleshooting Common Issues</h2>
+                            <span class="bg-[#f8f3e3] text-[#b48e22] text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                4:05
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            Solutions to the most common problems users might encounter, including login issues, meal plan generation errors, payment questions, and synchronization problems.
+                        </p>
+                        
+                        <div class="bg-[#f8f3e3] rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-[#b48e22] mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Account Access Issues</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:05</span>
+                                    <span class="text-gray-700">Meal Plan Generation Problems</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:15</span>
+                                    <span class="text-gray-700">Payment & Billing Issues</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-[#e5c867] text-[#b48e22] text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">3:10</span>
+                                    <span class="text-gray-700">Contacting Support</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#b48e22] hover:to-[#9e7b1e] text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Need More Help Section -->
+            <section id="help-section" class="mb-16 scroll-mt-24">
+                <div class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] rounded-xl overflow-hidden shadow-lg">
+                    <div class="p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold">Still Need Help?</h2>
+                        </div>
+                        <p class="mb-6 text-white/90">
+                            If you have questions that aren't covered in our video tutorials, our support team is here to help.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="mailto:support@getmovingmeals.com" class="inline-flex items-center bg-white text-[#b48e22] hover:bg-[#f8f3e3] px-5 py-2.5 rounded-lg transition shadow-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                Email Support
+                            </a>
+                            <a href="/support/live-chat" class="inline-flex items-center bg-white text-[#b48e22] hover:bg-[#f8f3e3] px-5 py-2.5 rounded-lg transition shadow-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                Live Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Fixed Help Button (All devices) -->
+            <div class="fixed bottom-6 right-6 z-50">
+                <div x-data="{ open: false }">
+                    <button @@click="open = !open" class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] text-white p-4 rounded-full shadow-lg hover:from-[#b48e22] hover:to-[#9e7b1e] transition flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                    
+                    <!-- Support Panel -->
+                    <div x-show="open" @@click.away="open = false" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform translate-y-4" class="absolute bottom-16 right-0 w-72 bg-white rounded-xl shadow-lg border border-[#e5c867] overflow-hidden">
+                        <div class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] text-white p-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-bold">Get Support</h3>
+                                <button @@click="open = false" class="text-white hover:text-[#f8f3e3] transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 space-y-3">
+                            <a href="mailto:support@getmovingmeals.com" class="flex items-center p-2 bg-[#f8f3e3] rounded-lg hover:bg-[#f0e8c9] transition">
+                                <div class="bg-[#e5c867] p-1.5 rounded-full mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#b48e22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800 text-sm">Email Support</div>
+                                    <div class="text-xs text-gray-600">support@getmovingmeals.com</div>
+                                </div>
+                            </a>
+                            <a href="/support/live-chat" class="flex items-center p-2 bg-[#f8f3e3] rounded-lg hover:bg-[#f0e8c9] transition">
+                                <div class="bg-[#e5c867] p-1.5 rounded-full mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#b48e22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800 text-sm">Live Chat</div>
+                                    <div class="text-xs text-gray-600">Chat with our support team</div>
+                                </div>
+                            </a>
+                            <div class="flex items-center p-2 bg-[#f8f3e3] rounded-lg">
+                                <div class="bg-[#e5c867] p-1.5 rounded-full mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#b48e22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-800 text-sm">Support Hours</div>
+                                    <div class="text-xs text-gray-600">Mon-Fri: 9am-5pm EST</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </script>
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t border-[#e5c867] pt-6 pb-8 text-center">
+            <p class="text-[#b48e22] text-sm">
+                © GetMoving Meals @DateTime.Now.Year. All video content is proprietary and for user reference only.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Enhanced smooth scrolling and interactive navigation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smooth scroll for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    // Highlight the target briefly
+                    if (target.querySelector('.bg-white')) {
+                        target.querySelector('.bg-white').classList.add('ring', 'ring-[#c9a227]', 'ring-opacity-75');
+                        setTimeout(() => {
+                            target.querySelector('.bg-white').classList.remove('ring', 'ring-[#c9a227]', 'ring-opacity-75');
+                        }, 2000);
+                    }
+                    
+                    // Scroll to target with improved offset calculation for different screen sizes
+                    const mobileOffset = window.innerWidth < 768 ? 80 : 100;
+                    window.scrollTo({
+                        top: target.offsetTop - mobileOffset,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Update active section in sidebar based on scroll position
+        const sections = document.querySelectorAll('section[id]');
+        const desktopNavLinks = document.querySelectorAll('.fixed a[href^="#"]');
+        
+        function updateActiveSection() {
+            const scrollPosition = window.scrollY + 150;
+            let currentActive = null;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    const currentId = section.getAttribute('id');
+                    currentActive = currentId;
+                    
+                    // Update desktop navigation
+                    desktopNavLinks.forEach(link => {
+                        link.classList.remove('bg-[#f8f3e3]', 'text-[#b48e22]');
+                        if (link.getAttribute('href') === `#${currentId}`) {
+                            link.classList.add('bg-[#f8f3e3]', 'text-[#b48e22]');
+                        }
+                    });
+                }
+            });
+            
+            // Update page title with current section
+            if (currentActive) {
+                const sectionTitle = document.querySelector(`#${currentActive} h2`).textContent;
+                document.title = `${sectionTitle} - GetMoving Meals Documentation`;
+            }
+        }
+        
+        // Watch for video interactions to track engagement
+        document.querySelectorAll('video').forEach(video => {
+            video.addEventListener('play', function() {
+                // Could be used for analytics in the future
+                console.log(`Video started: ${this.closest('section').querySelector('h2').textContent}`);
+            });
+            
+            video.addEventListener('pause', function() {
+                // Could be used for analytics in the future
+                console.log(`Video paused: ${this.closest('section').querySelector('h2').textContent}`);
+            });
+        });
+        
+        // Track scrolling to update active section
+        window.addEventListener('scroll', updateActiveSection);
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            // Re-calculate any position-dependent elements
+            updateActiveSection();
+        });
+        
+        // Initialize active section
+        updateActiveSection();
+    });
+</script>

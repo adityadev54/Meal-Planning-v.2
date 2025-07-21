@@ -1,0 +1,376 @@
+﻿@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Feedback.SubmitModel
+
+@{
+    ViewData["Title"] = "Submit Feedback";
+}
+
+<div class="w-full min-h-screen bg-gradient-to-br from-[#f8f3e3]/50 to-white py-10 px-4 sm:px-6 lg:px-8" role="main" aria-labelledby="feedback-title">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section with Logo -->
+        <div class="flex flex-col md:flex-row items-center md:items-start justify-between mb-8">
+            <div class="flex flex-col md:flex-row items-center mb-6 md:mb-0">
+                <img src="~/assets/getmoving1000.png" alt="GetMoving Logo" class="h-16 md:h-20 w-auto mb-4 md:mb-0 md:mr-6" />
+                <div>
+                    <h1 id="feedback-title" class="text-3xl sm:text-4xl font-bold text-[#c9a227] mb-2 text-center md:text-left">We Value Your Feedback</h1>
+                    <p class="text-gray-700 text-lg sm:text-xl mb-2 text-center md:text-left">
+                        Help us improve! Share your thoughts, suggestions, or report any issues you've encountered.
+                    </p>
+                </div>
+            </div>
+            <div class="hidden md:block animate-bounce">
+                <i data-lucide="message-square-heart" class="w-16 h-16 text-[#c9a227]/60"></i>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-[#e5c867]/50 p-6 sm:p-8 md:p-10 backdrop-blur-sm">
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="bg-[#f8f3e3]/70 border-l-4 border-[#c9a227] text-[#856519] rounded-lg p-5 mb-8 shadow-inner flex items-start gap-3 animate-fade-in" role="alert">
+                <i data-lucide="check-circle" class="w-6 h-6 text-green-600 flex-shrink-0"></i>
+                <p class="font-medium">@TempData["SuccessMessage"]</p>
+            </div>
+        }
+
+        <form method="post" enctype="multipart/form-data" autocomplete="off">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <!-- Left Column (spans 5 columns on md screens) -->
+                <div class="md:col-span-5 space-y-6">
+                    <div>
+                        <label asp-for="Feedback.FeedbackType" class="block text-sm font-semibold text-[#c9a227] mb-2">Feedback Type</label>
+                        <div class="relative">
+                            <select asp-for="Feedback.FeedbackType" 
+                                    class="w-full pl-4 pr-10 py-3.5 rounded-lg border border-[#e5c867] bg-[#f8f3e3]/30 focus:ring-2 focus:ring-[#c9a227] focus:border-[#c9a227] text-gray-700 transition-all appearance-none" 
+                                    aria-describedby="typeHelp">
+                                <option value="">Select a type</option>
+                                <option value="Feature">Feature Request</option>
+                                <option value="Bug">Bug Report</option>
+                                <option value="Suggestion">Suggestion</option>
+                                <option value="Usability">Usability Issue</option>
+                                <option value="Performance">Performance Problem</option>
+                                <option value="Content">Content Feedback</option>
+                                <option value="Accessibility">Accessibility Concern</option>
+                                <option value="Account">Account/Sign-in Issue</option>
+                                <option value="Security">Security Concern</option>
+                                <option value="UI">UI/Design Feedback</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#c9a227]">
+                                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Feedback.FeedbackType" class="text-red-600 text-sm mt-1.5 block"></span>
+                        <small id="typeHelp" class="text-gray-500 text-sm mt-1.5 block">Choose the category that best describes your feedback.</small>
+                    </div>
+
+                    <div>
+                        <label asp-for="Feedback.Subject" class="block text-sm font-semibold text-[#c9a227] mb-2">Subject</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 inset-y-0 flex items-center text-[#c9a227]">
+                                <i data-lucide="pencil" class="w-5 h-5"></i>
+                            </span>
+                            <input asp-for="Feedback.Subject" 
+                                class="w-full pl-12 pr-4 py-3.5 rounded-lg border border-[#e5c867] bg-[#f8f3e3]/30 focus:ring-2 focus:ring-[#c9a227] focus:border-[#c9a227] text-gray-700 transition-all" 
+                                placeholder="Subject (e.g. Feature request, Bug, Suggestion)" 
+                                aria-describedby="subjectHelp" />
+                        </div>
+                        <span asp-validation-for="Feedback.Subject" class="text-red-600 text-sm mt-1.5 block"></span>
+                        <small id="subjectHelp" class="text-gray-500 text-sm mt-1.5 block">Provide a brief title for your feedback.</small>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-[#c9a227] mb-2">Your Rating</label>
+                        <div class="flex items-center space-x-2 text-3xl mb-1.5 bg-[#f8f3e3]/30 p-4 rounded-lg border border-[#e5c867]" id="rating-stars">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="star cursor-pointer text-gray-300 hover:text-[#c9a227] transition-colors transform hover:scale-110 @(Model.Feedback.Rating == i ? "text-[#c9a227]" : "")" data-value="@i">★</span>
+                            }
+                        </div>
+                        <input type="hidden" asp-for="Feedback.Rating" />
+                        <span asp-validation-for="Feedback.Rating" class="text-red-600 text-sm mt-1.5 block"></span>
+                    </div>
+                    
+                    <!-- Attachment Upload Box (Moved from Right Column) -->
+                    <div class="border-2 border-dashed border-[#e5c867] rounded-lg p-5 bg-[#f8f3e3]/20 hover:bg-[#f8f3e3]/40 transition-colors cursor-pointer relative group">
+                        <input asp-for="Attachment" type="file" id="attachment" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".jpg,.png,.pdf,.docx" aria-describedby="fileHelp" />
+                        <div class="flex flex-col items-center justify-center gap-2 text-center">
+                            <div class="w-12 h-12 rounded-full bg-[#f8f3e3] flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="upload" class="w-6 h-6 text-[#c9a227]"></i>
+                            </div>
+                            <span class="block font-medium text-gray-700" id="file-upload-label">Upload Attachment (optional)</span>
+                            <small id="fileHelp" class="text-gray-500 text-sm block">Drag & drop or click to browse<br>JPG, PNG, PDF, DOCX (max 5MB)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (spans 7 columns on md screens) -->
+                <div class="md:col-span-7">
+                    <div>
+                        <label asp-for="Feedback.Message" class="block text-sm font-semibold text-[#c9a227] mb-2">Your Feedback</label>
+                        <div class="relative">
+                            <textarea 
+                                asp-for="Feedback.Message" 
+                                class="w-full px-5 py-4 rounded-lg border border-[#e5c867] bg-[#f8f3e3]/30 focus:ring-2 focus:ring-[#c9a227] focus:border-[#c9a227] text-gray-700 transition-all" 
+                                rows="10" 
+                                placeholder="Describe your feedback in detail... We appreciate your thoughts on how we can improve the GetMoving experience for you!" 
+                                aria-describedby="messageHelp"></textarea>
+                            <div class="absolute bottom-3 right-3 text-[#c9a227]/70">
+                                <i data-lucide="message-square" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Feedback.Message" class="text-red-600 text-sm mt-1.5 block"></span>
+                        <small id="messageHelp" class="text-gray-500 text-sm mt-1.5 block">Include any relevant details to help us understand your feedback. The more specific, the better we can address your needs!</small>
+                    </div>
+                    
+                    <!-- Benefits of Providing Feedback -->
+                    <div class="mt-6 bg-[#f8f3e3]/50 rounded-lg p-4 border border-[#e5c867]/50">
+                        <h3 class="text-sm font-semibold text-[#c9a227] mb-2 flex items-center gap-2">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            Why Your Feedback Matters
+                        </h3>
+                        <ul class="text-sm text-gray-600 space-y-2 pl-6">
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0"></i>
+                                <span>Helps us improve our meal planning services</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0"></i>
+                                <span>Influences our future feature development</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0"></i>
+                                <span>Ensures we meet your nutritional and health goals</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button Section -->
+            <div class="flex flex-col sm:flex-row justify-between items-center border-t border-[#e5c867]/30 pt-8 mt-8">
+                <div class="text-sm text-gray-500 mb-4 sm:mb-0 text-center sm:text-left">
+                    <p class="flex items-center gap-2">
+                        <i data-lucide="shield" class="w-5 h-5 text-[#c9a227]/70"></i>
+                        Your privacy is important to us. We'll only use this feedback to improve our services.
+                    </p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="/" class="bg-white border border-[#c9a227] text-[#c9a227] font-semibold py-3 px-6 rounded-lg transition-all hover:bg-[#f8f3e3]/20 focus:outline-none focus:ring-2 focus:ring-[#c9a227] focus:ring-opacity-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#b48e22] hover:to-[#9e7b1e] text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#c9a227] focus:ring-opacity-50 shadow-md flex items-center gap-2">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        Submit Feedback
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    @* <!-- Testimonial Section -->
+    <div class="max-w-7xl mx-auto mt-12 px-4 sm:px-6">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden border border-[#fef08a]/30 p-6">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-[#d4a017]">What Our Users Say</h2>
+                <p class="text-gray-600">See how feedback has helped improve GetMoving</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-[#fefce8]/30 rounded-lg p-5 border border-[#fef08a]/30 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <div class="text-[#d4a017] mr-1">★★★★★</div>
+                        <div class="text-gray-400 text-sm ml-auto">2 weeks ago</div>
+                    </div>
+                    <p class="text-gray-700 italic">"Thanks to user feedback, the meal planning experience has become so much more intuitive. I love how they listen to their users!"</p>
+                    <p class="text-[#d4a017] font-medium mt-3">- Sarah J.</p>
+                </div>
+                <div class="bg-[#fefce8]/30 rounded-lg p-5 border border-[#fef08a]/30 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <div class="text-[#d4a017] mr-1">★★★★★</div>
+                        <div class="text-gray-400 text-sm ml-auto">1 month ago</div>
+                    </div>
+                    <p class="text-gray-700 italic">"I suggested adding nutritional breakdowns to the meal plans, and they implemented it within weeks! Truly responsive team."</p>
+                    <p class="text-[#d4a017] font-medium mt-3">- Michael T.</p>
+                </div>
+                <div class="bg-[#fefce8]/30 rounded-lg p-5 border border-[#fef08a]/30 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <div class="text-[#d4a017] mr-1">★★★★★</div>
+                        <div class="text-gray-400 text-sm ml-auto">3 months ago</div>
+                    </div>
+                    <p class="text-gray-700 italic">"The improvements based on community feedback have made GetMoving the best meal planning service I've ever used!"</p>
+                    <p class="text-[#d4a017] font-medium mt-3">- Rachel K.</p>
+                </div>
+            </div>
+        </div>
+    </div> *@
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Star rating logic with enhanced visual effects
+            const stars = document.querySelectorAll('#rating-stars .star');
+            const ratingInput = document.querySelector('input[name="Feedback.Rating"]');                stars.forEach(star => {
+                star.addEventListener('mouseenter', function () {
+                    const value = parseInt(this.dataset.value);
+                    stars.forEach((s, i) => {
+                        // Apply gold color to stars up to the current one
+                        s.classList.toggle('text-[#c9a227]', i < value);
+                        s.classList.toggle('text-gray-300', i >= value);
+                        
+                        // Add scale effect to the stars
+                        if (i < value) {
+                            s.classList.add('transform', 'scale-110');
+                        } else {
+                            s.classList.remove('transform', 'scale-110');
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseleave', function () {
+                    stars.forEach((s, i) => {
+                        s.classList.toggle('text-[#c9a227]', ratingInput.value && i < ratingInput.value);
+                        s.classList.toggle('text-gray-300', !ratingInput.value || i >= ratingInput.value);
+                        
+                        // Remove scale effect when not hovering
+                        if (!ratingInput.value || parseInt(ratingInput.value) <= i) {
+                            s.classList.remove('transform', 'scale-110');
+                        }
+                    });
+                });
+                
+                star.addEventListener('click', function () {
+                    // Add animation effect when selecting a star
+                    this.classList.add('animate-ping');
+                    setTimeout(() => this.classList.remove('animate-ping'), 300);
+                    
+                    ratingInput.value = this.dataset.value;
+                    stars.forEach((s, i) => {
+                        s.classList.toggle('text-[#c9a227]', i < ratingInput.value);
+                        s.classList.toggle('text-gray-300', i >= ratingInput.value);
+                    });
+                });
+            });
+            
+            // Initialize star rating if value exists
+            if (ratingInput.value) {
+                stars.forEach((s, i) => {
+                    s.classList.toggle('text-[#c9a227]', i < ratingInput.value);
+                    s.classList.toggle('text-gray-300', i >= ratingInput.value);
+                });
+            }
+            
+            // Enhanced file upload experience
+            const fileInput = document.getElementById('attachment');
+            const fileLabel = document.getElementById('file-upload-label');
+            const fileUploadArea = fileInput.closest('div.border-dashed');
+            
+            // Update label and styling on file selection
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    const fileName = fileInput.files[0].name;
+                    fileLabel.textContent = fileName;
+                    fileUploadArea.classList.add('bg-[#f8f3e3]/70', 'border-[#c9a227]');
+                    fileUploadArea.classList.remove('bg-[#f8f3e3]/20', 'border-[#e5c867]');
+                    
+                    // Show file icon based on file type
+                    const fileIcon = fileUploadArea.querySelector('[data-lucide="upload"]');
+                    if (fileIcon) {
+                        if (fileName.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                            fileIcon.setAttribute('data-lucide', 'image');
+                        } else if (fileName.match(/\.(pdf)$/i)) {
+                            fileIcon.setAttribute('data-lucide', 'file-text');
+                        } else if (fileName.match(/\.(doc|docx)$/i)) {
+                            fileIcon.setAttribute('data-lucide', 'file-text');
+                        }
+                        if (typeof lucide !== 'undefined') {
+                            lucide.createIcons();
+                        }
+                    }
+                } else {
+                    resetFileUpload();
+                }
+            });
+            
+            // Reset file upload appearance
+            function resetFileUpload() {
+                fileLabel.textContent = 'Upload Attachment (optional)';
+                fileUploadArea.classList.remove('bg-[#f8f3e3]/70', 'border-[#c9a227]');
+                fileUploadArea.classList.add('bg-[#f8f3e3]/20', 'border-[#e5c867]');
+                
+                const fileIcon = fileUploadArea.querySelector('[data-lucide]');
+                if (fileIcon) {
+                    fileIcon.setAttribute('data-lucide', 'upload');
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }
+            }
+            
+            // Drag and drop functionality
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileUploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileUploadArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileUploadArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                fileUploadArea.classList.add('bg-[#f8f3e3]/70', 'scale-105');
+            }
+            
+            function unhighlight() {
+                fileUploadArea.classList.remove('bg-[#f8f3e3]/70', 'scale-105');
+            }
+            
+            fileUploadArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                
+                // Trigger change event
+                const event = new Event('change', { bubbles: true });
+                fileInput.dispatchEvent(event);
+            }
+            
+            // Add animation styles
+            const style = document.createElement('style');
+            style.innerHTML = 
+                "@@keyframes ping {" +
+                "    75%, 100% {" +
+                "        transform: scale(1.2);" +
+                "        opacity: 0;" +
+                "    }" +
+                "}" +
+                ".animate-ping {" +
+                "    animation: ping 0.3s cubic-bezier(0, 0, 0.2, 1);" +
+                "}" +
+                "@@keyframes fade-in {" +
+                "    0% { opacity: 0; }" +
+                "    100% { opacity: 1; }" +
+                "}" +
+                ".animate-fade-in {" +
+                "    animation: fade-in 0.5s ease-out forwards;" +
+                "}";
+            document.head.appendChild(style);
+        });
+    </script>
+}

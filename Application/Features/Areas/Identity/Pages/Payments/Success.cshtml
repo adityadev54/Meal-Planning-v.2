@@ -1,0 +1,101 @@
+@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Payments.SuccessModel
+@{
+    ViewData["Title"] = "Subscription Successful";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-white font-lato text-gray-900 flex items-center justify-center p-4 pt-16">
+    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8 max-w-md w-full text-center animate-slide-up">
+        <div class="bg-gradient-to-r from-green-100 to-green-50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <i data-lucide="check-circle" class="w-14 h-14 text-green-500"></i>
+        </div>
+        
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Subscription Successful!</h1>
+        <p class="text-gray-600 mb-8">Thank you for subscribing to our <span class="text-orange-500 font-semibold">@Model.PlanName</span> plan.</p>
+        
+        <div class="bg-gradient-to-r from-orange-50 to-white rounded-xl p-6 mb-8 text-left border border-orange-100">
+            <h3 class="text-gray-800 font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="receipt" class="w-5 h-5 text-orange-500"></i>
+                Order Details
+            </h3>
+            <div class="flex justify-between mb-3 border-b border-gray-100 pb-3">
+                <span class="text-gray-600">Order ID:</span>
+                <span class="font-medium text-gray-800">@Model.SessionId</span>
+            </div>
+            <div class="flex justify-between mb-3 border-b border-gray-100 pb-3">
+                <span class="text-gray-600">Plan:</span>
+                <span class="font-medium text-gray-800">@Model.PlanName</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600">Amount:</span>
+                <span class="font-medium text-gray-800">$@Model.Amount.ToString("0.00")</span>
+            </div>
+        </div>
+        
+        <div class="flex flex-col gap-3">
+            <a href="/" class="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all hover:shadow-lg">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                Go to Dashboard
+            </a>
+            <a href="/Areas/Identity/Pages/Account/Profile" class="flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-3 px-8 rounded-lg shadow-sm transition-all">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                View My Profile
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        lucide.createIcons();
+        
+        // Add a confetti animation effect
+        setTimeout(function() {
+            const confettiCount = 200;
+            const colors = ['#FF9800', '#FFC107', '#FFE082', '#FFECB3', '#4CAF50', '#A5D6A7'];
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                const size = Math.random() * 10 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.background = color;
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.opacity = Math.random() + 0.5;
+                confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }, 300);
+    </script>
+    
+    <style>
+        .font-lato { font-family: 'Lato', Arial, sans-serif; }
+        .animate-slide-up { opacity: 0; transform: translateY(20px); animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @@keyframes slideUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        
+        .confetti {
+            position: fixed;
+            top: -20px;
+            z-index: 10;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        @@keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(720deg); }
+        }
+    </style>
+}

@@ -1,0 +1,907 @@
+﻿@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Meals.MealPlans.MealPlanModel
+@{
+    ViewData["Title"] = "Meal Planner";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+    /* Base variables */
+    :root {
+        --primary: #c9a227;
+        --primary-light: #f8f3e3;
+        --primary-dark: #b48e22;
+        --bg-gradient: linear-gradient(135deg, #f8f3e3, #ffffff);
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+        --transition: all 0.2s ease;
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+    }
+
+    /* Custom animations */
+    @@keyframes pulse {
+        0%, 100% { opacity: 0.85; }
+        50% { opacity: 1; }
+    }
+    
+    @@keyframes shimmer {
+        0% { background-position: -100% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
+    @@keyframes progress {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    @@keyframes fade {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    /* Animation classes */
+    .animate-shimmer {
+        background: linear-gradient(90deg, 
+            rgba(255,255,255,0), 
+            rgba(255,255,255,0.5), 
+            rgba(255,255,255,0));
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+    
+    .animate-progress {
+        animation: progress 2s infinite ease;
+    }
+    
+    .animate-fade {
+        animation: fade 0.3s ease-out forwards;
+    }
+
+    /* Compact UI Components */
+    .panel {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+    
+    .panel-active {
+        box-shadow: var(--shadow-lg), 0 0 0 2px rgba(249, 115, 22, 0.2);
+    }
+    
+    /* Form Controls */
+    input[type="text"], input[type="number"], textarea, select {
+        border: 1px solid #e5e7eb;
+        border-radius: var(--radius-sm);
+        padding: 0.65rem 0.75rem;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    }
+    
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .btn-secondary {
+        background: white;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .btn-secondary:hover {
+        border-color: #d1d5db;
+        background: #f9fafb;
+    }
+    
+    /* Custom form elements */
+    input[type="checkbox"], input[type="radio"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1.2em;
+        height: 1.2em;
+        border: 1.5px solid #d1d5db;
+        border-radius: 0.25em;
+        cursor: pointer;
+        position: relative;
+        margin-right: 0.5em;
+        vertical-align: -0.15em;
+        transition: var(--transition);
+    }
+    
+    input[type="radio"] {
+        border-radius: 50%;
+    }
+    
+    input[type="checkbox"]:checked, input[type="radio"]:checked {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    input[type="checkbox"]:checked::before {
+        content: "";
+        position: absolute;
+        width: 0.3em;
+        height: 0.6em;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg) translate(-30%, -10%);
+        left: 50%;
+        top: 40%;
+    }
+    
+    input[type="radio"]:checked::before {
+        content: "";
+        position: absolute;
+        width: 0.6em;
+        height: 0.6em;
+        background-color: white;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    /* Progress indicator */
+    .progress-container {
+        height: 3px;
+        background: #e5e7eb;
+        overflow: hidden;
+        border-radius: 3px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: var(--primary);
+        width: 0;
+        transition: width 0.5s ease;
+    }
+    
+    /* Step pagination */
+    .step-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .step-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: #e5e7eb;
+        transition: var(--transition);
+    }
+    
+    .step-dot-active {
+        background: var(--primary);
+        transform: scale(1.2);
+    }
+    
+    /* Food chip styles */
+    .food-chip {
+        padding: 0.5rem 0.75rem;
+        background: #f9fafb;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        border-radius: 2rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        user-select: none;
+    }
+    
+    .food-chip:hover, .food-chip.active {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary-dark);
+    }
+    
+    /* AI-inspired loading */
+    .ai-thinking {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .ai-thinking::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(201, 162, 39, 0.2), 
+            transparent);
+        transform: translateX(-100%);
+        animation: progress 1.5s infinite;
+    }
+</style>
+
+<div class="min-h-screen font-['Inter'] text-gray-800 bg-gradient-to-b from-[#f8f3e3]/50 to-white">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+        <!-- Compact Header -->
+        <div class="mb-6 text-start">
+            <div class="mt-2 flex items-center justify-between">
+                <div class="flex items-start gap-1.5 text-xs font-medium">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-[#c9a227]"></i>
+                    <span class="text-gray-500">Complete all steps in order</span>
+                </div>
+                
+                @if (ViewData["TrialStatus"] != null)
+                {
+                    string trialStatus = ViewData["TrialStatus"]?.ToString() ?? "";
+                    if (trialStatus == "Active")
+                    {
+                        <div class="text-xs font-medium bg-green-50 text-green-700 px-2 py-1 rounded-md flex items-center gap-1">
+                            <i data-lucide="clock" class="w-3 h-3"></i>
+                            <span>Free trial: @ViewData["TrialDaysLeft"] days left</span>
+                        </div>
+                    }
+                    else if (trialStatus == "Expired")
+                    {
+                        <a href="/Areas/Identity/Pages/Payments/MealPlanPayments" class="text-xs font-medium bg-amber-50 text-amber-700 px-2 py-1 rounded-md flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                            <span>Free trial ended - Subscribe now</span>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="mb-6 relative">
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar" style="width: 16.67%;"></div>
+            </div>
+            <div class="flex justify-between mt-1.5 text-xs text-gray-500 font-medium">
+                <div class="step-label current" data-step="1">Goal</div>
+                <div class="step-label" data-step="2">Diet</div>
+                <div class="step-label" data-step="3">Likes</div>
+                <div class="step-label" data-step="4">Dislikes</div>
+                <div class="step-label" data-step="5">Allergies</div>
+                <div class="step-label" data-step="6">Schedule</div>
+            </div>
+        </div>
+        
+        <!-- AI-Style Step Indicator -->
+        <div class="flex items-center mb-5">
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-[#c9a227] rounded-full flex items-center justify-center shadow-sm">
+                    <span id="currentStepIcon" class="text-white text-sm font-semibold">1</span>
+                </div>
+            </div>
+            <div class="ml-3 flex-grow">
+                <h2 id="stepTitle" class="text-lg font-semibold text-gray-900">What's your health goal?</h2>
+                <p id="stepDescription" class="text-sm text-gray-500">This helps us tailor your meal plan</p>
+            </div>
+            <div class="flex-shrink-0 text-xs text-gray-400 font-medium">
+                <span id="stepCounter">Step 1 of 6</span>
+            </div>
+        </div>
+
+        <!-- AI-Style Processing Modal -->
+        <div id="processingModal" class="fixed inset-0 z-50 hidden bg-white/80 backdrop-filter backdrop-blur-sm transition-all duration-300">
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-full max-w-md p-6 transform transition-all">
+                    <div class="panel ai-thinking">
+                        <div class="p-6 text-center">
+                            <div class="flex justify-center mb-4">
+                                <div class="relative">
+                                    <i data-lucide="chef-hat" class="w-12 h-12 text-[#c9a227]"></i>
+                                    <div class="absolute inset-0 animate-pulse opacity-70"></div>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-1">Creating Your Meal Plan</h3>
+                            <p class="text-gray-600 text-sm mb-4">Our AI chef is personalizing recipes for you...</p>
+                            
+                            <div class="flex items-center justify-center gap-1.5 mb-1">
+                                <span class="inline-block w-2 h-2 bg-[#c9a227] rounded-full animate-pulse" style="animation-delay: 0s"></span>
+                                <span class="inline-block w-2 h-2 bg-[#c9a227] rounded-full animate-pulse" style="animation-delay: 0.2s"></span>
+                                <span class="inline-block w-2 h-2 bg-[#c9a227] rounded-full animate-pulse" style="animation-delay: 0.4s"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form - Compact -->
+        <form id="mealPlanForm" method="post" autocomplete="off" onsubmit="showProcessing()">
+            @Html.AntiForgeryToken()
+
+            <!-- Panel Container (single container for all steps, smoother UI) -->
+            <div class="panel relative min-h-[500px] panel-active overflow-visible">
+                <!-- Step 1: Health Goals -->
+                <div id="step-1" class="step-content active p-5 animate-fade">
+                    <div class="space-y-4">
+                        <div class="mb-4 text-sm text-gray-500 ml-1">Select your primary goal</div>
+                        
+                        <div class="space-y-2">
+                            @foreach (var goal in new[] { "General Health", "Weight Loss", "Maintain Weight", "Muscle Gain" })
+                            {
+                                <label class="flex items-center p-3 rounded-md hover:bg-[#f8f3e3] transition cursor-pointer">
+                                    <input type="radio" name="DietaryGoal" value="@goal" required class="mr-3">
+                                    <span>@goal</span>
+                                </label>
+                            }
+                        </div>
+                        
+                        <div class="mt-5 pt-3 border-t border-gray-100">
+                            <label class="block text-sm text-gray-600 mb-1.5">Or specify another goal:</label>
+                            <input type="text" name="CustomDietaryGoal" placeholder="e.g., Lower blood pressure, manage diabetes..."
+                                class="w-full" maxlength="100">
+                            <div class="text-xs text-gray-400 mt-1">Your specific health needs</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Dietary Restrictions -->
+                <div id="step-2" class="step-content hidden p-5 animate-fade">
+                    <div class="space-y-4">
+                        <div class="mb-3 text-sm text-gray-500 ml-1">Select all that apply</div>
+                        
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            @foreach (var diet in new[] { "Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Keto", "Paleo", "Halal", "Kosher" })
+                            {
+                                <label class="flex items-center p-2.5 rounded hover:bg-[#f8f3e3] transition cursor-pointer border border-gray-100">
+                                    <input type="checkbox" name="DietaryRestrictions" value="@diet" class="mr-2.5">
+                                    <span class="text-sm">@diet</span>
+                                </label>
+                            }
+                        </div>
+                        
+                        <div class="pt-2">
+                            <label class="block text-sm text-gray-600 mb-1.5">Other diet preferences:</label>
+                            <input type="text" name="CustomDietaryRestrictions" placeholder="Low sodium, Mediterranean..."
+                                   class="w-full">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Favorite Foods -->
+                <div id="step-3" class="step-content hidden p-5 animate-fade">
+                    <div class="flex flex-col h-full">
+                        <div class="mb-3 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">Select foods you enjoy</div>
+                            <div class="text-xs text-orange-500">At least 3 required</div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-1.5 mb-4" id="favoriteFoodSuggestions">
+                            @foreach (var food in new[] { "Chicken", "Rice", "Beef", "Eggs", "Salmon", "Pasta", "Potatoes", "Broccoli" })
+                            {
+                                <button type="button" class="food-chip">@food</button>
+                            }
+                        </div>
+                        
+                        <div class="relative mb-4">
+                            <input type="text" id="favoriteFoodInput" placeholder="Add your own favorites..." class="w-full pr-8">
+                            <button type="button" id="addFavoriteBtn" class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                                <i data-lucide="plus" class="w-4 h-4 text-[#c9a227]"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mb-2 text-xs font-medium">Your selections:</div>
+                        <div id="favoriteFoodsTags" class="flex flex-wrap gap-1.5 mb-3 min-h-[50px] p-2 bg-gray-50/70 rounded"></div>
+                        <input type="hidden" name="FavoriteFoods" id="favoriteFoodsHidden">
+                        
+                        <div class="text-xs text-gray-500 flex items-center mt-1 mb-4">
+                            <i data-lucide="info" class="w-3 h-3 mr-1"></i>
+                            <span>Click on a food to mark it as occasional</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Disliked Foods -->
+                <div id="step-4" class="step-content hidden p-5 animate-fade">
+                    <div class="flex flex-col h-full">
+                        <div class="mb-3 text-sm text-gray-500">Select foods you dislike</div>
+                        
+                        <div class="flex flex-wrap gap-1.5 mb-4" id="dislikedFoodSuggestions">
+                            @foreach (var food in new[] { "Cilantro", "Mushrooms", "Olives", "Brussels Sprouts", "Liver", "Oysters" })
+                            {
+                                <button type="button" class="food-chip">@food</button>
+                            }
+                        </div>
+                        
+                        <div class="relative mb-4">
+                            <input type="text" id="dislikedFoodInput" placeholder="Add other foods you dislike..." class="w-full pr-8">
+                            <button type="button" id="addDislikeBtn" class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                                <i data-lucide="plus" class="w-4 h-4 text-[#c9a227]"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mb-2 text-xs font-medium">Foods to avoid:</div>
+                        <div id="dislikedFoodsTags" class="flex flex-wrap gap-1.5 mb-3 min-h-[50px] p-2 bg-gray-50/70 rounded"></div>
+                        <input type="hidden" name="DislikedFoods" id="dislikedFoodsHidden">
+                    </div>
+                </div>
+                
+                <!-- Step 5: Allergies -->
+                <div id="step-5" class="step-content hidden p-5 animate-fade">
+                    <div class="flex flex-col h-full">
+                        <div class="mb-3 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">Select any food allergies</div>
+                            <div class="text-xs text-red-500 flex items-center">
+                                <i data-lucide="alert-triangle" class="w-3 h-3 mr-1"></i>
+                                <span>Important for safety</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            @foreach (var allergy in new[] { "Peanuts", "Tree Nuts", "Shellfish", "Fish", "Eggs", "Milk", "Soy", "Wheat", "Gluten" })
+                            {
+                                <label class="flex items-center p-2.5 rounded hover:bg-red-50 transition cursor-pointer border border-gray-100">
+                                    <input type="checkbox" name="Allergies" value="@allergy" class="mr-2.5">
+                                    <span class="text-sm">@allergy</span>
+                                </label>
+                            }
+                        </div>
+                        
+                        <div class="pt-1 mb-3">
+                            <label class="block text-sm text-gray-600 mb-1.5">Other allergies:</label>
+                            <textarea name="OtherAllergies" placeholder="List any other allergies or sensitivities..."
+                                    class="w-full" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 6: Meals Per Day -->
+                <div id="step-6" class="step-content hidden p-5 animate-fade">
+                    <div class="flex flex-col h-full">
+                        <div class="mb-3 text-sm text-gray-500">How many meals per day?</div>
+                        
+                        <div class="space-y-2.5 mb-4">
+                            @foreach (var meal in new[] { 
+                                new { Count = 2, Description = "Brunch and dinner" },
+                                new { Count = 3, Description = "Breakfast, lunch, dinner" },
+                                new { Count = 4, Description = "Three meals plus a snack" },
+                                new { Count = 5, Description = "Three meals plus two snacks" }
+                            })
+                            {
+                                <label class="flex items-center p-2.5 rounded hover:bg-[#f8f3e3] transition cursor-pointer border border-gray-100">
+                                    <input type="radio" name="MealsPerDay" value="@meal.Count" class="mr-2.5" @(meal.Count == 3 ? "checked" : "")>
+                                    <div>
+                                        <div class="text-sm font-medium">@meal.Count meals</div>
+                                        <div class="text-xs text-gray-500">@meal.Description</div>
+                                    </div>
+                                </label>
+                            }
+                        </div>
+                        
+                        <div class="flex items-center justify-center pt-5 mt-auto">
+                            <button type="submit" class="btn btn-primary px-6 flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span>Generate My Meal Plan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Controls -->
+                <div class="p-4 bg-gray-50 rounded-b-md border-t border-gray-100 flex items-center justify-between">
+                    <button type="button" id="prevBtn" class="btn btn-secondary px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i data-lucide="chevron-left" class="w-4 h-4 mr-1"></i> Back
+                    </button>
+                    
+                    <div class="flex gap-1">
+                        <span class="step-dot step-dot-active" data-step="1"></span>
+                        <span class="step-dot" data-step="2"></span>
+                        <span class="step-dot" data-step="3"></span>
+                        <span class="step-dot" data-step="4"></span>
+                        <span class="step-dot" data-step="5"></span>
+                        <span class="step-dot" data-step="6"></span>
+                    </div>
+                    
+                    <button type="button" id="nextBtn" class="btn btn-primary px-4 py-2 text-sm">
+                        Continue <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Error message (if any) -->
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mt-4 p-3 bg-red-50 text-red-700 rounded-md shadow-sm flex items-start gap-2 text-sm">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0"></i>
+                <div>
+                    <div class="font-medium">Something went wrong</div>
+                    <p>@Model.ErrorMessage</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            // Step navigation setup
+            let currentStep = 1;
+            const totalSteps = 6;
+            const stepContents = document.querySelectorAll('.step-content');
+            const stepDots = document.querySelectorAll('.step-dot');
+            const stepLabels = document.querySelectorAll('.step-label');
+            
+            // Step-specific configuration
+            const stepConfig = [
+                { title: "What's your health goal?", description: "This helps us tailor your meal plan", validation: validateStep1 },
+                { title: "Any dietary restrictions?", description: "Select all that apply to your diet", validation: () => true },
+                { title: "What foods do you enjoy?", description: "Select at least 3 favorites", validation: validateStep3 },
+                { title: "Any foods to avoid?", description: "Optional: foods to exclude", validation: () => true },
+                { title: "Do you have any allergies?", description: "Important for your safety", validation: () => true },
+                { title: "How many meals per day?", description: "Final step: meal frequency", validation: validateStep6 }
+            ];
+            
+            // Step validation functions
+            function validateStep1() {
+                const dietaryGoalRadios = document.querySelectorAll('input[name="DietaryGoal"]:checked');
+                const customGoal = document.querySelector('input[name="CustomDietaryGoal"]').value.trim();
+                return (dietaryGoalRadios.length > 0 || customGoal !== '');
+            }
+            
+            function validateStep3() {
+                return favoriteFoods.length >= 3;
+            }
+            
+            function validateStep6() {
+                return document.querySelector('input[name="MealsPerDay"]:checked') !== null;
+            }
+            
+            // Navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Update UI based on current step
+            function updateStepUI(step) {
+                // Update step title and description
+                document.getElementById('stepTitle').textContent = stepConfig[step-1].title;
+                document.getElementById('stepDescription').textContent = stepConfig[step-1].description;
+                document.getElementById('currentStepIcon').textContent = step;
+                document.getElementById('stepCounter').textContent = `Step ${step} of ${totalSteps}`;
+                
+                // Update progress bar
+                const progressPercentage = (step / totalSteps) * 100;
+                document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+                
+                // Update step content visibility
+                stepContents.forEach((content, idx) => {
+                    content.classList.toggle('hidden', idx+1 !== step);
+                    content.classList.toggle('active', idx+1 === step);
+                });
+                
+                // Update step dots
+                stepDots.forEach((dot, idx) => {
+                    dot.classList.toggle('step-dot-active', idx+1 === step);
+                    // Mark completed steps
+                    if (idx+1 < step) {
+                        dot.classList.add('bg-green-500');
+                    } else if (idx+1 > step) {
+                        dot.classList.remove('bg-green-500');
+                    }
+                });
+                
+                // Update labels
+                stepLabels.forEach((label, idx) => {
+                    if (idx+1 === step) {
+                        label.classList.add('text-[#c9a227]', 'font-medium', 'current');
+                        label.classList.remove('text-gray-500');
+                    } else if (idx+1 < step) {
+                        label.classList.add('text-green-500');
+                        label.classList.remove('text-gray-500', 'text-[#c9a227]', 'current', 'font-medium');
+                    } else {
+                        label.classList.add('text-gray-500');
+                        label.classList.remove('text-[#c9a227]', 'text-green-500', 'current', 'font-medium');
+                    }
+                });
+                
+                // Update navigation button states
+                prevBtn.disabled = step === 1;
+                if (step === totalSteps) {
+                    nextBtn.classList.add('hidden');
+                } else {
+                    nextBtn.classList.remove('hidden');
+                }
+            }
+            
+            // Navigate to a specific step
+            function goToStep(step) {
+                if (step < 1 || step > totalSteps) return;
+                
+                // If trying to move forward, validate current step first
+                if (step > currentStep) {
+                    if (!stepConfig[currentStep-1].validation()) {
+                        // Show error notification
+                        showStepError();
+                        return;
+                    }
+                }
+                
+                currentStep = step;
+                updateStepUI(currentStep);
+                
+                // Announce step change for screen readers
+                announceStepChange(currentStep);
+            }
+            
+            function showStepError() {
+                const errorMessages = {
+                    1: "Please select a health goal or enter your own",
+                    3: "Please select at least 3 favorite foods",
+                    6: "Please select the number of meals per day"
+                };
+                
+                // Create a temporary error message
+                const errorContainer = document.createElement('div');
+                errorContainer.className = 'bg-red-50 text-red-700 p-2 text-sm rounded flex items-center mb-3 animate-fade';
+                errorContainer.innerHTML = `
+                    <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i>
+                    <span>${errorMessages[currentStep] || "Please complete this step"}</span>
+                `;
+                
+                // Insert error at top of current step content
+                const currentStepContent = document.querySelector(`.step-content.active`);
+                currentStepContent.insertBefore(errorContainer, currentStepContent.firstChild);
+                
+                // Initialize icon
+                lucide.createIcons({
+                    attrs: {
+                        class: ["w-4", "h-4"]
+                    }
+                });
+                
+                // Remove after delay
+                setTimeout(() => {
+                    errorContainer.style.opacity = '0';
+                    setTimeout(() => errorContainer.remove(), 300);
+                }, 3000);
+            }
+            
+            function announceStepChange(step) {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.className = 'sr-only';
+                announcement.textContent = `Step ${step} of ${totalSteps}: ${stepConfig[step-1].title}`;
+                document.body.appendChild(announcement);
+                setTimeout(() => announcement.remove(), 1000);
+            }
+            
+            // Button event listeners
+            prevBtn.addEventListener('click', () => goToStep(currentStep - 1));
+            nextBtn.addEventListener('click', () => goToStep(currentStep + 1));
+            
+            // --- Food Selection Logic ---
+            
+            // Favorites management
+            let favoriteFoods = [];
+            const favoriteFoodInput = document.getElementById('favoriteFoodInput');
+            const favoriteFoodTags = document.getElementById('favoriteFoodsTags');
+            const favoriteFoodsHidden = document.getElementById('favoriteFoodsHidden');
+            const favoriteSuggestions = document.getElementById('favoriteFoodSuggestions');
+            const addFavoriteBtn = document.getElementById('addFavoriteBtn');
+            
+            function addFavoriteFood(name) {
+                name = name.trim();
+                if (!name) return;
+                if (favoriteFoods.some(f => f.name.toLowerCase() === name.toLowerCase())) return;
+                
+                favoriteFoods.push({ name, occasional: false });
+                renderFavoriteFoods();
+                favoriteFoodInput.value = '';
+                favoriteFoodInput.focus();
+            }
+            
+            function renderFavoriteFoods() {
+                favoriteFoodTags.innerHTML = '';
+                
+                if (favoriteFoods.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-xs text-gray-400 italic';
+                    emptyMsg.textContent = 'No favorite foods added yet';
+                    favoriteFoodTags.appendChild(emptyMsg);
+                    favoriteFoodsHidden.value = '';
+                    return;
+                }
+                
+                favoriteFoods.forEach((food, idx) => {
+                    const tag = document.createElement('div');
+                    tag.className = `food-tag inline-flex items-center gap-1.5 bg-${food.occasional ? 'yellow' : 'green'}-50 text-gray-700 px-2 py-1 rounded-lg text-sm`;
+                    tag.dataset.index = idx;
+                    tag.innerHTML = `
+                        <span>${food.name}</span>
+                        <button type="button" class="toggle-occasional ml-0.5" title="${food.occasional ? 'Regular item' : 'Mark as occasional'}">
+                            <i data-lucide="star" class="w-3.5 h-3.5 ${food.occasional ? 'text-yellow-500' : 'text-gray-300'}"></i>
+                        </button>
+                        <button type="button" class="remove-food ml-0.5" title="Remove">
+                            <i data-lucide="x" class="w-3.5 h-3.5 text-gray-400 hover:text-red-500"></i>
+                        </button>
+                    `;
+                    
+                    favoriteFoodTags.appendChild(tag);
+                });
+                
+                // Update hidden input
+                favoriteFoodsHidden.value = favoriteFoods
+                    .map(f => `${f.name}${f.occasional ? ' (Occasional)' : ''}`)
+                    .join(',');
+                
+                // Re-initialize Lucide icons
+                lucide.createIcons();
+            }
+            
+            // Event handlers for favorite foods
+            favoriteFoodInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addFavoriteFood(favoriteFoodInput.value);
+                }
+            });
+            
+            addFavoriteBtn.addEventListener('click', () => {
+                addFavoriteFood(favoriteFoodInput.value);
+            });
+            
+            favoriteSuggestions.addEventListener('click', e => {
+                if (e.target.classList.contains('food-chip')) {
+                    addFavoriteFood(e.target.textContent);
+                    e.target.classList.add('opacity-50');
+                }
+            });
+            
+            favoriteFoodTags.addEventListener('click', e => {
+                const foodTag = e.target.closest('.food-tag');
+                if (!foodTag) return;
+                
+                const idx = parseInt(foodTag.dataset.index);
+                
+                if (e.target.closest('.toggle-occasional')) {
+                    favoriteFoods[idx].occasional = !favoriteFoods[idx].occasional;
+                    renderFavoriteFoods();
+                } else if (e.target.closest('.remove-food')) {
+                    favoriteFoods.splice(idx, 1);
+                    renderFavoriteFoods();
+                }
+            });
+            
+            // Dislikes management
+            let dislikedFoods = [];
+            const dislikedFoodInput = document.getElementById('dislikedFoodInput');
+            const dislikedFoodTags = document.getElementById('dislikedFoodsTags');
+            const dislikedFoodsHidden = document.getElementById('dislikedFoodsHidden');
+            const dislikedSuggestions = document.getElementById('dislikedFoodSuggestions');
+            const addDislikeBtn = document.getElementById('addDislikeBtn');
+            
+            function addDislikedFood(name) {
+                name = name.trim();
+                if (!name) return;
+                if (dislikedFoods.includes(name.toLowerCase())) return;
+                
+                dislikedFoods.push(name);
+                renderDislikedFoods();
+                dislikedFoodInput.value = '';
+                dislikedFoodInput.focus();
+            }
+            
+            function renderDislikedFoods() {
+                dislikedFoodTags.innerHTML = '';
+                
+                if (dislikedFoods.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-xs text-gray-400 italic';
+                    emptyMsg.textContent = 'No disliked foods added yet';
+                    dislikedFoodTags.appendChild(emptyMsg);
+                    dislikedFoodsHidden.value = '';
+                    return;
+                }
+                
+                dislikedFoods.forEach((food, idx) => {
+                    const tag = document.createElement('div');
+                    tag.className = 'food-tag inline-flex items-center gap-1.5 bg-red-50 text-gray-700 px-2 py-1 rounded-lg text-sm';
+                    tag.dataset.index = idx;
+                    tag.innerHTML = `
+                        <span>${food}</span>
+                        <button type="button" class="remove-food ml-1" title="Remove">
+                            <i data-lucide="x" class="w-3.5 h-3.5 text-gray-400 hover:text-red-500"></i>
+                        </button>
+                    `;
+                    
+                    dislikedFoodTags.appendChild(tag);
+                });
+                
+                // Update hidden input
+                dislikedFoodsHidden.value = dislikedFoods.join(',');
+                
+                // Re-initialize Lucide icons
+                lucide.createIcons();
+            }
+            
+            // Event handlers for disliked foods
+            dislikedFoodInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addDislikedFood(dislikedFoodInput.value);
+                }
+            });
+            
+            addDislikeBtn.addEventListener('click', () => {
+                addDislikedFood(dislikedFoodInput.value);
+            });
+            
+            dislikedSuggestions.addEventListener('click', e => {
+                if (e.target.classList.contains('food-chip')) {
+                    addDislikedFood(e.target.textContent);
+                    e.target.classList.add('opacity-50');
+                }
+            });
+            
+            dislikedFoodTags.addEventListener('click', e => {
+                if (e.target.closest('.remove-food')) {
+                    const foodTag = e.target.closest('.food-tag');
+                    const idx = parseInt(foodTag.dataset.index);
+                    dislikedFoods.splice(idx, 1);
+                    renderDislikedFoods();
+                }
+            });
+            
+            // Initialize food lists
+            renderFavoriteFoods();
+            renderDislikedFoods();
+            
+            // Initialize the first step
+            updateStepUI(currentStep);
+        });
+        
+        // Show processing modal when submitting
+        function showProcessing() {
+            document.getElementById('processingModal').classList.remove('hidden');
+            return true;
+        }
+        
+        window.onload = function() {
+            // Initialize all Lucide icons
+            lucide.createIcons();
+            
+            // Hide processing modal if no error
+            if ('@Model.ErrorMessage' === '') {
+                document.getElementById('processingModal').classList.add('hidden');
+            }
+        };
+    </script>
+}

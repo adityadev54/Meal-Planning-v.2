@@ -1,0 +1,320 @@
+﻿@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Account.Devs.APIDocsModel
+@{
+    ViewData["Title"] = "API Documentation";
+}
+
+<style>
+    .api-docs-layout {
+        display: flex;
+        max-width: 1100px;
+        margin: 2.5rem auto 2rem auto;
+        font-family: 'Segoe UI', 'Inter', Arial, sans-serif;
+        color: #2e2e2e;
+        min-height: 80vh;
+    }
+
+    .api-docs-sidebar {
+        min-width: 210px;
+        border-right: 1.5px solid #e5e7eb;
+        padding: 0 1.5rem 0 0;
+        background: #fff;
+        position: sticky;
+        top: 2rem;
+        height: fit-content;
+    }
+
+    .api-docs-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-top: 1.5rem;
+    }
+
+    .api-docs-nav-link {
+        color: #a16207;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 0.5em 0.7em;
+        border-radius: 6px;
+        transition: background 0.15s;
+        font-size: 1rem;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        display: block;
+    }
+
+        .api-docs-nav-link.active, .api-docs-nav-link:hover {
+            background: #fef9c3;
+            color: #a16207;
+        }
+
+    .api-docs-content {
+        flex: 1;
+        padding: 0 0 0 2.5rem;
+        min-width: 0;
+    }
+
+    .api-docs-title {
+        font-size: 2.3rem;
+        font-weight: 800;
+        color: #a16207;
+        margin-bottom: 0.5rem;
+        letter-spacing: -1px;
+    }
+
+    .api-docs-lead {
+        color: #78716c;
+        font-size: 1.13rem;
+        margin-bottom: 2.2rem;
+    }
+
+    .api-docs-section {
+        display: none;
+        margin-bottom: 2.5rem;
+        animation: fadeIn 0.3s;
+    }
+
+        .api-docs-section.active {
+            display: block;
+        }
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .api-docs-section-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #a16207;
+        margin-bottom: 0.7rem;
+        margin-top: 2.2rem;
+    }
+
+    .api-docs-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.5rem;
+        font-size: 1.01rem;
+    }
+
+        .api-docs-table th, .api-docs-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.6em 1em;
+            text-align: left;
+        }
+
+        .api-docs-table th {
+            background: #fef9c3;
+            color: #a16207;
+            font-weight: 700;
+        }
+
+        .api-docs-table td {
+            background: #f9fafb;
+        }
+
+    .api-docs-code {
+        background: #18181b;
+        color: #fde68a;
+        font-family: 'Fira Mono', 'Consolas', monospace;
+        font-size: 1rem;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.2rem;
+        overflow-x: auto;
+    }
+
+    .api-docs-tip {
+        background: #fef9c3;
+        color: #a16207;
+        border-left: 4px solid #eab308;
+        border-radius: 6px;
+        padding: 0.7em 1.2em;
+        margin: 1.5em 0;
+        font-size: 1.01rem;
+    }
+
+    .api-docs-anchor {
+        color: #a16207;
+        text-decoration: underline;
+    }
+    @@media (max-width: 900px) {
+        .api-docs-layout
+
+    {
+        flex-direction: column;
+    }
+
+    .api-docs-sidebar {
+        min-width: 0;
+        border-right: none;
+        border-bottom: 1.5px solid #e5e7eb;
+        padding: 0 0 1.5rem 0;
+    }
+
+    .api-docs-content {
+        padding: 0;
+    }
+
+    }
+</style>
+
+<div class="api-docs-layout">
+    <nav class="api-docs-sidebar">
+        <div class="api-docs-title" style="font-size:1.3rem;margin-bottom:1.2rem;">API Reference</div>
+        <div class="api-docs-nav" id="apiDocsNav">
+            <button class="api-docs-nav-link active" data-section="authentication">Authentication</button>
+            <button class="api-docs-nav-link" data-section="endpoints">Endpoints</button>
+            <button class="api-docs-nav-link" data-section="example-request">Example Request</button>
+            <button class="api-docs-nav-link" data-section="example-response">Example Response</button>
+            <button class="api-docs-nav-link" data-section="best-practices">Best Practices</button>
+        </div>
+    </nav>
+    <main class="api-docs-content">
+        <h1 class="api-docs-title">ChatGPT API Documentation</h1>
+        <div class="api-docs-lead">
+            This documentation provides a comprehensive guide for developers integrating with the ChatGPT API. It covers authentication, available endpoints, example requests and responses, and best practices. Use this as a reference for both implementation and future maintenance.
+        </div>
+
+        <section class="api-docs-section active" id="section-authentication">
+            <h2 class="api-docs-section-title">Authentication</h2>
+            <p>
+                All API requests require authentication using an API key. This key is unique to your account and should be kept secret.
+                To authenticate, include the key in the <code>Authorization</code> header as a Bearer token. This ensures that only authorized users can access the API and helps track usage per account.
+            </p>
+            <div class="api-docs-code">
+                Authorization: Bearer <span style="color:#facc15;">YOUR_OPENAI_API_KEY</span>
+            </div>
+            <p>
+                <strong>Note:</strong> Never expose your API key in client-side code or public repositories.
+            </p>
+        </section>
+
+        <section class="api-docs-section" id="section-endpoints">
+            <h2 class="api-docs-section-title">Endpoints</h2>
+            <p>
+                The following endpoints are available for interacting with the ChatGPT model. Each endpoint is versioned and may require specific parameters.
+            </p>
+            <table class="api-docs-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>POST</td>
+                        <td>/v1/chat/completions</td>
+                        <td>Get a completion from the ChatGPT model. Requires a model name and a list of messages.</td>
+                    </tr>
+                    <!-- Add more endpoints as needed -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="api-docs-section" id="section-example-request">
+            <h2 class="api-docs-section-title">Example Request</h2>
+            <p>
+                Below is an example of how to make a request to the <code>/v1/chat/completions</code> endpoint using <b>curl</b>.
+                Replace <code>YOUR_OPENAI_API_KEY</code> with your actual API key.
+            </p>
+            <div class="api-docs-code">
+                <span style="color:#7dd3fc;">curl</span> https://api.openai.com/v1/chat/completions \<br />
+                &nbsp;&nbsp;-H "Authorization: Bearer <span style="color:#facc15;">YOUR_OPENAI_API_KEY</span>" \<br />
+                &nbsp;&nbsp;-H "Content-Type: application/json" \<br />
+                &nbsp;&nbsp;-d '<span style="color:#a7f3d0;">
+                    {
+                    "model": "gpt-3.5-turbo",
+                    "messages": [{"role": "user", "content": "Hello, world!"}]
+                    }
+                </span>'
+            </div>
+            <p>
+                The <code>model</code> parameter specifies which version of ChatGPT to use. The <code>messages</code> array contains the conversation history.
+            </p>
+        </section>
+
+        <section class="api-docs-section" id="section-example-response">
+            <h2 class="api-docs-section-title">Example Response</h2>
+            <p>
+                A successful response returns a JSON object with the generated completion and usage statistics.
+                The <code>choices</code> array contains the assistant's reply.
+            </p>
+            <div class="api-docs-code" style="color:#a7f3d0;">
+                {
+                "id": "chatcmpl-abc123",
+                "object": "chat.completion",
+                "created": 1677858242,
+                "model": "gpt-3.5-turbo-0301",
+                "choices": [
+                {
+                "index": 0,
+                "message": {
+                "role": "assistant",
+                "content": "Hello! How can I assist you today?"
+                },
+                "finish_reason": "stop"
+                }
+                ],
+                "usage": {
+                "prompt_tokens": 9,
+                "completion_tokens": 12,
+                "total_tokens": 21
+                }
+                }
+            </div>
+            <p>
+                <strong>Tip:</strong> Always check the <code>usage</code> field to monitor your token consumption and avoid unexpected costs.
+            </p>
+        </section>
+
+        <section class="api-docs-section" id="section-best-practices">
+            <h2 class="api-docs-section-title">Best Practices</h2>
+            <ul>
+                <li>Keep your API key secure and rotate it regularly.</li>
+                <li>Use HTTPS for all requests to protect data in transit.</li>
+                <li>Handle errors gracefully and implement retry logic for transient failures.</li>
+                <li>Monitor rate limits and usage to avoid service interruptions.</li>
+                <li>Refer to the <a href="https://platform.openai.com/docs/api-reference" target="_blank" class="api-docs-anchor">official OpenAI API docs</a> for advanced usage and updates.</li>
+            </ul>
+            <div class="api-docs-tip">
+                <strong>My Tip:</strong> Use tools like <b>Postman</b> or <b>curl</b> to test your API requests before integrating into your application.
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    // Sidebar navigation: show only the selected section
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('.api-docs-nav-link');
+        const sections = document.querySelectorAll('.api-docs-section');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                link.classList.add('active');
+                document.getElementById('section-' + link.dataset.section).classList.add('active');
+            });
+        });
+        // Set initial state
+        navLinks[0].classList.add('active');
+        sections[0].classList.add('active');
+    });
+</script>

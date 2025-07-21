@@ -1,0 +1,251 @@
+﻿@model IList<Meal_Planning.Core.Entities.ApplicationUser>
+
+<style>
+    :root {
+        --gold: #D4AF37;
+        --muted-gold: #C7A740;
+        --soft-gold-tint: #FFF8E1;
+        --white: #FFFFFF;
+        --off-white: #FAFAFA;
+        --charcoal: #2E2E2E;
+        --light-gray: #F5F5F5;
+        --medium-gray: #B0B0B0;
+        --dark-gray: #4F4F4F;
+        --fresh-green: #6AB04C;
+        --tomato-red: #EB4D4B;
+        --warm-orange: #F0932B;
+        --sky-blue: #74B9FF;
+    }
+
+    .users-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .users-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: black;
+    }
+
+        .users-title i {
+            color: black;
+        }
+
+    .user-search {
+        border: 1.5px solid var(--muted-gold);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        background: var(--off-white);
+        color: var(--charcoal);
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+        .user-search:focus {
+            border-color: var(--gold);
+            background: var(--soft-gold-tint);
+            outline: none;
+        }
+
+    .users-table-container {
+        background: var(--white);
+        border-radius: 8px;
+        box-shadow: 0 2px 12px 0 var(--muted-gold)1A;
+        padding: 1.5rem;
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 700px;
+    }
+
+        .users-table thead tr {
+            background: var(--soft-gold-tint);
+        }
+
+        .users-table th {
+            padding: 0.85rem 1.1rem;
+            text-align: left;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--charcoal);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--muted-gold);
+            letter-spacing: 0.04em;
+        }
+
+        .users-table tbody tr {
+            background: var(--white);
+            transition: background 0.2s;
+        }
+
+            .users-table tbody tr:hover {
+                background: var(--soft-gold-tint);
+            }
+
+        .users-table td {
+            padding: 0.85rem 1.1rem;
+            color: var(--charcoal);
+            border-bottom: 1px solid var(--light-gray);
+            white-space: nowrap;
+            vertical-align: middle;
+            font-size: 1rem;
+        }
+
+    .user-status {
+        display: inline-block;
+        padding: 0.25rem 1rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border: 1.5px solid;
+    }
+
+        .user-status.active {
+            background: rgba(106, 176, 76, 0.12);
+            color: var(--fresh-green);
+            border-color: var(--fresh-green);
+        }
+
+        .user-status.locked {
+            background: rgba(235, 77, 75, 0.12);
+            color: var(--tomato-red);
+            border-color: var(--tomato-red);
+        }
+
+    .copy-email-btn, .action-btn {
+        color: var(--charcoal) !important;
+        background: none;
+        border: none;
+        padding: 0.2rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: color 0.2s, background 0.2s;
+        vertical-align: middle;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .copy-email-btn:hover, .copy-email-btn:focus,
+        .action-btn:hover, .action-btn:focus {
+            color: var(--gold) !important;
+            background: var(--soft-gold-tint);
+            outline: none;
+        }
+
+        .copy-email-btn.copied {
+            color: var(--fresh-green) !important;
+        }
+
+    .no-users {
+        text-align: center;
+        color: var(--medium-gray);
+        padding: 2rem 0;
+        font-size: 1.1rem;
+    }
+    @@media (max-width: 700px) {
+        .users-table-container
+
+    {
+        padding: 0.5rem;
+    }
+
+    .users-table {
+        min-width: 500px;
+        font-size: 0.95rem;
+    }
+
+    .users-title {
+        font-size: 1.1rem;
+    }
+
+    }
+</style>
+
+<div class="users-header">
+    <div class="users-title">
+        <i data-lucide="users" class="w-7 h-7"></i>
+        All Users
+    </div>
+    <input id="userSearch" type="text" placeholder="Search users..." class="user-search" />
+</div>
+<div class="users-table-container">
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            @foreach (var user in Model)
+            {
+                var isLocked = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.Now;
+                <tr>
+                    <td>@user.FirstName @user.LastName</td>
+                    <td>
+                        @user.Email
+                        <button type="button" class="copy-email-btn" data-email="@user.Email" title="Copy Email" style="margin-left:0.5rem;">
+                            <i data-lucide="copy"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <span class="user-status @(isLocked ? "locked" : "active")">
+                            @(isLocked ? "Locked" : "Active")
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" title="View Details" disabled>
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Any())
+    {
+        <div class="no-users">No users found.</div>
+    }
+</div>
+
+<script>
+    // Ensure Lucide icons are rendered after AJAX load
+    if (window.lucide) lucide.createIcons();
+
+    // Search/filter logic
+    const searchInput = document.getElementById('userSearch');
+    const tableBody = document.getElementById('userTableBody');
+    if (searchInput && tableBody) {
+        searchInput.addEventListener('input', function () {
+            const filter = this.value.toLowerCase();
+            Array.from(tableBody.rows).forEach(row => {
+                const name = row.cells[0].innerText.toLowerCase();
+                const email = row.cells[1].innerText.toLowerCase();
+                row.style.display = (name.includes(filter) || email.includes(filter)) ? '' : 'none';
+            });
+        });
+    }
+
+    // Copy email logic
+    document.querySelectorAll('.copy-email-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const email = this.getAttribute('data-email');
+            navigator.clipboard.writeText(email);
+            this.classList.add('copied');
+            setTimeout(() => this.classList.remove('copied'), 1000);
+        });
+    });
+</script>

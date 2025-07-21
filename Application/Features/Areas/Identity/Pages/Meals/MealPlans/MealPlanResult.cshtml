@@ -1,0 +1,1736 @@
+﻿@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Meals.MealPlans.MealPlanResultModel
+@{
+    ViewData["Title"] = "Your Meal Plan";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+       :root {
+           --primary-light: #fef3c7;
+           --primary: #f59e0b;
+           --primary-dark: #d97706;
+           --neutral-light: #f3f4f6;
+           --neutral: #e5e7eb;
+           --neutral-dark: #9ca3af;
+           --text-primary: #78350f;
+           --text-body: #4b5563;
+           --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+           --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+           --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+           --font-sans: 'Inter', system-ui, sans-serif;
+           --radius-sm: 0.25rem;
+           --radius: 0.5rem;
+           --radius-lg: 1rem;
+       }
+       
+       body {
+           font-family: var(--font-sans);
+           scroll-behavior: smooth;
+       }
+       
+       @@media print {
+           .no-print, .no-print * { display: none !important; }
+           .print-only { display: block !important; }
+           body, html { background: #fff !important; color: #000 !important; margin: 0 !important; padding: 0 !important; }
+           .print-header { margin: 0 0 20px 0 !important; padding: 15px 0 !important; border-bottom: 2px solid #f59e0b !important; text-align: center; display: flex !important; justify-content: center; align-items: center; }
+           .print-container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+           .print-meal-day { page-break-inside: avoid !important; break-inside: avoid !important; margin-bottom: 20px !important; }
+           .print-meal-item { border-bottom: 1px solid #eee !important; padding: 10px 0 !important; }
+           .print-meal-type { font-weight: 600 !important; color: #000 !important; }
+           .print-meal-food { color: #333 !important; }
+           header, nav, footer, .navbar, .footer, .no-print { display: none !important; }
+           
+           .print-summary-section {
+               display: flex !important;
+               flex-direction: row !important;
+               justify-content: space-between !important;
+               margin-bottom: 30px !important;
+               padding: 10px 0 !important;
+               border-bottom: 1px solid #ddd !important;
+               border-top: 1px solid #ddd !important;
+           }
+           
+           .print-summary-item {
+               margin: 0 20px !important;
+               text-align: center !important;
+           }
+       }
+       
+       /* Animations */
+       .bubble-panel {
+           animation: bubbleIn 0.35s cubic-bezier(.68,-0.55,.27,1.55);
+       }
+       
+       @@keyframes bubbleIn {
+           0% { transform: scale(0.7); opacity: 0; }
+           80% { transform: scale(1.05); opacity: 1; }
+           100% { transform: scale(1); opacity: 1; }
+       }
+       
+       @@keyframes fadeIn {
+           0% { opacity: 0; }
+           100% { opacity: 1; }
+       }
+       
+       @@keyframes slideInUp {
+           0% { transform: translateY(20px); opacity: 0; }
+           100% { transform: translateY(0); opacity: 1; }
+       }
+       
+       .fade-in {
+           animation: fadeIn 0.5s ease forwards;
+       }
+       
+       .slide-in-up {
+           animation: slideInUp 0.5s ease forwards;
+       }
+       
+       /* Progress bar for nutritional info */
+       .progress-bar {
+           height: 8px;
+           border-radius: 4px;
+           background: var(--neutral);
+           overflow: hidden;
+       }
+       
+       .progress-bar-fill {
+           height: 100%;
+           border-radius: 4px;
+           transition: width 0.6s ease;
+       }
+   </style>
+
+   <div class="min-h-screen bg-gradient-to-br from-[#c9a227]/5 via-white to-[#c9a227]/10 py-10 px-2 sm:px-6">
+       @if (string.IsNullOrEmpty(Model.MealPlan))
+       {
+           <div class="max-w-lg mx-auto p-8 bg-white rounded-lg shadow-md text-center">
+               <div class="w-16 h-16 mx-auto bg-[#c9a227]/10 rounded-full flex items-center justify-center mb-4">
+                   <i data-lucide="alert-triangle" class="w-8 h-8 text-[#c9a227]"></i>
+               </div>
+               <h2 class="text-2xl font-bold text-gray-800 mb-2">No Meal Plan Found</h2>
+               <p class="text-gray-600 mb-6">We couldn't find any meal plan data. You may need to generate a new meal plan.</p>
+               <a href="/Areas/Identity/Pages/Meals/MealPlans/CreateMealPlan" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-[#c9a227] hover:bg-[#b48e22]">
+                   Create New Meal Plan
+               </a>
+           </div>
+       }
+       else
+       {
+       <div class="max-w-full mx-auto space-y-8">
+           <!-- Top Bar -->
+           <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 no-print">
+               <div class="flex items-center gap-3">
+                   <div class="w-12 h-12 bg-gradient-to-br from-[#c9a227]/80 to-[#c9a227] rounded-full flex items-center justify-center shadow-lg">
+                       <i data-lucide="utensils-crossed" class="w-6 h-6 text-white"></i>
+                   </div>
+                   <div>
+                       <span class="text-[#c9a227] font-extrabold text-3xl tracking-tight">Meal Plan</span>
+                       <span class="text-gray-500 text-sm block">Created on @DateTime.Now.ToString("MMMM d, yyyy")</span>
+                   </div>
+               </div>
+               
+               <div class="flex flex-wrap items-center gap-2">
+                   <div class="dropdown relative inline-block">
+                       <button class="flex items-center gap-1 bg-white border border-[#c9a227]/20 text-[#c9a227] font-semibold rounded-md px-4 py-2 hover:bg-[#c9a227]/5 transition-colors shadow-sm"
+                               id="actionDropdown">
+                           <i data-lucide="more-horizontal" class="w-5 h-5"></i> Actions 
+                       </button>
+                       <div class="dropdown-menu hidden absolute right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-100 z-10 w-48 py-1" id="actionMenu">
+                           <button class="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-[#c9a227]/5 text-left" onclick="window.print()">
+                               <i data-lucide="printer" class="w-4 h-4 text-[#c9a227]"></i> Print Plan
+                           </button>
+                           <button class="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-[#c9a227]/5 text-left" onclick="showNutrition()">
+                               <i data-lucide="pie-chart" class="w-4 h-4 text-[#c9a227]"></i> Nutritional Info
+                           </button>
+                           <button class="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-[#c9a227]/5 text-left" id="shoppingListBtn">
+                               <i data-lucide="shopping-bag" class="w-4 h-4 text-[#c9a227]"></i> Shopping List
+                           </button>
+                           <button class="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-[#c9a227]/5 text-left" onclick="showStoreFinder()">
+                               <i data-lucide="map-pin" class="w-4 h-4 text-[#c9a227]"></i> Find Stores
+                           </button>
+                           <a href="mailto:?subject=My%20Meal%20Plan&body=Check%20out%20my%20meal%20plan!" class="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-[#c9a227]/5 text-left">
+                               <i data-lucide="share-2" class="w-4 h-4 text-amber-500"></i> Share Plan
+                           </a>
+                       </div>
+                   </div>
+                   
+                   <button class="flex items-center gap-1 bg-[#c9a227] text-white font-semibold rounded-md px-4 py-2 hover:bg-[#b48e22] transition-colors shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed" style="box-shadow: 0 0 15px rgba(201, 162, 39, 0.3);"
+                           onclick="document.getElementById('saveMealForm').submit()"
+                           @(string.IsNullOrEmpty(Model.MealPlan) ? "disabled" : "")>
+                       <i data-lucide="save" class="w-5 h-5"></i> Save Plan
+                   </button>
+                   
+                   <form id="saveMealForm" method="post" asp-page-handler="Save" class="hidden">
+                       @Html.AntiForgeryToken()
+                       <input type="hidden" asp-for="MealPlan"/>
+                   </form>
+                   
+                   <a asp-page="/Meals/MealPlan" class="flex items-center gap-1 bg-white border border-amber-200 text-amber-800 font-semibold rounded-md px-4 py-2 hover:bg-amber-50 transition-colors shadow-sm">
+                       <i data-lucide="refresh-ccw" class="w-5 h-5"></i> Refine Plan
+                   </a>
+               </div>
+           </div>
+
+           <!-- Status Messages -->
+           @if (!string.IsNullOrEmpty(Model.Message))
+           {
+               <div class="p-4 mb-2 text-sm text-green-700 bg-green-100 rounded-lg shadow">
+                   @Model.Message
+               </div>
+           }
+           @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+           {
+               <div class="p-4 mb-2 text-sm text-red-700 bg-red-100 rounded-lg shadow">
+                   @Model.ErrorMessage
+               </div>
+           }
+
+           <!-- Print Header -->
+           <div class="print-header hidden items-center justify-center gap-3 mb-6 print-only">
+               <div class="w-12 h-12 bg-gradient-to-br from-amber-300 to-amber-500 rounded-full flex items-center justify-center">
+                   <i data-lucide="utensils-crossed" class="w-6 h-6 text-white"></i>
+               </div>
+               <div>
+                   <span class="text-amber-600 font-bold text-2xl">7-Day Meal Plan</span>
+                   <span class="text-gray-500 text-sm block">Generated on @DateTime.Now.ToString("MMMM d, yyyy")</span>
+               </div>
+           </div>
+
+           <!-- Main Content -->
+           <div class="bg-white/90 border border-[#c9a227]/10 rounded-2xl shadow-lg p-6 sm:p-8" style="box-shadow: 0 0 20px rgba(201, 162, 39, 0.15)">
+               <!-- Page Header -->
+               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-amber-100 pb-4">
+                   <div>
+                       <h1 class="text-2xl sm:text-3xl font-extrabold text-amber-700 mb-1">Your Personalized Meal Plan</h1>
+                       <p class="text-gray-600">Nutritionally balanced meals for the week ahead</p>
+                   </div>
+                   <!-- Meal Plan Stats -->
+                   <div class="mt-4 sm:mt-0 flex items-center gap-2 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-full text-sm font-medium text-amber-800">
+                       <i data-lucide="calendar" class="w-4 h-4"></i>
+                       <span>7 days</span>
+                   </div>
+               </div>
+
+               @* Parse meal plan into a table structure *@
+               @{
+                   var dayRows = new List<(string Day, string Meal, string Food)>();
+                   List<IGrouping<string, (string Day, string Meal, string Food)>> grouped = new();
+
+                   if (Model.MealPlan != null)
+                   {
+                       var lines = Model.MealPlan.Split('\n');
+                       string? currentDay = null;
+                       foreach (var line in lines)
+                       {
+                           var trimmed = line.Trim();
+                           if (string.IsNullOrEmpty(trimmed)) continue;
+
+                           var dayMatch = System.Text.RegularExpressions.Regex.Match(trimmed, @"^Day\s*(\d+):?", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                           if (dayMatch.Success)
+                           {
+                               currentDay = dayMatch.Groups[1].Value;
+                           }
+                           else if (currentDay != null && trimmed.Contains("-"))
+                           {
+                               var mealSplit = trimmed.Split('-', 2);
+                               if (mealSplit.Length == 2)
+                               {
+                                   dayRows.Add((currentDay, mealSplit[0].Trim(), mealSplit[1].Trim()));
+                               }
+                           }
+                       }
+                       grouped = dayRows.GroupBy(r => r.Day).ToList();
+                   }
+
+                   // Generate weekday names starting from Monday
+                   string[] weekDays = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                   // Always display a full 7-day week
+                   var displayDays = weekDays.ToList();
+
+                   // Calculate summary values
+                   var totalDays = grouped.Count;
+                   var totalMeals = dayRows.Count;
+                   var uniqueFoods = dayRows.Select(r => r.Food).Distinct().Count();
+                   
+                   // Extract food items from meals for shopping list and nutritional data
+                   var shoppingItems = dayRows.Select(r => r.Food)
+                       .Distinct()
+                       .OrderBy(f => f)
+                       .ToList();
+                       
+                   // Calculate nutritional data based on food items
+                   var totalCalories = 0;
+                   var totalProtein = 0;
+                   var totalCarbs = 0;
+                   var totalFat = 0;
+                   
+                   // Dictionary to store nutritional info by food
+                   var nutritionInfo = new Dictionary<string, (int calories, int protein, int carbs, int fat)>();
+                   
+                   // Process each food item to calculate nutritional data
+                   foreach (var food in shoppingItems)
+                   {
+                       // This would typically come from your database
+                       // For now using a simple algorithm based on the food name
+                       var calories = 0;
+                       var protein = 0;
+                       var carbs = 0;
+                       var fat = 0;
+                       
+                       var foodLower = food.ToLower();
+                       
+                       // Assign estimated nutritional values based on food type
+                       if (foodLower.Contains("chicken") || foodLower.Contains("turkey") || foodLower.Contains("fish"))
+                       {
+                           calories = 250;
+                           protein = 25;
+                           carbs = 0;
+                           fat = 15;
+                       }
+                       else if (foodLower.Contains("beef") || foodLower.Contains("pork"))
+                       {
+                           calories = 300;
+                           protein = 22;
+                           carbs = 0;
+                           fat = 22;
+                       }
+                       else if (foodLower.Contains("rice") || foodLower.Contains("pasta") || foodLower.Contains("bread"))
+                       {
+                           calories = 200;
+                           protein = 5;
+                           carbs = 40;
+                           fat = 2;
+                       }
+                       else if (foodLower.Contains("vegetable") || foodLower.Contains("salad"))
+                       {
+                           calories = 50;
+                           protein = 2;
+                           carbs = 10;
+                           fat = 0;
+                       }
+                       else if (foodLower.Contains("fruit") || foodLower.Contains("berry"))
+                       {
+                           calories = 80;
+                           protein = 1;
+                           carbs = 20;
+                           fat = 0;
+                       }
+                       else if (foodLower.Contains("yogurt") || foodLower.Contains("milk") || foodLower.Contains("cheese"))
+                       {
+                           calories = 150;
+                           protein = 10;
+                           carbs = 12;
+                           fat = 8;
+                       }
+                       else
+                       {
+                           // Default values for other foods
+                           calories = 150;
+                           protein = 5;
+                           carbs = 15;
+                           fat = 7;
+                       }
+                       
+                       // Store nutrition info for this food
+                       nutritionInfo[food] = (calories, protein, carbs, fat);
+                       
+                       // Add to totals
+                       totalCalories += calories;
+                       totalProtein += protein;
+                       totalCarbs += carbs;
+                       totalFat += fat;
+                   }
+                   
+                   // Calculate daily averages
+                   var dailyCalories = totalDays > 0 ? totalCalories / totalDays : 0;
+                   
+                   // Calculate macronutrient percentages
+                   var totalMacros = totalProtein * 4 + totalCarbs * 4 + totalFat * 9; // Convert to calories
+                   var proteinPercent = totalMacros > 0 ? (int)Math.Round((totalProtein * 4.0 / totalMacros) * 100) : 0;
+                   var carbsPercent = totalMacros > 0 ? (int)Math.Round((totalCarbs * 4.0 / totalMacros) * 100) : 0;
+                   var fatPercent = totalMacros > 0 ? (int)Math.Round((totalFat * 9.0 / totalMacros) * 100) : 0;
+                   
+                   // Categorize shopping items
+                   var groceryCategories = new Dictionary<string, List<string>>
+                   {
+                       { "Fruits & Vegetables", new List<string>() },
+                       { "Protein & Dairy", new List<string>() },
+                       { "Grains & Bread", new List<string>() },
+                       { "Spices & Condiments", new List<string>() },
+                       { "Other Items", new List<string>() }
+                   };
+                   
+                   foreach (var item in shoppingItems)
+                   {
+                       var itemLower = item.ToLower();
+                       if (itemLower.Contains("fruit") || itemLower.Contains("vegetable") || 
+                           itemLower.Contains("apple") || itemLower.Contains("tomato") ||
+                           itemLower.Contains("lettuce") || itemLower.Contains("carrot") ||
+                           itemLower.Contains("onion") || itemLower.Contains("pepper"))
+                       {
+                           groceryCategories["Fruits & Vegetables"].Add(item);
+                       }
+                       else if (itemLower.Contains("chicken") || itemLower.Contains("beef") || 
+                               itemLower.Contains("fish") || itemLower.Contains("milk") ||
+                               itemLower.Contains("cheese") || itemLower.Contains("yogurt") ||
+                               itemLower.Contains("egg") || itemLower.Contains("meat") ||
+                               itemLower.Contains("tofu"))
+                       {
+                           groceryCategories["Protein & Dairy"].Add(item);
+                       }
+                       else if (itemLower.Contains("bread") || itemLower.Contains("rice") || 
+                               itemLower.Contains("pasta") || itemLower.Contains("flour") ||
+                               itemLower.Contains("cereal") || itemLower.Contains("oat"))
+                       {
+                           groceryCategories["Grains & Bread"].Add(item);
+                       }
+                       else if (itemLower.Contains("salt") || itemLower.Contains("pepper") || 
+                               itemLower.Contains("oil") || itemLower.Contains("vinegar") ||
+                               itemLower.Contains("sauce") || itemLower.Contains("spice"))
+                       {
+                           groceryCategories["Spices & Condiments"].Add(item);
+                       }
+                       else
+                       {
+                           groceryCategories["Other Items"].Add(item);
+                       }
+                   }
+               }
+
+               @if (Model.MealPlan != null)
+               {
+                   <!-- Day selector tabs -->
+                   <div class="flex overflow-x-auto space-x-2 mb-6 no-print hide-on-print pb-2">
+                       @for (int i = 0; i < 7; i++)
+                       {
+                           var isActive = i == 0;
+                           var dayName = displayDays[i];
+                           <button class="day-tab flex-shrink-0 px-4 py-2 rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-opacity-50 @(isActive ? "bg-amber-500 text-white" : "bg-white text-gray-600 hover:bg-amber-50")"
+                                   data-day="day-@i">
+                               @dayName
+                           </button>
+                       }
+                   </div>
+                   
+                   <!-- Meal plan content -->
+                   <div class="mb-10 print-container">
+                       <div class="space-y-6">
+                           @for (int i = 0; i < 7; i++)
+                           {
+                               var group = i < grouped.Count ? grouped[i] : null;
+                               var dayName = displayDays[i];
+                               var isVisible = i == 0;
+                               var mealCount = group != null ? group.Count() : 0;
+                               <div id="day-@i" class="day-content print-meal-day bg-white/90 border border-amber-100 rounded-xl shadow-md p-6 @(isVisible ? "" : "hidden")">
+                                   <div class="flex items-center justify-between mb-4 border-b border-amber-100 pb-3">
+                                       <h3 class="text-xl font-bold text-amber-700 flex items-center gap-2">
+                                           <i data-lucide="calendar-days" class="w-5 h-5"></i>
+                                           @dayName
+                                       </h3>
+                                       <span class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                                           @mealCount meals
+                                       </span>
+                                   </div>
+                                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                       @if (group != null && group.Any())
+                                       {
+                                           foreach (var meal in group)
+                                           {
+                                               <div class="print-meal-item bg-white border border-gray-100 p-4 rounded-lg hover:shadow-md transition-shadow">
+                                                   <div class="flex items-start gap-3">
+                                                       <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                                           @{
+                                                               var mealIcon = "utensils";
+                                                               if (meal.Meal.ToLower().Contains("breakfast"))
+                                                                   mealIcon = "sun";
+                                                               else if (meal.Meal.ToLower().Contains("lunch"))
+                                                                   mealIcon = "coffee";
+                                                               else if (meal.Meal.ToLower().Contains("dinner"))
+                                                                   mealIcon = "moon";
+                                                           }
+                                                           <i data-lucide="@mealIcon" class="w-6 h-6 text-amber-600"></i>
+                                                       </div>
+                                                   <div class="flex-grow">
+                                                       <div class="flex justify-between items-start">
+                                                           <h4 class="font-semibold text-gray-800 print-meal-type">@meal.Meal</h4>
+                                                           <div class="flex gap-1 no-print">
+                                                               <button class="favorite-meal-btn text-gray-400 hover:text-amber-600 p-1 rounded-full hover:bg-amber-50 transition-colors" title="Favorite">
+                                                                   <i data-lucide="heart" class="w-4 h-4"></i>
+                                                               </button>
+                                                               <button class="swap-meal-btn text-gray-400 hover:text-amber-600 p-1 rounded-full hover:bg-amber-50 transition-colors" title="Swap meal">
+                                                                   <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                                               </button>
+                                                           </div>
+                                                       </div>
+                                                       <p class="text-gray-700 print-meal-food">@meal.Food</p>
+                                                   
+                                                   <!-- Nutrition badges - sample data, would come from a real database -->
+                                                   @{
+                                                       var foodLower = meal.Food.ToLower();
+                                                       string[] badges = new[] { "Balanced" }; // Default value
+                                                       
+                                                       if (foodLower.Contains("salad") || foodLower.Contains("vegetable"))
+                                                           badges = new[] { "High Fiber", "Low Calorie", "Vitamin A" };
+                                                       else if (foodLower.Contains("chicken") || foodLower.Contains("turkey"))
+                                                           badges = new[] { "High Protein", "Low Fat" };
+                                                       else if (foodLower.Contains("fish") || foodLower.Contains("salmon"))
+                                                           badges = new[] { "Omega-3", "Protein" };
+                                                       else if (foodLower.Contains("rice") || foodLower.Contains("pasta"))
+                                                           badges = new[] { "Complex Carbs", "Energy" };
+                                                       else if (foodLower.Contains("yogurt") || foodLower.Contains("dairy"))
+                                                           badges = new[] { "Calcium", "Protein" };
+                                                       else if (foodLower.Contains("fruit") || foodLower.Contains("berry"))
+                                                           badges = new[] { "Vitamin C", "Antioxidants" };
+                                                       
+                                                       <div class="flex flex-wrap gap-2 mt-2 no-print">
+                                                           @foreach (var badge in badges)
+                                                           {
+                                                               <span class="text-xs font-medium bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">@badge</span>
+                                                           }
+                                                       </div>
+                                                   }
+                                                </div>
+                                            </div>
+                                           </div>
+                                       }
+                                       }
+                                       else
+                                       {
+                                           <div class="bg-white border border-gray-100 p-4 rounded-lg text-center">
+                                               <div class="flex flex-col items-center justify-center py-6">
+                                                   <div class="w-16 h-16 mb-4 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
+                                                       <i data-lucide="calendar-x" class="w-8 h-8 text-amber-300"></i>
+                                                   </div>
+                                                   <p class="text-gray-500 mb-2">No meals scheduled for this day</p>
+                                                   <p class="text-sm text-gray-400">You can generate a new meal plan to include this day</p>
+                                               </div>
+                                           </div>
+                                       }
+                                   </div>
+                               </div>
+                           }
+                       </div>
+                   </div>
+
+                   <!-- Nutrition Summary Cards -->
+                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 print-summary-section">
+                       <div class="print-summary-item bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                           <div class="flex items-center gap-3 mb-3">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                   <i data-lucide="utensils" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <div>
+                                   <h3 class="text-lg font-bold text-gray-800">@totalMeals</h3>
+                                   <p class="text-sm text-gray-500">Total Meals</p>
+                               </div>
+                           </div>
+                           <div class="pl-2">
+                               <div class="flex justify-between text-sm mb-1">
+                                   <span class="text-gray-600">Variety</span>
+                                   <span class="text-gray-900 font-medium">@uniqueFoods unique foods</span>
+                               </div>
+                               <div class="progress-bar">
+                                   <div class="progress-bar-fill bg-amber-500" style="width: @(Math.Min(uniqueFoods * 10, 100))%"></div>
+                               </div>
+                           </div>
+                       </div>
+                       
+                       <div class="print-summary-item bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                           <div class="flex items-center gap-3 mb-3">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                   <i data-lucide="flame" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <div>
+                                   <h3 class="text-lg font-bold text-gray-800">@totalCalories</h3>
+                                   <p class="text-sm text-gray-500">Est. Calories/Week</p>
+                               </div>
+                           </div>
+                           <div class="pl-2">
+                               <div class="flex justify-between text-sm mb-1">
+                                   <span class="text-gray-600">Daily Average</span>
+                                   <span class="text-gray-900 font-medium">~@dailyCalories kcal</span>
+                               </div>
+                               <div class="progress-bar">
+                                   @{
+                                       // Calculate width based on whether daily calories fall within recommended range
+                                       // Recommended daily calories: 1800-2400
+                                       var caloriePercentage = dailyCalories switch {
+                                           _ when dailyCalories < 1200 => 40, // Too low
+                                           _ when dailyCalories < 1800 => 60, // A bit low
+                                           _ when dailyCalories <= 2400 => 80, // Optimal range
+                                           _ when dailyCalories <= 2800 => 60, // A bit high
+                                           _ => 40 // Too high
+                                       };
+                                       var calorieColor = dailyCalories switch {
+                                           _ when dailyCalories >= 1800 && dailyCalories <= 2400 => "bg-green-500",
+                                           _ when dailyCalories >= 1500 && dailyCalories < 1800 => "bg-amber-500",
+                                           _ when dailyCalories > 2400 && dailyCalories <= 2800 => "bg-amber-500",
+                                           _ => "bg-red-400"
+                                       };
+                                   }
+                                   <div class="progress-bar-fill @(calorieColor)" style="width: @(caloriePercentage)%"></div>
+                               </div>
+                           </div>
+                       </div>
+                       
+                       <div class="print-summary-item bg-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                           <div class="flex items-center gap-3 mb-3">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                   <i data-lucide="apple" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <div>
+                                   <h3 class="text-lg font-bold text-gray-800">Balanced</h3>
+                                   <p class="text-sm text-gray-500">Nutrition Profile</p>
+                               </div>
+                           </div>
+                           <div class="grid grid-cols-3 gap-1 pl-2">
+                               <div class="text-center">
+                                   <div class="text-xs font-medium text-gray-500">Protein</div>
+                                   <div class="text-base font-semibold text-amber-700">@proteinPercent%</div>
+                               </div>
+                               <div class="text-center">
+                                   <div class="text-xs font-medium text-gray-500">Carbs</div>
+                                   <div class="text-base font-semibold text-amber-700">@carbsPercent%</div>
+                               </div>
+                               <div class="text-center">
+                                   <div class="text-xs font-medium text-gray-500">Fats</div>
+                                   <div class="text-base font-semibold text-amber-700">@fatPercent%</div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   
+                   <!-- Action Tiles -->
+                   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 no-print">
+                       <button id="nutritionTileBtn" class="text-left bg-white hover:bg-gradient-to-br hover:from-amber-50 hover:to-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all group">
+                           <div class="flex justify-between items-start mb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center group-hover:bg-amber-200 transition-colors">
+                                   <i data-lucide="pie-chart" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <i data-lucide="chevron-right" class="w-5 h-5 text-amber-300 group-hover:text-amber-500 transition-colors"></i>
+                           </div>
+                           <h3 class="font-semibold text-gray-800 mb-1">Nutrition Info</h3>
+                           <p class="text-sm text-gray-500">View detailed nutritional analysis</p>
+                       </button>
+                       
+                       <button id="shoppingListBtn" class="text-left bg-white hover:bg-gradient-to-br hover:from-amber-50 hover:to-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all group">
+                           <div class="flex justify-between items-start mb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center group-hover:bg-amber-200 transition-colors">
+                                   <i data-lucide="shopping-bag" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <i data-lucide="chevron-right" class="w-5 h-5 text-amber-300 group-hover:text-amber-500 transition-colors"></i>
+                           </div>
+                           <h3 class="font-semibold text-gray-800 mb-1">Shopping List</h3>
+                           <p class="text-sm text-gray-500">@shoppingItems.Count items to buy</p>
+                       </button>
+                       
+                       <button id="recipeInstructionsTileBtn" class="text-left bg-white hover:bg-gradient-to-br hover:from-[#c9a227]/5 hover:to-white border border-[#c9a227]/10 rounded-xl p-5 shadow-sm hover:shadow-md transition-all group gold-glow-hover">
+                           <div class="flex justify-between items-start mb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center group-hover:bg-amber-200 transition-colors">
+                                   <i data-lucide="chef-hat" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <i data-lucide="chevron-right" class="w-5 h-5 text-amber-300 group-hover:text-amber-500 transition-colors"></i>
+                           </div>
+                           <h3 class="font-semibold text-gray-800 mb-1">Recipe Instructions</h3>
+                           <p class="text-sm text-gray-500">Step-by-step cooking guides</p>
+                       </button>
+                       
+                       <button id="calendarBtn" class="text-left bg-white hover:bg-gradient-to-br hover:from-amber-50 hover:to-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all group">
+                           <div class="flex justify-between items-start mb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center group-hover:bg-amber-200 transition-colors">
+                                   <i data-lucide="calendar" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <i data-lucide="chevron-right" class="w-5 h-5 text-amber-300 group-hover:text-amber-500 transition-colors"></i>
+                           </div>
+                           <h3 class="font-semibold text-gray-800 mb-1">Add to Calendar</h3>
+                           <p class="text-sm text-gray-500">Sync with your personal calendar</p>
+                       </button>
+                       
+                       <button id="storeFinderTileBtn" class="text-left bg-white hover:bg-gradient-to-br hover:from-amber-50 hover:to-white border border-amber-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all group">
+                           <div class="flex justify-between items-start mb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center group-hover:bg-amber-200 transition-colors">
+                                   <i data-lucide="map-pin" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <i data-lucide="chevron-right" class="w-5 h-5 text-amber-300 group-hover:text-amber-500 transition-colors"></i>
+                           </div>
+                           <h3 class="font-semibold text-gray-800 mb-1">Find Stores</h3>
+                           <p class="text-sm text-gray-500">Locate grocery stores nearby</p>
+                       </button>
+                   </div>
+
+                   <!-- Shopping List Modal -->
+                   <div id="shoppingListPanel" class="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+                       <div class="bubble-panel bg-white rounded-2xl shadow-2xl border border-amber-200 max-w-3xl w-full p-6 relative">
+                           <button id="closeShoppingList" class="absolute top-3 right-3 text-amber-400 hover:text-amber-600 transition" aria-label="Close">
+                               <i data-lucide="x" class="w-6 h-6"></i>
+                           </button>
+                           
+                           <div class="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                   <i data-lucide="shopping-bag" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <div>
+                                   <h3 class="text-xl font-bold text-gray-900">Shopping List</h3>
+                                   <p class="text-sm text-gray-500">@shoppingItems.Count items for your meal plan</p>
+                               </div>
+                           </div>
+                           
+                           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <!-- Left Column: Categories -->
+                               <div>
+                                   <div class="flex justify-between items-center mb-3">
+                                       <h4 class="font-semibold text-gray-700">Grocery Categories</h4>
+                                       <div class="flex items-center gap-2">
+                                           <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-md hover:bg-green-200 transition-colors" id="checkAllItems">
+                                               Check All
+                                           </button>
+                                           <button class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200 transition-colors" id="uncheckAllItems">
+                                               Uncheck All
+                                           </button>
+                                       </div>
+                                   </div>
+                                   
+                                   <!-- Shopping list by categories -->
+                                   <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                                       @{
+                                           // We're using the groceryCategories that were created in the main data processing section above
+                                           
+                                           foreach (var category in groceryCategories.Where(c => c.Value.Any()))
+                                           {
+                                               <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                                                   <div class="bg-amber-50 px-4 py-3 border-b border-amber-100">
+                                                       <h5 class="font-medium text-amber-800">@category.Key</h5>
+                                                   </div>
+                                                   <div class="divide-y divide-gray-100">
+                                                       @foreach (var item in category.Value)
+                                                       {
+                                                           <div class="p-3 hover:bg-gray-50 transition-colors flex items-center">
+                                                               <input type="checkbox" id="chk-@item.GetHashCode()" class="shopping-item-checkbox w-4 h-4 rounded text-amber-500 focus:ring-amber-500 mr-3">
+                                                               <label for="chk-@item.GetHashCode()" class="text-gray-700 select-none flex-grow">@item</label>
+                                                               <button class="text-gray-400 hover:text-gray-600" title="Remove">
+                                                                   <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                               </button>
+                                                           </div>
+                                                       }
+                                                   </div>
+                                               </div>
+                                           }
+                                       }
+                                   </div>
+                               </div>
+                               
+                               <!-- Right Column: Actions and Custom Items -->
+                               <div>
+                                   <h4 class="font-semibold text-gray-700 mb-3">Add Custom Items</h4>
+                                   <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm mb-4">
+                                       <div class="flex items-center gap-2 mb-3">
+                                           <input type="text" id="customItemInput" class="flex-grow rounded-md border-gray-300 shadow-sm focus:border-amber-300 focus:ring focus:ring-amber-200 focus:ring-opacity-50" placeholder="Enter item...">
+                                           <select id="customItemCategory" class="rounded-md border-gray-300 shadow-sm focus:border-amber-300 focus:ring focus:ring-amber-200 focus:ring-opacity-50 text-sm">
+                                               <option value="Fruits & Vegetables">Fruits & Veg</option>
+                                               <option value="Protein & Dairy">Protein</option>
+                                               <option value="Grains & Bread">Grains</option>
+                                               <option value="Spices & Condiments">Spices</option>
+                                               <option value="Other Items">Other</option>
+                                           </select>
+                                           <button id="addCustomItem" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-md shadow-sm transition-colors">
+                                               <i data-lucide="plus" class="w-4 h-4"></i>
+                                           </button>
+                                       </div>
+                                       <div id="recentlyAdded" class="text-sm text-gray-500">
+                                           <!-- Recently added items will appear here -->
+                                       </div>
+                                   </div>
+                                   
+                                   <!-- Action Buttons -->
+                                   <div class="space-y-2">
+                                       <button class="flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 px-4 rounded-lg shadow transition-colors">
+                                           <i data-lucide="printer" class="w-5 h-5"></i> Print Shopping List
+                                       </button>
+                                       <button class="flex items-center justify-center gap-2 w-full bg-white border border-amber-300 text-amber-700 font-medium py-3 px-4 rounded-lg hover:bg-amber-50 shadow-sm transition-colors">
+                                           <i data-lucide="mail" class="w-5 h-5"></i> Email Shopping List
+                                       </button>
+                                       <button class="flex items-center justify-center gap-2 w-full bg-white border border-amber-300 text-amber-700 font-medium py-3 px-4 rounded-lg hover:bg-amber-50 shadow-sm transition-colors">
+                                           <i data-lucide="smartphone" class="w-5 h-5"></i> Send to Phone
+                                       </button>
+                                   </div>
+                                   
+                                   <!-- Progress -->
+                                   <div class="mt-6">
+                                       <div class="flex justify-between items-center text-sm mb-2">
+                                           <span class="text-gray-700 font-medium">Shopping Progress</span>
+                                           <span class="text-amber-700" id="progressCounter">0%</span>
+                                       </div>
+                                       <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                           <div class="bg-amber-500 h-2.5 rounded-full" style="width: 0%" id="progressBar"></div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+
+                   <!-- Nutrition Information Modal -->
+                   <div id="nutritionPanel" class="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+                       <div class="bubble-panel bg-white rounded-2xl shadow-2xl border border-amber-200 max-w-4xl w-full p-6 relative">
+                           <button id="closeNutritionPanel" class="absolute top-3 right-3 text-amber-400 hover:text-amber-600 transition" aria-label="Close">
+                               <i data-lucide="x" class="w-6 h-6"></i>
+                           </button>
+                           
+                           <div class="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                   <i data-lucide="pie-chart" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <div>
+                                   <h3 class="text-xl font-bold text-gray-900">Nutrition Analysis</h3>
+                                   <p class="text-sm text-gray-500">Detailed breakdown of your meal plan</p>
+                               </div>
+                           </div>
+                           
+                           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                               <!-- Left column: Macronutrients -->
+                               <div>
+                                   <h4 class="font-semibold text-gray-700 mb-3">Macronutrient Balance</h4>
+                                   <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                                       <div class="flex justify-center mb-6">
+                                           <div class="relative w-48 h-48">
+                                               <!-- Dynamic pie chart using conic gradient based on calculated macros -->
+                                               <div class="absolute inset-0 rounded-full" style="background: conic-gradient(
+                                                   #F59E0B 0% @proteinPercent%, 
+                                                   #2563EB @proteinPercent% @(proteinPercent + carbsPercent)%, 
+                                                   #10B981 @(proteinPercent + carbsPercent)% 100%);"></div>
+                                               <div class="absolute inset-4 bg-white rounded-full flex items-center justify-center">
+                                                   @{
+                                                       string nutritionStatus = "Balanced";
+                                                       if (proteinPercent < 15) nutritionStatus = "Low Protein";
+                                                       else if (proteinPercent > 35) nutritionStatus = "High Protein";
+                                                       else if (carbsPercent < 40) nutritionStatus = "Low Carb";
+                                                       else if (carbsPercent > 65) nutritionStatus = "High Carb";
+                                                       else if (fatPercent < 20) nutritionStatus = "Low Fat";
+                                                       else if (fatPercent > 35) nutritionStatus = "High Fat";
+                                                   }
+                                                   <span class="font-bold text-gray-800">@nutritionStatus</span>
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="grid grid-cols-3 gap-2 text-center">
+                                           <div>
+                                               <div class="flex items-center justify-center gap-1 mb-1">
+                                                   <div class="w-3 h-3 bg-amber-500 rounded-full"></div>
+                                                   <span class="text-sm font-medium">Protein</span>
+                                               </div>
+                                               <span class="text-lg font-bold text-gray-800">@proteinPercent%</span>
+                                           </div>
+                                           <div>
+                                               <div class="flex items-center justify-center gap-1 mb-1">
+                                                   <div class="w-3 h-3 bg-blue-600 rounded-full"></div>
+                                                   <span class="text-sm font-medium">Carbs</span>
+                                               </div>
+                                               <span class="text-lg font-bold text-gray-800">@carbsPercent%</span>
+                                           </div>
+                                           <div>
+                                               <div class="flex items-center justify-center gap-1 mb-1">
+                                                   <div class="w-3 h-3 bg-green-600 rounded-full"></div>
+                                                   <span class="text-sm font-medium">Fats</span>
+                                               </div>
+                                               <span class="text-lg font-bold text-gray-800">@fatPercent%</span>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                               
+                               <!-- Middle column: Key nutrients -->
+                               <div>
+                                   <h4 class="font-semibold text-gray-700 mb-3">Key Nutrients</h4>
+                                   <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                                       <div class="space-y-3">
+                                           <div>
+                                               <div class="flex justify-between mb-1">
+                                                   <span class="text-sm font-medium text-gray-700">Protein</span>
+                                                   <span class="text-sm text-gray-600">@totalProtein g</span>
+                                               </div>
+                                               <div class="w-full bg-gray-200 rounded-full h-2">
+                                                   <div class="bg-amber-500 h-2 rounded-full" style="width: @Math.Min((totalProtein * 2), 100)%"></div>
+                                               </div>
+                                           </div>
+                                           <div>
+                                               <div class="flex justify-between mb-1">
+                                                   <span class="text-sm font-medium text-gray-700">Carbohydrates</span>
+                                                   <span class="text-sm text-gray-600">@totalCarbs g</span>
+                                               </div>
+                                               <div class="w-full bg-gray-200 rounded-full h-2">
+                                                   <div class="bg-blue-500 h-2 rounded-full" style="width: @Math.Min((totalCarbs / 2), 100)%"></div>
+                                               </div>
+                                           </div>
+                                           <div>
+                                               <div class="flex justify-between mb-1">
+                                                   <span class="text-sm font-medium text-gray-700">Fats</span>
+                                                   <span class="text-sm text-gray-600">@totalFat g</span>
+                                               </div>
+                                               <div class="w-full bg-gray-200 rounded-full h-2">
+                                                   <div class="bg-green-500 h-2 rounded-full" style="width: @Math.Min((totalFat * 3), 100)%"></div>
+                                               </div>
+                                           </div>
+                                           <div>
+                                               <div class="flex justify-between mb-1">
+                                                   <span class="text-sm font-medium text-gray-700">Calories (Daily Avg)</span>
+                                                   <span class="text-sm text-gray-600">@dailyCalories kcal</span>
+                                               </div>
+                                               <div class="w-full bg-gray-200 rounded-full h-2">
+                                                   <div class="bg-amber-500 h-2 rounded-full" style="width: @Math.Min((dailyCalories / 25), 100)%"></div>
+                                               </div>
+                                           </div>
+                                           <div>
+                                               <div class="flex justify-between mb-1">
+                                                   <span class="text-sm font-medium text-gray-700">Food Variety</span>
+                                                   <span class="text-sm text-gray-600">12mcg / 15mcg</span>
+                                               </div>
+                                               <div class="w-full bg-gray-200 rounded-full h-2">
+                                                   <div class="bg-purple-500 h-2 rounded-full" style="width: 70%"></div>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                               
+                               <!-- Right column: Nutritional tips -->
+                               <div>
+                                   <h4 class="font-semibold text-gray-700 mb-3">Nutrition Tips</h4>
+                                   <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                                       <ul class="space-y-3">
+                                           @{
+                                               var nutritionTips = new List<string>();
+                                               if (proteinPercent < 15)
+                                               {
+                                                   nutritionTips.Add("Consider adding more protein sources like lean meats, fish, eggs, or legumes.");
+                                               }
+                                               if (carbsPercent > 65)
+                                               {
+                                                   nutritionTips.Add("Your meal plan is high in carbohydrates. Try balancing with more protein and healthy fats.");
+                                               }
+                                               if (fatPercent < 20)
+                                               {
+                                                   nutritionTips.Add("Include more healthy fats like avocados, nuts, seeds, and olive oil.");
+                                               }
+                                               if (dailyCalories < 1500)
+                                               {
+                                                   nutritionTips.Add("Your estimated daily calories may be low. Consider adding more nutrient-dense foods.");
+                                               }
+                                               else if (dailyCalories > 2500)
+                                               {
+                                                   nutritionTips.Add("Your estimated daily calories are on the higher side. Focus on portion control if weight management is a goal.");
+                                               }
+                                               
+                                               if (!nutritionTips.Any())
+                                               {
+                                                   nutritionTips.Add("Your meal plan appears well-balanced! Focus on variety and portion control.");
+                                                   nutritionTips.Add("Stay hydrated by drinking plenty of water throughout the day.");
+                                                   nutritionTips.Add("Include colorful vegetables and fruits for a wide range of nutrients.");
+                                               }
+                                               
+                                               foreach (var tip in nutritionTips)
+                                               {
+                                                   <li class="flex items-start gap-2">
+                                                       <i data-lucide="check-circle" class="w-5 h-5 text-amber-500 mt-0.5"></i>
+                                                       <span class="text-gray-700 text-sm">@tip</span>
+                                                   </li>
+                                               }
+                                           }
+                                           <li class="flex items-start gap-2">
+                                               <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5"></i>
+                                               <span class="text-gray-700 text-sm">Daily water intake recommendation: 2-3 liters per day.</span>
+                                           </li>
+                                       </ul>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+
+                   <!-- Recipe Instructions Modal -->
+                   <div id="recipeInstructionsPanel" class="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+                       <div class="bubble-panel bg-white rounded-2xl shadow-2xl border border-amber-200 max-w-4xl w-full p-6 relative">
+                           <button id="closeRecipeInstructionsPanel" class="absolute top-3 right-3 text-[#c9a227] hover:text-[#b48e22] transition" aria-label="Close">
+                               <i data-lucide="x" class="w-6 h-6"></i>
+                           </button>
+                           
+                           <div class="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                   <i data-lucide="chef-hat" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <div>
+                                   <h3 class="text-xl font-bold text-gray-900">Recipe Instructions</h3>
+                                   <p class="text-sm text-gray-500">Step-by-step cooking guides for your meal plan</p>
+                               </div>
+                           </div>
+                           
+                           <div class="mb-4">
+                               <div class="flex justify-between items-center mb-3">
+                                   <h4 class="font-semibold text-gray-700">Select a meal to view instructions:</h4>
+                                   <div class="flex items-center gap-2">
+                                       <select id="mealDayFilter" class="text-sm rounded-md border-gray-300 shadow-sm focus:border-amber-300 focus:ring focus:ring-amber-200 focus:ring-opacity-50">
+                                           <option value="all">All Days</option>
+                                           @for (int i = 0; i < 7; i++)
+                                           {
+                                               <option value="day-@i">@displayDays[i]</option>
+                                           }
+                                       </select>
+                                   </div>
+                               </div>
+                               
+                               <div class="relative">
+                                   <input type="text" id="mealSearchInput" class="w-full rounded-md border-gray-300 pl-10 shadow-sm focus:border-amber-300 focus:ring focus:ring-amber-200 focus:ring-opacity-50" placeholder="Search for a meal...">
+                                   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                       <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                                   </div>
+                               </div>
+                           </div>
+                           
+                           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <!-- Left column: Meal list -->
+                               <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                                   <div class="bg-amber-50 px-4 py-3 border-b border-amber-100">
+                                       <h5 class="font-medium text-amber-800">Meals</h5>
+                                   </div>
+                                   <div id="mealList" class="max-h-96 overflow-y-auto divide-y divide-gray-100">
+                                       @{
+                                           var mealsList = new List<string>();
+                                           foreach (var row in dayRows)
+                                           {
+                                               if (!string.IsNullOrEmpty(row.Food) && !mealsList.Contains(row.Food))
+                                               {
+                                                   mealsList.Add(row.Food);
+                                               }
+                                           }
+                                           
+                                           foreach (var meal in mealsList)
+                                           {
+                                               <div class="meal-item p-3 hover:bg-amber-50 cursor-pointer transition-colors" data-meal="@meal">
+                                                   <h6 class="font-medium text-gray-800">@meal</h6>
+                                               </div>
+                                           }
+                                       }
+                                   </div>
+                               </div>
+                               
+                               <!-- Right column: Instructions -->
+                               <div>
+                                   <div class="bg-white border border-gray-100 rounded-xl h-full overflow-hidden shadow-sm flex flex-col">
+                                       <div class="bg-amber-50 px-4 py-3 border-b border-amber-100">
+                                           <h5 class="font-medium text-amber-800">Cooking Instructions</h5>
+                                       </div>
+                                       <div id="instructionsDisplay" class="p-4 flex-grow overflow-y-auto">
+                                           <div class="text-center text-gray-500 h-full flex items-center justify-center">
+                                               <div>
+                                                   <i data-lucide="utensils" class="w-10 h-10 mx-auto mb-3 text-gray-300"></i>
+                                                   <p>Select a meal to view instructions</p>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                           
+                           <input type="hidden" id="recipeInstructions" value="@(Model.RecipeInstructions ?? "")" />
+                       </div>
+                   </div>
+
+                   <!-- Grocery Store Finder Modal -->
+                   <div id="storeFinderPanel" class="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+                       <div class="bubble-panel bg-white rounded-2xl shadow-2xl border border-amber-200 max-w-2xl w-full p-6 relative">
+                           <button id="closeStoreFinderPanel" class="absolute top-3 right-3 text-amber-400 hover:text-amber-600 transition" aria-label="Close">
+                               <i data-lucide="x" class="w-6 h-6"></i>
+                           </button>
+                           
+                           <div class="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
+                               <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                   <i data-lucide="map-pin" class="w-5 h-5 text-amber-600"></i>
+                               </div>
+                               <div>
+                                   <h3 class="text-xl font-bold text-gray-900">Nearby Grocery Stores</h3>
+                                   <p class="text-sm text-gray-500">Find places to shop for your ingredients</p>
+                               </div>
+                           </div>
+                           
+                           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <!-- Left column: Search and filters -->
+                               <div>
+                                   <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm mb-4">
+                                       <label for="zipCodeInput" class="block text-sm font-medium text-gray-700 mb-1">Your Location</label>
+                                       <div class="flex gap-2">
+                                           <input type="text" id="zipCodeInput" class="flex-grow rounded-md border-gray-300 shadow-sm focus:border-amber-300 focus:ring focus:ring-amber-200 focus:ring-opacity-50" placeholder="@(Model.ZipCode ?? "Enter your zip code")" value="@Model.ZipCode" />
+                                           <button id="useMyLocation" class="bg-amber-100 text-amber-700 px-3 py-2 rounded-md hover:bg-amber-200 transition-colors text-sm flex items-center gap-1">
+                                               <i data-lucide="navigation" class="w-4 h-4"></i>
+                                               <span class="hidden sm:inline">Use My Location</span>
+                                           </button>
+                                       </div>
+                                   </div>
+                                   
+                                   <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm mb-4">
+                                       <div class="flex justify-between items-center mb-3">
+                                           <h5 class="font-medium text-gray-700">Store Types</h5>
+                                           <button class="text-xs text-amber-600 hover:text-amber-800">Clear All</button>
+                                       </div>
+                                       <div class="space-y-2">
+                                           <label class="flex items-center gap-2">
+                                               <input type="checkbox" class="rounded text-amber-500 focus:ring-amber-500" checked>
+                                               <span class="text-gray-700 text-sm">Supermarkets</span>
+                                           </label>
+                                           <label class="flex items-center gap-2">
+                                               <input type="checkbox" class="rounded text-amber-500 focus:ring-amber-500" checked>
+                                               <span class="text-gray-700 text-sm">Natural Food Stores</span>
+                                           </label>
+                                           <label class="flex items-center gap-2">
+                                               <input type="checkbox" class="rounded text-amber-500 focus:ring-amber-500">
+                                               <span class="text-gray-700 text-sm">Farmer's Markets</span>
+                                           </label>
+                                           <label class="flex items-center gap-2">
+                                               <input type="checkbox" class="rounded text-amber-500 focus:ring-amber-500">
+                                               <span class="text-gray-700 text-sm">Specialty Stores</span>
+                                           </label>
+                                       </div>
+                                   </div>
+                                   
+                                   <button id="searchStoresBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium px-4 py-2.5 rounded-lg shadow transition-all flex items-center justify-center gap-2">
+                                       <i data-lucide="search" class="w-4 h-4"></i> Find Grocery Stores
+                                   </button>
+                               </div>
+                               
+                               <!-- Right column: Results -->
+                               <div>
+                                   <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                                       <div class="bg-amber-50 px-4 py-3 border-b border-amber-100">
+                                           <h5 class="font-medium text-amber-800">Results</h5>
+                                       </div>
+                                       <div id="storeResults" class="max-h-80 overflow-y-auto divide-y divide-gray-100">
+                                           <div class="p-4 text-center text-gray-500">
+                                               <i data-lucide="map-search" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+                                               <p>Enter a zip code to find nearby stores</p>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               }
+               else if (Model.ErrorMessage != null)
+               {
+                   <div class="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 mb-8 shadow">
+                       <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0"></i>
+                       <div>
+                           <strong class="font-semibold">Error:</strong>
+                           <span class="block">@Model.ErrorMessage</span>
+                       </div>
+                   </div>
+               }
+               else
+               {
+                   <div class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 shadow">
+                       <i data-lucide="info" class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0"></i>
+                       <p class="font-semibold">No meal plan generated yet.</p>
+                   </div>
+               }
+           </div>
+       </div>
+   }
+   </div>
+
+
+@section Scripts {
+    <script>
+           document.addEventListener("DOMContentLoaded", function () {
+               // Initialize Lucide icons
+               lucide.createIcons();
+               
+               // Print header handling
+               function beforePrint() {
+                   document.querySelectorAll('.print-header').forEach(e => e.classList.remove('hidden'));
+               }
+               function afterPrint() {
+                   document.querySelectorAll('.print-header').forEach(e => e.classList.add('hidden'));
+               }
+               window.addEventListener('beforeprint', beforePrint);
+               window.addEventListener('afterprint', afterPrint);
+               
+               // Day tabs functionality
+               const dayTabs = document.querySelectorAll('.day-tab');
+               if (dayTabs.length > 0) {
+                   dayTabs.forEach(tab => {
+                       tab.addEventListener('click', () => {
+                           const targetDayId = tab.dataset.day;
+                           
+                           // Hide all day content
+                           document.querySelectorAll('.day-content').forEach(content => {
+                               content.classList.add('hidden');
+                           });
+                           
+                           // Show selected day content
+                           document.getElementById(targetDayId).classList.remove('hidden');
+                           
+                           // Update active tab styling
+                           dayTabs.forEach(t => {
+                               t.classList.remove('bg-amber-500', 'text-white');
+                               t.classList.add('bg-white', 'text-gray-600', 'hover:bg-amber-50');
+                           });
+                           tab.classList.remove('bg-white', 'text-gray-600', 'hover:bg-amber-50');
+                           tab.classList.add('bg-amber-500', 'text-white');
+                       });
+                   });
+               }
+               
+               // Actions dropdown
+               const actionDropdown = document.getElementById('actionDropdown');
+               const actionMenu = document.getElementById('actionMenu');
+               if (actionDropdown && actionMenu) {
+                   actionDropdown.addEventListener('click', () => {
+                       actionMenu.classList.toggle('hidden');
+                   });
+                   
+                   document.addEventListener('click', (e) => {
+                       if (!actionDropdown.contains(e.target) && !actionMenu.contains(e.target)) {
+                           actionMenu.classList.add('hidden');
+                       }
+                   });
+               }
+               
+               // Shopping List Panel
+               const shoppingBtn = document.getElementById('shoppingListBtn');
+               const shoppingPanel = document.getElementById('shoppingListPanel');
+               const closeShoppingBtn = document.getElementById('closeShoppingList');
+               if (shoppingBtn && shoppingPanel && closeShoppingBtn) {
+                   shoppingBtn.addEventListener('click', () => {
+                       shoppingPanel.classList.remove('hidden');
+                       updateShoppingProgress(); // Initialize progress
+                   });
+                   closeShoppingBtn.addEventListener('click', () => {
+                       shoppingPanel.classList.add('hidden');
+                   });
+                   shoppingPanel.addEventListener('click', (e) => {
+                       if (e.target === shoppingPanel) shoppingPanel.classList.add('hidden');
+                   });
+                   
+                   // Shopping list checkbox functionality
+                   const checkboxes = document.querySelectorAll('.shopping-item-checkbox');
+                   checkboxes.forEach(checkbox => {
+                       checkbox.addEventListener('change', updateShoppingProgress);
+                   });
+                   
+                   // Check/Uncheck all items
+                   const checkAllBtn = document.getElementById('checkAllItems');
+                   const uncheckAllBtn = document.getElementById('uncheckAllItems');
+                   
+                   if (checkAllBtn) {
+                       checkAllBtn.addEventListener('click', () => {
+                           checkboxes.forEach(checkbox => {
+                               checkbox.checked = true;
+                           });
+                           updateShoppingProgress();
+                       });
+                   }
+                   
+                   if (uncheckAllBtn) {
+                       uncheckAllBtn.addEventListener('click', () => {
+                           checkboxes.forEach(checkbox => {
+                               checkbox.checked = false;
+                           });
+                           updateShoppingProgress();
+                       });
+                   }
+                   
+                   // Add custom item functionality
+                   const customItemInput = document.getElementById('customItemInput');
+                   const addCustomItemBtn = document.getElementById('addCustomItem');
+                   const recentlyAdded = document.getElementById('recentlyAdded');
+                   const customItemCategory = document.getElementById('customItemCategory');
+                   
+                   if (addCustomItemBtn && customItemInput) {
+                       addCustomItemBtn.addEventListener('click', () => {
+                           const itemText = customItemInput.value.trim();
+                           if (itemText) {
+                               recentlyAdded.textContent = `Added: ${itemText}`;
+                               customItemInput.value = '';
+                               // In a real app, would add to the correct category
+                           }
+                       });
+                   }
+               }
+               
+               // Update shopping progress function
+               function updateShoppingProgress() {
+                   const checkboxes = document.querySelectorAll('.shopping-item-checkbox');
+                   const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                   const totalCount = checkboxes.length;
+                   const progressPercent = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
+                   
+                   const progressBar = document.getElementById('progressBar');
+                   const progressCounter = document.getElementById('progressCounter');
+                   
+                   if (progressBar && progressCounter) {
+                       progressBar.style.width = `${progressPercent}%`;
+                       progressCounter.textContent = `${progressPercent}%`;
+                   }
+               }
+               
+               // Nutrition Panel
+               const nutritionBtn = document.getElementById('nutritionTileBtn');
+               const nutritionPanel = document.getElementById('nutritionPanel');
+               const closeNutritionBtn = document.getElementById('closeNutritionPanel');
+               
+               if (nutritionBtn && nutritionPanel && closeNutritionBtn) {
+                   nutritionBtn.addEventListener('click', () => {
+                       nutritionPanel.classList.remove('hidden');
+                   });
+                   closeNutritionBtn.addEventListener('click', () => {
+                       nutritionPanel.classList.add('hidden');
+                   });
+                   nutritionPanel.addEventListener('click', (e) => {
+                       if (e.target === nutritionPanel) nutritionPanel.classList.add('hidden');
+                   });
+               }
+               
+               // Show nutrition from actions menu
+               window.showNutrition = function() {
+                   if (nutritionPanel) {
+                       nutritionPanel.classList.remove('hidden');
+                       actionMenu.classList.add('hidden');
+                   }
+               };
+               
+               // Recipe Instructions Panel
+               const recipeInstructionsTileBtn = document.getElementById('recipeInstructionsTileBtn');
+               const recipeInstructionsPanel = document.getElementById('recipeInstructionsPanel');
+               const closeRecipeInstructionsBtn = document.getElementById('closeRecipeInstructionsPanel');
+               const recipeInstructionsData = document.getElementById('recipeInstructions');
+               
+               if (recipeInstructionsTileBtn && recipeInstructionsPanel && closeRecipeInstructionsBtn) {
+                   recipeInstructionsTileBtn.addEventListener('click', () => {
+                       recipeInstructionsPanel.classList.remove('hidden');
+                   });
+                   closeRecipeInstructionsBtn.addEventListener('click', () => {
+                       recipeInstructionsPanel.classList.add('hidden');
+                   });
+                   recipeInstructionsPanel.addEventListener('click', (e) => {
+                       if (e.target === recipeInstructionsPanel) recipeInstructionsPanel.classList.add('hidden');
+                   });
+                   
+                   // Initialize recipe instructions functionality
+                   if (recipeInstructionsData && recipeInstructionsData.value) {
+                       try {
+                           const instructionsJson = JSON.parse(recipeInstructionsData.value);
+                           const mealList = document.getElementById('mealList');
+                           const instructionsDisplay = document.getElementById('instructionsDisplay');
+                           const mealSearchInput = document.getElementById('mealSearchInput');
+                           const mealDayFilter = document.getElementById('mealDayFilter');
+                           
+                           // Handle meal item click
+                           document.querySelectorAll('.meal-item').forEach(item => {
+                               item.addEventListener('click', () => {
+                                   const mealName = item.dataset.meal;
+                                   
+                                   // Clear previous selection
+                                   document.querySelectorAll('.meal-item').forEach(mi => {
+                                       mi.classList.remove('bg-amber-100');
+                                   });
+                                   
+                                   // Set new selection
+                                   item.classList.add('bg-amber-100');
+                                   
+                                   // Find instructions for this meal
+                                   let mealInstructions = null;
+                                   if (instructionsJson.meals) {
+                                       mealInstructions = instructionsJson.meals.find(m => 
+                                           m.name.toLowerCase() === mealName.toLowerCase());
+                                   }
+                                   
+                                   if (mealInstructions) {
+                                       let html = `
+                                           <h3 class="font-bold text-lg mb-3">${mealInstructions.name}</h3>`;
+                                       
+                                       if (mealInstructions.ingredients && mealInstructions.ingredients.length > 0) {
+                                           html += `
+                                           <div class="mb-4">
+                                               <h4 class="font-medium text-amber-700 mb-2">Ingredients:</h4>
+                                               <ul class="list-disc pl-5 space-y-1">`;
+                                           
+                                           mealInstructions.ingredients.forEach(ingredient => {
+                                               html += `<li>${ingredient}</li>`;
+                                           });
+                                           
+                                           html += `
+                                               </ul>
+                                           </div>`;
+                                       }
+                                       
+                                       if (mealInstructions.steps && mealInstructions.steps.length > 0) {
+                                           html += `
+                                           <div>
+                                               <h4 class="font-medium text-amber-700 mb-2">Instructions:</h4>
+                                               <ol class="list-decimal pl-5 space-y-3">`;
+                                           
+                                           mealInstructions.steps.forEach(step => {
+                                               html += `<li class="pl-1">${step}</li>`;
+                                           });
+                                           
+                                           html += `
+                                               </ol>
+                                           </div>`;
+                                       }
+                                       
+                                       instructionsDisplay.innerHTML = html;
+                                   } else {
+                                       instructionsDisplay.innerHTML = `
+                                           <div class="text-center text-gray-500 h-full flex items-center justify-center">
+                                               <div>
+                                                   <i data-lucide="alert-triangle" class="w-10 h-10 mx-auto mb-3 text-amber-300"></i>
+                                                   <p>No detailed instructions available for this meal.</p>
+                                               </div>
+                                           </div>`;
+                                       // Create Lucide icon after adding to DOM
+                                       lucide.createIcons();
+                                   }
+                               });
+                           });
+                           
+                           // Handle search
+                           if (mealSearchInput) {
+                               mealSearchInput.addEventListener('input', (e) => {
+                                   const searchTerm = e.target.value.toLowerCase();
+                                   document.querySelectorAll('.meal-item').forEach(item => {
+                                       const mealName = item.dataset.meal.toLowerCase();
+                                       if (mealName.includes(searchTerm)) {
+                                           item.style.display = 'block';
+                                       } else {
+                                           item.style.display = 'none';
+                                       }
+                                   });
+                               });
+                           }
+                           
+                           // Handle day filter
+                           if (mealDayFilter) {
+                               mealDayFilter.addEventListener('change', (e) => {
+                                   const selectedDay = e.target.value;
+                                   // This would require meal items to be tagged with their day
+                                   // For now, we just filter if "all" or specific day
+                                   if (selectedDay === 'all') {
+                                       document.querySelectorAll('.meal-item').forEach(item => {
+                                           item.style.display = 'block';
+                                       });
+                                   }
+                               });
+                           }
+                           
+                       } catch (e) {
+                           console.error("Error parsing recipe instructions:", e);
+                       }
+                   }
+               }
+               
+               // Store Finder Panel
+               const storeFinderBtn = document.getElementById('storeFinderTileBtn');
+               const storeFinderPanel = document.getElementById('storeFinderPanel');
+               const closeStoreFinderBtn = document.getElementById('closeStoreFinderPanel');
+               
+               if (storeFinderBtn && storeFinderPanel && closeStoreFinderBtn) {
+                   storeFinderBtn.addEventListener('click', () => {
+                       storeFinderPanel.classList.remove('hidden');
+                   });
+                   closeStoreFinderBtn.addEventListener('click', () => {
+                       storeFinderPanel.classList.add('hidden');
+                   });
+                   storeFinderPanel.addEventListener('click', (e) => {
+                       if (e.target === storeFinderPanel) storeFinderPanel.classList.add('hidden');
+                   });
+                   
+                   // Store finder search functionality
+                   const storeSearchInput = document.getElementById('storeSearch');
+                   const searchStoreBtn = document.getElementById('searchStoreBtn');
+                   const storeSearchResults = document.getElementById('storeSearchResults');
+                   
+                   if (searchStoreBtn && storeSearchInput) {
+                       searchStoreBtn.addEventListener('click', () => {
+                           const searchTerm = storeSearchInput.value.trim();
+                           if (searchTerm) {
+                               // In a real implementation, this would call an API
+                               // Here we'll just show the mock results
+                               document.getElementById('searchingStatus').classList.remove('hidden');
+                               setTimeout(() => {
+                                   document.getElementById('searchingStatus').classList.add('hidden');
+                                   document.getElementById('storeResultsList').classList.remove('hidden');
+                               }, 1000);
+                           }
+                       });
+                   }
+                   
+                   // Favorite store functionality
+                   const favoriteButtons = document.querySelectorAll('.favorite-store-btn');
+                   favoriteButtons.forEach(btn => {
+                       btn.addEventListener('click', function() {
+                           const isFavorite = this.getAttribute('data-favorite') === 'true';
+                           if (isFavorite) {
+                               this.innerHTML = '<i data-lucide="heart" class="w-4 h-4"></i> Add to Favorites';
+                               this.setAttribute('data-favorite', 'false');
+                               this.classList.remove('bg-red-500', 'hover:bg-red-600');
+                               this.classList.add('bg-amber-500', 'hover:bg-amber-600');
+                           } else {
+                               this.innerHTML = '<i data-lucide="heart-off" class="w-4 h-4"></i> Remove Favorite';
+                               this.setAttribute('data-favorite', 'true');
+                               this.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                               this.classList.add('bg-red-500', 'hover:bg-red-600');
+                           }
+                           lucide.createIcons();
+                       });
+                   });
+               }
+               
+               // Show store finder from actions menu
+               window.showStoreFinder = function() {
+                   if (storeFinderPanel) {
+                       storeFinderPanel.classList.remove('hidden');
+                       actionMenu.classList.add('hidden');
+                   }
+               };
+               
+               // Print functionality
+               window.printMealPlan = function() {
+                   // First hide elements not needed in print
+                   document.querySelectorAll('.no-print').forEach(el => {
+                       el.dataset.originalDisplay = el.style.display;
+                       el.style.display = 'none';
+                   });
+                   
+                   // Show all day contents for print
+                   document.querySelectorAll('.day-content').forEach(content => {
+                       content.classList.remove('hidden');
+                   });
+                   
+                   // Show print header
+                   document.querySelectorAll('.print-header').forEach(el => {
+                       el.classList.remove('hidden');
+                   });
+                   
+                   // Print and restore
+                   setTimeout(() => {
+                       window.print();
+                       
+                       // After print dialog closes, restore everything
+                       setTimeout(() => {
+                           // Hide all day contents except first
+                           document.querySelectorAll('.day-content').forEach((content, index) => {
+                               if (index > 0) content.classList.add('hidden');
+                           });
+                           
+                           // Restore no-print elements
+                           document.querySelectorAll('.no-print').forEach(el => {
+                               el.style.display = el.dataset.originalDisplay || '';
+                           });
+                           
+                           // Hide print header
+                           document.querySelectorAll('.print-header').forEach(el => {
+                               el.classList.add('hidden');
+                           });
+                       }, 100);
+                   }, 300);
+               };
+               
+               // Add to favorites functionality
+               window.addToFavorites = function() {
+                   const favoriteBtn = document.getElementById('favoriteBtn');
+                   if (favoriteBtn) {
+                       favoriteBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4 mr-1"></i> Added to Favorites';
+                       favoriteBtn.disabled = true;
+                       favoriteBtn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                       favoriteBtn.classList.add('bg-green-500');
+                       
+                       // Re-render Lucide icons
+                       lucide.createIcons();
+                       
+                       // In a real implementation, would make an API call here
+                       // For demo just show success and close menu
+                       setTimeout(() => {
+                           actionMenu.classList.add('hidden');
+                       }, 1500);
+                   }
+               };
+               
+               // Show shopping list from actions menu
+               window.showShoppingList = function() {
+                   if (shoppingPanel) {
+                       shoppingPanel.classList.remove('hidden');
+                       updateShoppingProgress();
+                       actionMenu.classList.add('hidden');
+                   }
+               };
+               
+               // Favorite and swap meal functionality
+               document.querySelectorAll('.favorite-meal-btn').forEach(btn => {
+                   btn.addEventListener('click', function() {
+                       // Toggle heart icon fill and color
+                       const icon = this.querySelector('i');
+                       
+                       if (this.classList.contains('text-amber-600')) {
+                           this.classList.remove('text-amber-600');
+                           this.classList.add('text-gray-400');
+                       } else {
+                           this.classList.remove('text-gray-400');
+                           this.classList.add('text-amber-600');
+                       }
+                       
+                       // In a real app, would send to backend to save favorite status
+                   });
+               });
+               
+               document.querySelectorAll('.swap-meal-btn').forEach(btn => {
+                   btn.addEventListener('click', function() {
+                       // Visual feedback for swap action
+                       const icon = this.querySelector('i');
+                       this.classList.add('animate-spin');
+                       
+                       // Simulate an API call with a timeout
+                       setTimeout(() => {
+                           this.classList.remove('animate-spin');
+                           // Show a little feedback
+                           const parent = this.closest('.print-meal-item');
+                           const overlay = document.createElement('div');
+                           overlay.className = 'absolute inset-0 bg-amber-50/80 flex items-center justify-center rounded-lg z-10';
+                           overlay.innerHTML = '<div class="text-center"><i data-lucide="check-circle" class="w-8 h-8 text-green-500 mx-auto mb-2"></i><p class="font-medium text-gray-700">Meal swapped!</p></div>';
+                           
+                           parent.style.position = 'relative';
+                           parent.appendChild(overlay);
+                           lucide.createIcons();
+                           
+                           // Remove feedback after a moment
+                           setTimeout(() => {
+                               overlay.remove();
+                           }, 1500);
+                           
+                           // In a real app, would actually swap the meal with an API call
+                       }, 800);
+                   });
+               });
+               
+               // Add backend integration for store search
+               // This handles the search functionality in the store finder modal
+               const searchStoresBtn = document.getElementById('searchStoresBtn');
+               const storeResults = document.getElementById('storeResults');
+               const zipCodeInput = document.getElementById('zipCodeInput');
+               
+               if (searchStoresBtn && zipCodeInput && storeResults) {
+                   searchStoresBtn.addEventListener('click', () => {
+                       if (zipCodeInput.value) {
+                           searchNearbyStores(zipCodeInput.value);
+                       }
+                   });
+               }
+               
+               // Function to search for nearby stores
+               async function searchNearbyStores(zipCode) {
+                   storeResults.innerHTML = '<p class="text-gray-600">Searching...</p>';
+                   try {
+                       // Call backend to validate and fetch stores
+                       const response = await fetch('/Areas/Identity/Pages/Meals/MealPlans/MealPlanResult?handler=SearchStores', {
+                           method: 'POST',
+                           headers: {
+                               'Content-Type': 'application/json',
+                               'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                           },
+                           body: JSON.stringify({ zipCode })
+                       });
+                       
+                       const data = await response.json();
+
+                       if (!response.ok) {
+                           storeResults.innerHTML = `<p class="text-red-600">${data.error}</p>`;
+                           return;
+                       }
+
+                       if (!data.stores || data.stores.length === 0) {
+                           storeResults.innerHTML = '<p class="text-red-600">No stores found.</p>';
+                           return;
+                       }
+
+                       // Display store results with distance calculation
+                       storeResults.innerHTML = '';
+                       data.stores.forEach(store => {
+                           const storeLat = parseFloat(store.lat);
+                           const storeLon = parseFloat(store.lon);
+                           const distance = calculateDistance(parseFloat(data.stores[0].lat), parseFloat(data.stores[0].lon), storeLat, storeLon);
+                           const storeName = store.name || 'Unnamed Grocery Store';
+                           const storeAddress = store.address || 'Address not available';
+                           const isFavorite = store.isFavorite || false;
+
+                           const storeDiv = document.createElement('div');
+                           storeDiv.className = 'bg-white border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition-shadow';
+                           storeDiv.innerHTML = `
+                               <div class="flex justify-between items-start">
+                                   <h3 class="font-bold text-gray-800">${storeName}</h3>
+                                   <span class="bg-amber-100 text-amber-800 text-xs font-medium px-2 py-1 rounded-full">${distance.toFixed(1)} miles</span>
+                               </div>
+                               <p class="text-gray-600 text-sm mt-1">${storeAddress}</p>
+                               <div class="flex justify-between items-center mt-3">
+                                   <a href="https://maps.google.com/?q=${encodeURIComponent(storeAddress)}" target="_blank" class="flex items-center text-amber-600 hover:text-amber-800 text-sm font-medium">
+                                       <i data-lucide="map" class="w-4 h-4 mr-1"></i> Directions
+                                   </a>
+                                   <button class="favorite-store-btn px-3 py-1 rounded-md text-sm font-medium flex items-center gap-1 ${isFavorite ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-white'}" data-favorite="${isFavorite}">
+                                       ${isFavorite ? 
+                                           '<i data-lucide="heart-off" class="w-4 h-4"></i> Remove Favorite' : 
+                                           '<i data-lucide="heart" class="w-4 h-4"></i> Add to Favorites'
+                                       }
+                                   </button>
+                               </div>
+                           `;
+                           storeResults.appendChild(storeDiv);
+                       });
+                       
+                       // Re-render Lucide icons
+                       lucide.createIcons();
+                       
+                       // Add event listeners to favorite buttons
+                       document.querySelectorAll('.favorite-store-btn').forEach(btn => {
+                           btn.addEventListener('click', function() {
+                               const isFavorite = this.getAttribute('data-favorite') === 'true';
+                               
+                               if (isFavorite) {
+                                   this.innerHTML = '<i data-lucide="heart" class="w-4 h-4"></i> Add to Favorites';
+                                   this.setAttribute('data-favorite', 'false');
+                                   this.classList.remove('bg-red-500', 'hover:bg-red-600');
+                                   this.classList.add('bg-amber-500', 'hover:bg-amber-600');
+                               } else {
+                                   this.innerHTML = '<i data-lucide="heart-off" class="w-4 h-4"></i> Remove Favorite';
+                                   this.setAttribute('data-favorite', 'true');
+                                   this.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                                   this.classList.add('bg-red-500', 'hover:bg-red-600');
+                               }
+                               
+                               // Re-render Lucide icons
+                               lucide.createIcons();
+                               
+                               // In a real implementation, would make an API call here to save the favorite status
+                           });
+                       });
+                   } catch (error) {
+                       storeResults.innerHTML = `<p class="text-red-600">Error fetching stores: ${error.message}</p>`;
+                   }
+               }
+
+               // Haversine formula to calculate distance between two points
+               function calculateDistance(lat1, lon1, lat2, lon2) {
+                   const R = 3958.8; // Earth's radius in miles
+                   const dLat = (lat2 - lat1) * Math.PI / 180;
+                   const dLon = (lon2 - lon1) * Math.PI / 180;
+                   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                             Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                   return R * c;
+               }
+           });
+       </script>
+}
+</div>
+</div>
+</div>

@@ -1,0 +1,146 @@
+﻿@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Payments.MealPlanPaymentsModel
+@{
+    ViewData["Title"] = "Subscription Plans";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<div class="min-h-screen bg-gradient-to-b from-[#c9a227]/5 to-[#c9a227]/10 font-['Inter'] text-gray-800 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Simple Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-[#c9a227] mb-2">
+                Choose Your Subscription Plan
+            </h1>
+            <p class="text-lg text-[#b48e22]">
+                Select the plan that fits your needs and start your meal planning journey.
+            </p>
+        </div>
+    
+        <!-- Billing Toggle -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-[#c9a227]/10 rounded-full p-1 flex items-center shadow-inner">
+                <span class="px-6 py-2 text-sm font-semibold text-[#c9a227] bg-white rounded-full shadow-sm cursor-default">
+                    <i class="fas fa-calendar-alt mr-2"></i> Monthly
+                </span>
+                <span class="px-6 py-2 text-sm font-semibold text-[#c9a227]/50 cursor-not-allowed">
+                    <i class="fas fa-calendar-week mr-2"></i> Annual (coming soon)
+                </span>
+            </div>
+        </div>
+
+        <!-- Plans Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @foreach (var plan in Model.Plans)
+            {
+                var planId = plan.Id.ToLower();
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full @(plan.IsPopular ? "ring-2 ring-amber-400" : "")">
+                    <!-- Plan Header -->
+                    <div class="@(plan.IsPopular ? "bg-gradient-to-r from-[#c9a227] to-[#b48e22]" : "bg-[#c9a227]/5") p-4 text-center">
+                        @if (plan.IsPopular)
+                        {
+                            <div class="absolute right-4 top-0 bg-[#c9a227] text-white text-xs font-bold py-1 px-2 rounded-b-lg shadow-sm">
+                                <i class="fas fa-star mr-1"></i> POPULAR
+                            </div>
+                        }
+                        
+                        <h2 class="text-xl font-bold @(plan.IsPopular ? "text-white" : "text-[#c9a227]") flex items-center justify-center">
+                            @if (plan.Name.Contains("Basic"))
+                            {
+                                <i class="fas fa-carrot @(plan.IsPopular ? "text-white" : "text-[#c9a227]") mr-2"></i>
+                            }
+                            else if (plan.Name.Contains("Premium"))
+                            {
+                                <i class="fas fa-utensils @(plan.IsPopular ? "text-white" : "text-[#c9a227]") mr-2"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-leaf @(plan.IsPopular ? "text-white" : "text-[#c9a227]") mr-2"></i>
+                            }
+                            @plan.Name
+                        </h2>
+                        
+                        <div class="text-center my-2">
+                            <span class="text-3xl font-bold @(plan.IsPopular ? "text-white" : "text-[#c9a227]")">$@plan.Price.ToString("0.00")</span>
+                            <span class="text-sm @(plan.IsPopular ? "text-white/80" : "text-[#c9a227]/80")">/month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 flex-grow">
+                        <ul class="space-y-2 mb-4">
+                            @foreach (var feature in plan.Features)
+                            {
+                                <li class="flex items-start gap-2 text-sm text-gray-700">
+                                    @if (feature.IsIncluded)
+                                    {
+                                        <i class="fas fa-check text-green-500 mt-1"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-times text-red-400 mt-1"></i>
+                                    }
+                                    <span>@feature.Text</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    
+                    <div class="p-4 bg-gray-50">
+                        <form method="post" asp-page-handler="Subscribe" asp-route-plan="@planId" asp-route-billing="monthly" asp-route-planName="@plan.Name" asp-route-amount="@plan.Price">
+                            <button type="submit" class="w-full @(plan.IsPopular ? "bg-[#c9a227] hover:bg-[#b48e22] text-white" : "bg-[#c9a227]/10 hover:bg-[#c9a227]/20 text-[#c9a227]") py-2 px-4 rounded-lg font-medium transition">
+                                @(plan.IsPopular ? "Get Started" : "Select Plan")
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Messages -->
+        @if (ViewData["Message"] != null)
+        {
+            <div class="mt-8 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200 flex items-center gap-3 shadow-sm max-w-md mx-auto">
+                <i class="fas fa-check text-green-500"></i>
+                <span>@ViewData["Message"]</span>
+            </div>
+        }
+        
+        @if (ViewData["ErrorMessage"] != null)
+        {
+            <div class="mt-8 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 flex items-center gap-3 shadow-sm max-w-md mx-auto">
+                <i class="fas fa-exclamation text-red-500"></i>
+                <span>@ViewData["ErrorMessage"]</span>
+            </div>
+        }
+
+        <!-- Security Note -->
+        <div class="text-center mt-8 mb-4">
+            <p class="text-[#c9a227] inline-flex items-center gap-2 bg-[#c9a227]/5 px-4 py-2 rounded-lg shadow-sm border border-[#c9a227]/10 text-sm">
+                <i class="fas fa-lock"></i>
+                <span>Mock payment processing for testing. No real payment required.</span>
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+
+@section Scripts {
+    <script>
+        // Make forms show visual feedback during submission to prevent double-clicks
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    // Disable the button immediately to prevent multiple submissions
+                    const button = this.querySelector('button[type="submit"]');
+                    if (button) {
+                        button.disabled = true;
+                        button.classList.add('opacity-75');
+                        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                    }
+                });
+            });
+        });
+    </script>
+}

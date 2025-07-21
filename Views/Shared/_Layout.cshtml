@@ -1,0 +1,441 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>@ViewData["Title"] - GetMoving Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Consistent blurred navbar - same effect always */
+        .liquid-glass-navbar {
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); */
+        }
+
+        /* Remove the scrolled state differentiation */
+        .liquid-glass-navbar.scrolled {
+            /* Same as default state */
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Nav link styling */
+        .liquid-glass-navbar .nav-link {
+            color: rgba(0, 0, 0, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .liquid-glass-navbar .nav-link:hover {
+            color: #c9a227; /* Gold hover color */
+            transform: translateY(-1px);
+        }
+
+        /* Mobile menu styling */
+        #mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.2s ease;
+            opacity: 0;
+            background: rgba(255, 255, 255, 0.95); /* Light glass for mobile */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+        }
+
+        #mobile-menu.show {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        #mobile-menu .nav-link {
+            color: rgba(0, 0, 0, 0.8);
+        }
+
+        #mobile-menu .nav-link:hover {
+            color: #c9a227;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Menu toggle button */
+        #menu-toggle {
+            color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Focus states */
+        .nav-link:focus-visible {
+            outline: 2px solid #c9a227;
+            outline-offset: 2px;
+        }
+
+        /* Touch targets */
+        .touch-target {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        /* Logo visibility */
+        .navbar-logo {
+            filter: none;
+        }
+
+        /* Ensure icons are visible */
+        .liquid-glass-navbar [data-lucide] {
+            color: inherit;
+            stroke: currentColor;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-[#5a4f3a] font-sans antialiased">
+    <!-- Header Section -->
+    <header class="fixed top-0 w-full z-50 liquid-glass-navbar">
+        <nav class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center md:space-x-2">
+            <!-- Logo Section -->
+            <a href="/" class="flex items-center">
+                <img src="~/assets/getmoving1000.png" alt="GetMoving Meals Logo" 
+                     class="h-10 w-auto rounded-md hover:opacity-90 transition-opacity navbar-logo" />
+            </a>
+            
+            <!-- Spacer to push login to the right in mobile -->
+            <div class="flex-grow md:hidden"></div>
+
+            <!-- Login Button for Mobile (Outside Menu) -->
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <div class="md:hidden mr-3">
+                    <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Account/Auths/Login" 
+                       class="nav-link px-3 py-1 rounded-md text-sm font-medium hover:bg-black/5 transition-colors">
+                        <span>Log In</span>
+                    </a>
+                </div>
+            }
+            
+            <!-- Mobile Toggle -->
+            <button id="menu-toggle" class="md:hidden touch-target p-2 focus:outline-none focus:ring-2 focus:ring-[#c9a227] rounded" 
+                    aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <!-- Desktop Nav Links -->
+            <div id="desktop-menu" class="hidden md:flex items-center space-x-1 lg:space-x-3">
+                
+                
+                
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    
+                    @if (User.IsInRole("Member"))
+                    {
+                        <a asp-controller="Home" asp-action="Index"
+                   class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span>Home</span>
+                </a>
+                
+                @if (!User.IsInRole("Admin"))
+                {
+                    <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Payments/MealPlanPayments"
+                       class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                        <i data-lucide="banknote" class="w-4 h-4"></i>
+                        <span>Subscriptions</span>
+                    </a>
+                }
+                        <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Meals/MealPlans/CreateMealPlan"
+                           class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                            <i data-lucide="utensils-crossed" class="w-4 h-4"></i>
+                            <span>Create</span>
+                        </a>
+                        
+                        <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Meals/Queries/GetSavedMeals"
+                           class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                            <i data-lucide="salad" class="w-4 h-4"></i>
+                            <span>Saved</span>
+                        </a>
+                    }
+                    
+                    <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Account/Profile/Profile"
+                       class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <span>Profile</span>
+                    </a>
+                    
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Feedback/Review"
+                           class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                            <i data-lucide="square-chart-gantt" class="w-4 h-4"></i>
+                            <span>Reviews</span>
+                        </a>
+                        
+                        @* <a asp-controller="Language" asp-action="Editor"
+                           class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                            <i data-lucide="languages" class="w-4 h-4"></i>
+                            <span>Translation Editor</span>
+                        </a> *@
+                    }
+                    
+                    @if (User.IsInRole("Developer"))
+                    {
+                        <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Account/Devs/developer"
+                           class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2">
+                            <i data-lucide="code" class="w-4 h-4"></i>
+                            <span>Developer</span>
+                        </a>
+                    }
+                    
+                    <form asp-area="Identity" asp-page="/Areas/Identity/Pages/Account/Auths/Logout" method="post" class="inline">
+                        <button type="submit"
+                                class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 hover:text-red-600 transition-colors flex items-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Account/Auths/Login"
+                       class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-black/5 transition-colors">
+                        Log In
+                    </a>
+                }
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden">
+            <div class="px-2 pt-2 pb-4 space-y-1">
+                
+                
+                
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    
+                    @if (User.IsInRole("Member"))
+                    {
+                        <a asp-controller="Home" asp-action="Index"
+                   class="nav-link block px-3 py-3 rounded-md text-base font-medium transition-colors flex items-center gap-3">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Home</span>
+                </a>
+
+                @if (!User.IsInRole("Admin"))
+                {
+                    <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Payments/MealPlanPayments"
+                       class="nav-link block px-3 py-3 rounded-md text-base font-medium transition-colors flex items-center gap-3">
+                        <i data-lucide="banknote" class="w-5 h-5"></i>
+                        <span>Subscriptions</span>
+                    </a>
+                }
+                        <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Meals/MealPlans/CreateMealPlan"
+                           class="nav-link block px-3 py-3 rounded-md text-base font-medium transition-colors flex items-center gap-3">
+                            <i data-lucide="utensils-crossed" class="w-5 h-5"></i>
+                            <span>Create</span>
+                        </a>
+                        
+                        <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Meals/Queries/GetSavedMeals"
+                           class="nav-link block px-3 py-3 rounded-md text-base font-medium transition-colors flex items-center gap-3">
+                            <i data-lucide="salad" class="w-5 h-5"></i>
+                            <span>Saved</span>
+                        </a>
+                    }
+                    
+                    <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Account/Profile/Profile"
+                       class="nav-link block px-3 py-3 rounded-md text-base font-medium transition-colors flex items-center gap-3">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                        <span>Profile</span>
+                    </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-area="Identity" asp-page="/Areas/Identity/Pages/Feedback/Review"
+                           class="nav-link block px-3 py-3 rounded-md text-base font-medium transition-colors flex items-center gap-3">
+                            <i data-lucide="square-chart-gantt" class="w-5 h-5"></i>
+                            <span>Reviews</span>
+                        </a>
+                        
+                        @* <a asp-controller="Language" asp-action="Editor"
+                           class="nav-link block px-3 py-3 rounded-md text-base font-medium transition-colors flex items-center gap-3">
+                            <i data-lucide="languages" class="w-5 h-5"></i>
+                            <span>Translation Editor</span>
+                        </a> *@
+                    }
+                    
+                    <form asp-area="Identity" asp-page="/Areas/Identity/Pages/Account/Auths/Logout" method="post" class="block">
+                        <button type="submit"
+                                class="nav-link w-full text-left px-3 py-3 rounded-md text-base font-medium hover:text-red-600 transition-colors flex items-center gap-3">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <!-- Login link removed from mobile menu since it's now outside -->
+                }
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="pt-16 min-h-screen md:pt-16 pt-20"> <!-- Adjusted for fixed header with smaller padding on mobile -->
+        <partial name="_TrialNotification" />
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+<footer class="bg-gradient-to-b from-[#FFFFFF] to-[#DDDBCB] border-t border-[#c9a227]/20 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" style="filter: drop-shadow(0 0 0 transparent);">
+            <!-- Brand Info -->
+            <div class="text-center md:text-left">
+                <div class="flex justify-center md:justify-start items-center gap-3 mb-4">
+                    <img src="~/assets/getmoving1000.png" alt="GetMoving Logo" class="h-12 w-auto rounded-md" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+                    <span class="hidden text-2xl font-bold text-[#c9a227] font-display">GetMoving</span>
+                </div>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    Personalized meal plans that match your nutritional needs and fitness goals.
+                </p>
+                <!-- Newsletter Signup -->
+                <form class="mt-4 flex flex-col gap-2" method="post" asp-page="/Newsletter/Subscribe">
+                    <label for="newsletter-email" class="sr-only">Email for newsletter</label>
+                    <input id="newsletter-email" type="email" placeholder="Enter your email" class="px-4 py-2 bg-white border border-[#c9a227]/20 rounded-lg focus:ring-2 focus:ring-[#c9a227]/30 focus:border-[#c9a227]/30 text-sm transition-all" required />
+                    <button type="submit" class="bg-gradient-to-r from-[#c9a227] to-[#b48e22] hover:from-[#d4ae38] hover:to-[#c9a227] text-white font-medium text-sm py-2 rounded-lg transition-all transform hover:scale-105">
+                        Subscribe to Updates
+                    </button>
+                </form>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="text-center md:text-left">
+                <h3 class="text-sm font-semibold text-[#c9a227] uppercase tracking-wider mb-4">Quick Links</h3>
+                <ul class="space-y-3">
+                    <li><a asp-controller="Home" asp-action="Index" class="text-sm text-gray-700 hover:text-[#c9a227] transition-colors" aria-label="Go to Home page">Home</a></li>
+                    <li><a asp-area="Identity" asp-page="/Areas/Identity/Pages/Payments/MealPlanPayments" class="text-sm text-gray-700 hover:text-[#c9a227] transition-colors" aria-label="View Subscription Plans">Subscriptions</a></li>
+                    <li><a asp-controller="Home" asp-action="Privacy" class="text-sm text-gray-700 hover:text-[#c9a227] transition-colors" aria-label="View Privacy Policy">Privacy Policy</a></li>
+                    <li><a asp-area="Identity" asp-page="/Areas/Identity/Pages/Documentation/Documentation" class="text-sm text-gray-700 hover:text-[#c9a227] transition-colors" aria-label="View Documentation">Documentation</a></li>
+                    <li><a href="https://www.getmoving100.com/" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-700 hover:text-[#c9a227] transition-colors" aria-label="Visit Get Moving 100">Get Moving 100</a></li>
+                </ul>
+            </div>
+
+            <!-- Connect & Support -->
+            <div class="text-center md:text-left">
+                <h3 class="text-sm font-semibold text-[#c9a227] uppercase tracking-wider mb-4">Connect & Support</h3>
+                <ul class="space-y-3 mb-6">
+                    @* <li>
+                        <a href="/Support/FAQ" class="text-sm text-gray-700 hover:text-[#c9a227] transition-colors flex items-center gap-2 justify-center md:justify-start" aria-label="View FAQ">
+                            <i data-lucide="help-circle" class="w-4 h-4"></i>
+                            <span>FAQ</span>
+                        </a>
+                    </li> *@
+                    <li>
+                        <a href="tel:252-814-4642" class="text-sm text-gray-700 hover:text-[#c9a227] transition-colors flex items-center gap-2 justify-center md:justify-start" aria-label="Call support">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            <span>252-814-4642</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Social Media -->
+                <h4 class="text-xs font-semibold text-gray-700 mb-3">Follow Us</h4>
+                <div class="flex justify-center md:justify-start gap-4">
+                    <a href="https://www.instagram.com/getmoving100/" target="_blank" rel="noopener noreferrer" class="bg-[#c9a227]/10 hover:bg-[#c9a227]/20 text-[#c9a227] p-2 rounded-full transition-colors inline-flex items-center justify-center" aria-label="Follow us on Instagram">
+                        <i data-lucide="instagram" class="w-5 h-5"></i>
+                    </a>
+                    <a href="https://www.youtube.com/%40GetMoving1000" target="_blank" rel="noopener noreferrer" class="bg-[#c9a227]/10 hover:bg-[#c9a227]/20 text-[#c9a227] p-2 rounded-full transition-colors inline-flex items-center justify-center" aria-label="Subscribe to Quinton Harris's YouTube channel">
+                        <i data-lucide="youtube" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 pt-6 border-t border-[#c9a227]/10 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-xs text-gray-700">
+                © @DateTime.Now.Year GetMoving. All rights reserved.
+            </p>                <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="mt-4 md:mt-0 bg-[#c9a227]/5 hover:bg-[#c9a227]/10 text-[#c9a227] px-4 py-2 rounded-full text-xs flex items-center gap-1 group transition-colors" aria-label="Scroll back to top">
+                Back to Top
+                <i data-lucide="chevron-up" class="w-4 h-4 group-hover:-translate-y-1 transition-transform"></i>
+            </button>
+        </div>
+    </div>
+</footer>
+
+@section Scripts {
+    <style>
+        /* Animations */
+        .animate-slide-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s ease-out forwards;
+            box-shadow: none !important;
+        }
+        @@keyframes slideUp {
+            0% { transform: translateY(20px); opacity: 0; box-shadow: none; }
+            100% { transform: translateY(0); opacity: 1; box-shadow: none; }
+        }
+        
+        /* Footer shadow removal */
+        footer .grid > div {
+            box-shadow: none !important;
+            filter: drop-shadow(0 0 0 transparent) !important;
+            -webkit-filter: drop-shadow(0 0 0 transparent) !important;
+            -moz-filter: drop-shadow(0 0 0 transparent) !important;
+        }
+        /* Fallback for logo */
+        .fallback\:hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        lucide.createIcons();
+    </script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+}
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (menuToggle && mobileMenu) {
+                menuToggle.addEventListener('click', function() {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    mobileMenu.classList.toggle('show');
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        mobileMenu.classList.remove('show');
+                    }
+                });
+            }
+            
+            // Keep the navbar always blurred (scroll listener removed)
+        });
+    </script>
+    
+    <!-- Load JS fixes -->
+    <script src="~/js/fixes-loader.js"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+</body>
+</html>

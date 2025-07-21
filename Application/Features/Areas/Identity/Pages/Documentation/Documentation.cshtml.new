@@ -1,0 +1,308 @@
+@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Documentation.DocumentationModel
+@{
+    ViewData["Title"] = "GetMoving Meals Video Documentation";
+}
+
+<div class="min-h-screen bg-gradient-to-b from-orange-50 to-yellow-50 pt-16">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Main Header -->
+        <div class="text-center mb-12 max-w-3xl mx-auto">
+            <div class="flex justify-center mb-5">
+                <div class="w-40 md:w-60">
+                    <!-- GetMoving Logo -->
+                    <div class="text-center">
+                        <span class="text-4xl md:text-5xl font-black" style="color: #FFA500;">GET</span>
+                        <span class="text-4xl md:text-5xl font-black text-gray-800">MOVING</span>
+                        <div class="text-xl md:text-2xl font-bold text-amber-600 mt-1">VIDEO DOCUMENTATION</div>
+                    </div>
+                </div>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">Meal Planning Essentials</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Quick video guides to help you get the most out of GetMoving Meals
+            </p>
+            
+            <div class="mt-6 inline-block bg-amber-100 rounded-lg px-4 py-2 border border-amber-200">
+                <p class="text-amber-800 font-medium flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                    </svg>
+                    Last updated: @DateTime.Now.ToString("MMMM d, yyyy")
+                </p>
+            </div>
+        </div>
+
+        <!-- Simple Video Navigation -->
+        <div class="flex justify-center mb-10">
+            <div class="inline-flex flex-wrap gap-2 justify-center">
+                <a href="#getting-started" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition">Getting Started</a>
+                <a href="#meal-planning" class="px-5 py-2 bg-amber-100 text-amber-800 rounded-lg font-medium hover:bg-amber-200 transition">Meal Planning</a>
+                <a href="#account-settings" class="px-5 py-2 bg-amber-100 text-amber-800 rounded-lg font-medium hover:bg-amber-200 transition">Account Settings</a>
+                <a href="#troubleshooting" class="px-5 py-2 bg-amber-100 text-amber-800 rounded-lg font-medium hover:bg-amber-200 transition">Troubleshooting</a>
+            </div>
+        </div>
+        
+        <!-- Main Video Container -->
+        <div class="max-w-5xl mx-auto">
+            <!-- Getting Started Video -->
+            <section id="getting-started" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/getting-started-thumb.jpg">
+                            <source src="/assets/videos/getting-started.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Getting Started with GetMoving Meals</h2>
+                            <span class="bg-amber-100 text-amber-800 text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                4:32
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            This video covers the basics of using the GetMoving Meals application, from signing up to navigating the main dashboard. Perfect for first-time users who want to quickly understand how the platform works.
+                        </p>
+                        
+                        <div class="bg-amber-50 rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-amber-800 mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Introduction</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:45</span>
+                                    <span class="text-gray-700">Account Creation</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:30</span>
+                                    <span class="text-gray-700">Dashboard Overview</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:50</span>
+                                    <span class="text-gray-700">Setting Preferences</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Meal Planning Video -->
+            <section id="meal-planning" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/meal-planning-thumb.jpg">
+                            <source src="/assets/videos/meal-planning.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Creating Your Perfect Meal Plan</h2>
+                            <span class="bg-amber-100 text-amber-800 text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                5:48
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            Learn how to create personalized meal plans that match your dietary preferences, nutritional goals, and schedule. This video shows the full meal planning process from start to finish.
+                        </p>
+                        
+                        <div class="bg-amber-50 rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-amber-800 mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Meal Plan Overview</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:10</span>
+                                    <span class="text-gray-700">Setting Dietary Preferences</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:25</span>
+                                    <span class="text-gray-700">Generating Your Plan</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">4:15</span>
+                                    <span class="text-gray-700">Editing & Customizing</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Settings Video -->
+            <section id="account-settings" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/account-settings-thumb.jpg">
+                            <source src="/assets/videos/account-settings.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Managing Your Account & Preferences</h2>
+                            <span class="bg-amber-100 text-amber-800 text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                3:15
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            Learn how to customize your account settings, update your dietary preferences, manage payment information, and set up notification preferences for the best experience.
+                        </p>
+                        
+                        <div class="bg-amber-50 rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-amber-800 mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Profile Settings</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:55</span>
+                                    <span class="text-gray-700">Subscription Management</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:40</span>
+                                    <span class="text-gray-700">Dietary Preferences</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:25</span>
+                                    <span class="text-gray-700">Notifications & Alerts</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Troubleshooting Video -->
+            <section id="troubleshooting" class="mb-16 scroll-mt-24">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100">
+                    <div class="relative pb-[56.25%] h-0 overflow-hidden">
+                        <!-- Replace with actual video source -->
+                        <video class="absolute top-0 left-0 w-full h-full" controls poster="/assets/images/troubleshooting-thumb.jpg">
+                            <source src="/assets/videos/troubleshooting.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800">Troubleshooting Common Issues</h2>
+                            <span class="bg-amber-100 text-amber-800 text-sm px-3 py-1 rounded-full inline-flex items-center mt-2 md:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                4:05
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-5">
+                            Solutions to the most common problems users might encounter, including login issues, meal plan generation errors, payment questions, and synchronization problems.
+                        </p>
+                        
+                        <div class="bg-amber-50 rounded-lg p-4 mb-5">
+                            <h3 class="font-medium text-amber-800 mb-2">Video Contents:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">0:00</span>
+                                    <span class="text-gray-700">Account Access Issues</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">1:05</span>
+                                    <span class="text-gray-700">Meal Plan Generation Problems</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">2:15</span>
+                                    <span class="text-gray-700">Payment & Billing Issues</span>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded mr-2 flex-shrink-0 w-12 text-center">3:10</span>
+                                    <span class="text-gray-700">Contacting Support</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Transcript
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Need More Help Section -->
+            <section class="mb-16">
+                <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl overflow-hidden shadow-lg">
+                    <div class="p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-2xl font-bold">Still Need Help?</h2>
+                        </div>
+                        <p class="mb-6 text-white/90">
+                            If you have questions that aren't covered in our video tutorials, our support team is here to help.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="mailto:support@getmovingmeals.com" class="inline-flex items-center bg-white text-amber-700 hover:bg-amber-50 px-5 py-2.5 rounded-lg transition shadow-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                Email Support
+                            </a>
+                            <a href="/support/live-chat" class="inline-flex items-center bg-white text-amber-700 hover:bg-amber-50 px-5 py-2.5 rounded-lg transition shadow-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                Live Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t border-amber-200 pt-6 pb-8 text-center">
+            <p class="text-amber-800 text-sm">
+                © GetMoving Meals @DateTime.Now.Year. All video content is proprietary and for user reference only.
+            </p>
+        </div>
+    </div>
+</div>

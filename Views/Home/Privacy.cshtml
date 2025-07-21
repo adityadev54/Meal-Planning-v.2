@@ -1,0 +1,263 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+    Layout = "_Layout";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+    :root {
+        --brand-light: #fef9c3;
+        --brand-medium: #facc15;
+        --brand-dark: #ca8a04;
+        --white: #fff;
+        --gray: #f8fafc;
+        --text: #1A202C;
+        --text-secondary: #4A5568;
+    }
+
+    .privacy-container {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 3rem 1.5rem;
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(250, 204, 21, 0.2);
+    }
+
+    .privacy-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+        .privacy-header h1 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: var(--brand-dark);
+            margin-bottom: 0.5rem;
+        }
+
+    .privacy-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        background: linear-gradient(90deg, #FFF8E1 0%, rgba(250, 204, 21, 0.05) 100%);
+        border-left: 5px solid var(--brand-medium);
+        border-radius: 8px;
+        padding: 1.2rem 1.2rem 1.2rem 1.5rem;
+        margin-bottom: 2.5rem;
+        color: var(--text);
+        font-size: 1.08rem;
+    }
+
+        .privacy-notice i {
+            color: var(--brand-dark);
+            margin-top: 0.2em;
+            flex-shrink: 0;
+        }
+
+    .privacy-section {
+        margin-bottom: 2.2rem;
+        border-bottom: 1px solid rgba(250, 204, 21, 0.2);
+        padding-bottom: 1.5rem;
+    }
+
+        .privacy-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+    .privacy-title {
+        font-size: 1.25rem;
+        color: var(--brand-dark);
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .privacy-content {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+        .privacy-content ul {
+            margin: 0.5em 0 0 1.2em;
+            padding: 0;
+        }
+
+        .privacy-content li {
+            margin-bottom: 0.4em;
+        }
+
+    .privacy-footer {
+        text-align: center;
+        font-size: 0.98em;
+        color: #888;
+        margin-top: 2.5rem;
+    }
+
+        .privacy-footer a {
+            color: var(--brand-dark);
+            text-decoration: underline;
+        }
+
+            .privacy-footer a:hover {
+                color: var(--brand-medium);
+            }
+
+    .back-to-top {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--brand-dark);
+        color: #fff;
+        padding: 0.7em 1.2em;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(250, 204, 21, 0.2);
+        z-index: 10;
+        transition: all 0.2s;
+    }
+
+        .back-to-top:hover {
+            background: var(--brand-medium);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+    @@media (max-width: 600px) {
+        .privacy-container {
+            padding: 1.2rem 0.5rem 2rem 0.5rem;
+        }
+
+        .privacy-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .privacy-title {
+            font-size: 1.08rem;
+        }
+
+        .privacy-notice {
+            font-size: 0.98rem;
+        }
+    }
+</style>
+
+<div class="privacy-container">
+    <div class="privacy-header">
+        <h1>@ViewData["Title"]</h1>
+        <div class="privacy-notice" role="alert">
+            <i data-lucide="shield-check" style="width:2em;height:2em;"></i>
+            <div>
+                <strong>Your privacy matters to us.</strong> This document explains what data we collect, how we use it, and your rights regarding your personal information.
+            </div>
+        </div>
+    </div>
+
+    <section class="privacy-section">
+        <div class="privacy-title"><i data-lucide="user" style="width:1.2em"></i> What We Collect</div>
+        <div class="privacy-content">
+            <p>To create your personalized meal plans, we collect:</p>
+            <ul>
+                <li><strong>Account info:</strong> Email and password to secure your account</li>
+                <li><strong>Preferences:</strong> Dietary restrictions, allergies, and food preferences</li>
+                <li><strong>Usage data:</strong> How you interact with the app to improve our service</li>
+                <li><strong>Meal feedback:</strong> Your ratings and comments on suggested meals</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="privacy-section">
+        <div class="privacy-title"><i data-lucide="settings" style="width:1.2em"></i> How We Use Your Data</div>
+        <div class="privacy-content">
+            <p>We only use your data to:</p>
+            <ul>
+                <li>Generate personalized meal plans</li>
+                <li>Improve our recommendations</li>
+                <li>Keep your account secure</li>
+                <li>Provide customer support</li>
+                <li>Send service-related notifications (no marketing spam)</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="privacy-section">
+        <div class="privacy-title"><i data-lucide="lock" style="width:1.2em"></i> Data Security</div>
+        <div class="privacy-content">
+            <p>We protect your information with:</p>
+            <ul>
+                <li>Secure servers with encryption</li>
+                <li>Regular security updates</li>
+                <li>Limited access to only essential staff</li>
+            </ul>
+            <p>Your meal preferences and health data are kept private and never shared without your permission.</p>
+        </div>
+    </section>
+
+    <section class="privacy-section">
+        <div class="privacy-title"><i data-lucide="share-2" style="width:1.2em"></i> Data Sharing</div>
+        <div class="privacy-content">
+            <p>We don't sell your data. We only share information when:</p>
+            <ul>
+                <li>Required by law</li>
+                <li>With service providers who help operate our app (under strict confidentiality)</li>
+                <li>You explicitly choose to share a meal plan</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="privacy-section">
+        <div class="privacy-title"><i data-lucide="shield" style="width:1.2em"></i> Your Choices</div>
+        <div class="privacy-content">
+            <p>You can:</p>
+            <ul>
+                <li>Update or delete your account anytime</li>
+                <li>Export your meal plans and data</li>
+                <li>Opt out of non-essential emails</li>
+                <li>Request a copy of your stored data</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="privacy-section">
+        <div class="privacy-title"><i data-lucide="refresh-cw" style="width:1.2em"></i> Changes</div>
+        <div class="privacy-content">
+            <p>We'll notify you of significant policy changes. Continued use means you accept the updated policy.</p>
+        </div>
+    </section>
+
+    <section class="privacy-section">
+        <div class="privacy-title"><i data-lucide="mail" style="width:1.2em"></i> Contact</div>
+        <div class="privacy-content">
+            <p>Questions about your privacy? Email us at:<br />
+            <a href="mailto:privacy@getmovingmeals.com">privacy@getmovingmeals.com</a></p>
+        </div>
+    </section>
+
+    <div class="privacy-footer">
+        <p>Last updated: @DateTime.Now.ToString("MMMM d, yyyy")</p>
+        <p class="mt-2">This Privacy Policy is separate from our <a href="/Home/Terms">Terms of Service</a>, which governs your use of our services.</p>
+    </div>
+</div>
+
+<a href="#" class="back-to-top" aria-label="Back to Top">Back to Top</a>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.lucide) lucide.createIcons();
+            // Smooth scroll for back to top
+            document.querySelectorAll('.back-to-top').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        });
+    </script>
+}

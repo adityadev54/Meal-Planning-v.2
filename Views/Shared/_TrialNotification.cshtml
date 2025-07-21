@@ -1,0 +1,106 @@
+@using Microsoft.AspNetCore.Identity
+@using Meal_Planning.Core.Entities
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject Meal_Planning.Infrastructure.Persistence.ApplicationDbContext DbContext
+@inject Meal_Planning.Infrastructure.Services.IDateTimeService DateTimeService
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+    .animate-slide-up {
+        animation: trialBannerSlideUp 0.5s ease-out forwards;
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    
+    @@keyframes trialBannerSlideUp {
+        to {
+            transform: translateY(0);
+            opacity: 1;
+            box-shadow: 0 8px 24px -4px rgba(201, 162, 39, 0.15);
+        }
+    }
+</style>
+
+@{
+    if (SignInManager.IsSignedIn(User))
+    {
+        var userId = UserManager.GetUserId(User);
+        var userPrefs = await DbContext.Preferences.FirstOrDefaultAsync(p => p.UserID == userId);
+        bool showTrialBanner = false;
+        int daysLeft = 0;
+        
+        if (userPrefs != null && userPrefs.TrialStartDate.HasValue)
+        {
+            var trialEnd = userPrefs.TrialStartDate.Value.AddDays(7);
+            var now = DateTimeService.UtcNow;
+            
+            if (now < trialEnd)
+            {
+                daysLeft = Math.Max(0, (int)(trialEnd - now).TotalDays);
+                showTrialBanner = true;
+                
+                // Check if user already has a subscription
+                var hasSubscription = await DbContext.Subscriptions.AnyAsync(s => s.UserId == userId && s.IsActive);
+                if (hasSubscription)
+                {
+                    showTrialBanner = false; // Don't show banner if already subscribed
+                }
+            }
+        }
+        
+        if (showTrialBanner)
+        {
+            var bgClass = daysLeft <= 2 ? "from-red-50 to-white border-red-100" : "from-[#f8f3e3] to-white border-[#e5c867]";
+            var iconColor = daysLeft <= 2 ? "text-red-500" : "text-[#c9a227]";
+            var buttonClass = daysLeft <= 2 
+                ? "from-red-600 to-red-500 hover:from-red-700 hover:to-red-600" 
+                : "from-[#c9a227] to-[#e5c867] hover:from-[#b48e22] hover:to-[#c9a227]";
+            
+            <div class="fixed bottom-4 right-4 left-4 md:left-auto md:max-w-md z-50 animate-slide-up" id="trialBanner">
+                <div class="bg-gradient-to-r @bgClass rounded-xl border shadow-md p-4 shadow-[#c9a227]/10">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0">
+                            <i data-lucide="clock" class="w-5 h-5 @iconColor"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-gray-900 mb-1">Trial Ending Soon!</h4>
+                            @if (daysLeft <= 1)
+                            {
+                                <p class="text-gray-600 text-sm mb-3">Your free trial ends today! Subscribe now to maintain uninterrupted access to all features.</p>
+                            }
+                            else
+                            {
+                                <p class="text-gray-600 text-sm mb-3">You have <span class="font-semibold text-[#c9a227]">@daysLeft days</span> left in your free trial. Subscribe now to maintain access to all features.</p>
+                            }
+                            <div class="flex items-center justify-end gap-3">
+                                <a href="/Areas/Identity/Pages/Payments/MealPlanPayments" 
+                                   class="flex items-center gap-1.5 bg-gradient-to-r @buttonClass text-white text-sm font-semibold rounded-lg px-4 py-2 hover:shadow-[0_4px_12px_rgba(201,162,39,0.3)] transition-all">
+                                    <i data-lucide="credit-card" class="w-4 h-4"></i>
+                                    Subscribe Now
+                                </a>
+                                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" onclick="document.getElementById('trialBanner').classList.add('hidden');" aria-label="Close">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+<script>
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    } else {
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    }
+</script>

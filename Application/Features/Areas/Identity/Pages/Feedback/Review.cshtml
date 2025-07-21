@@ -1,0 +1,324 @@
+﻿@page
+@model Meal_Planning.Application.Features.Areas.Identity.Pages.Feedback.ReviewModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Meal_Planning.Core.Entities.ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Feedback Review";
+    Func<DateTime, string> relativeTime = dt =>
+    {
+        var span = DateTime.UtcNow - dt;
+        if (span.TotalMinutes < 1) return "just now";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes} min ago";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours} hr ago";
+        return dt.ToLocalTime().ToString("g");
+    };
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;500;600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    'inter': ['Inter', 'sans-serif'],
+                    'playfair': ['Playfair Display', 'serif'],
+                    'lora': ['Lora', 'serif']
+                },
+                colors: {
+                    brand: {
+                        50: '#f8f3e3',
+                        100: '#f0e8c9', 
+                        200: '#e5c867',
+                        300: '#d4b94e',
+                        400: '#c9a227',
+                        500: '#c9a227',
+                        600: '#b48e22',
+                        700: '#9e7b1e',
+                        800: '#806219',
+                        900: '#6a5115',
+                    },
+                    success: '#4CAF50',
+                    warning: '#FFC107',
+                    error: '#ef4444',
+                    dark: {
+                        1: '#121212',
+                        2: '#1E1E1E',
+                        3: '#2A2A2A'
+                    },
+                    light: {
+                        1: '#FFFFFF',
+                        2: '#F8F8F8',
+                        3: '#EEEEEE'
+                    }
+                },
+                keyframes: {
+                    slideUp: {
+                        '0%': { transform: 'translateY(20px)', opacity: '0' },
+                        '100%': { transform: 'translateY(0)', opacity: '1' }
+                    },
+                    fadeIn: {
+                        '0%': { opacity: '0' },
+                        '100%': { opacity: '1' }
+                    },
+                    pulse: {
+                        '0%, 100%': { opacity: '1' },
+                        '50%': { opacity: '0.7' }
+                    },
+                    shimmer: {
+                        '0%': { backgroundPosition: '-500px 0' },
+                        '100%': { backgroundPosition: '500px 0' }
+                    }
+                },
+                animation: {
+                    'slide-up': 'slideUp 0.5s ease-out forwards',
+                    'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    'pulse': 'pulse 2s infinite',
+                    'shimmer': 'shimmer 2s infinite linear'
+                },
+                backgroundImage: {
+                    'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    'grain': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E\")",
+                    'golden-shine': "linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(255, 223, 145, 0.1) 50%, rgba(201, 162, 39, 0.15) 100%)"
+                },
+                boxShadow: {
+                    'gold': '0 5px 15px -3px rgba(201, 162, 39, 0.3)',
+                    'gold-sm': '0 2px 8px -2px rgba(201, 162, 39, 0.25)'
+                }
+            }
+        }
+    }
+</script>
+
+<div class="min-h-screen bg-gradient-to-b from-light-1 to-brand-50 bg-grain py-8 px-4 sm:px-6 lg:px-8" style="background-color: #f8f3e3; background-image: linear-gradient(to bottom, #ffffff, #f8f3e3);">
+    <div class="max-w-7xl mx-auto opacity-0 animate-slide-up">
+        <!-- Logo and Title Section -->
+        <div class="flex flex-col items-center mb-10">
+            <img src="~/assets/getmoving1000.png" alt="GetMoving Logo" class="h-16 w-auto mb-4" />
+            <div class="relative">
+                <h1 class="text-3xl font-bold font-playfair text-center bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent" style="text-shadow: 0 0 15px rgba(201, 162, 39, 0.15);">
+                    Feedback Dashboard
+                </h1>
+                <div class="h-1 w-24 bg-gradient-to-r from-brand-500 to-brand-300 rounded-full mx-auto mt-2"></div>
+            </div>
+            <p class="text-dark-2 text-center mt-3 max-w-2xl font-lora">
+                Review and manage user feedback submissions
+            </p>
+        </div>
+
+        <!-- Admin header with badge -->
+        <div class="mb-8 relative">
+            <div class="absolute -left-2 -top-2">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-brand-500 to-brand-300 text-white shadow-lg transform -rotate-2">
+                    <i data-lucide="clipboard-list" class="h-3 w-3 mr-1"></i>
+                    ADMIN AREA
+                </span>
+            </div>
+            <div class="flex justify-between items-center p-4 rounded-xl bg-white border border-brand-200 shadow-sm">
+                <h2 class="text-xl font-bold font-playfair flex items-center gap-3 text-dark-1">
+                    <i data-lucide="message-square" class="text-brand-500"></i>
+                    User Feedback Submissions
+                </h2>
+                <span class="text-xs text-gray-500">@DateTime.Now.ToString("MMMM d, yyyy")</span>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-gold overflow-hidden p-6 sm:p-8 border border-brand-200 bg-golden-shine">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-brand-300 text-white shadow-md">
+                        <i data-lucide="mail-open" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold font-playfair text-dark-1">Feedback Submissions</h2>
+                        <p class="text-dark-3 text-sm">Showing all user feedback entries</p>
+                    </div>
+                </div>
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-50 rounded-lg border border-brand-100 shadow-gold-sm">
+                    <i data-lucide="message-square" class="h-4 w-4 text-brand-500"></i>
+                    <span class="text-sm font-medium">@Model.Feedbacks.Count() total entries</span>
+                </div>
+            </div>
+        
+            @if (!Model.Feedbacks.Any())
+            {
+                <div class="text-center p-16 bg-light-1 rounded-xl border border-brand-100">
+                    <div class="flex flex-col items-center justify-center gap-3">
+                        <div class="w-16 h-16 flex items-center justify-center rounded-full bg-brand-100 shadow-inner">
+                            <i data-lucide="inbox" class="h-8 w-8 text-brand-500"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-dark-2">No Feedback Yet</h3>
+                        <p class="text-dark-3 max-w-md">No feedback submissions have been received yet. When users submit feedback, it will appear here.</p>
+                    </div>
+                </div>
+            }
+        else
+        {
+            <div class="overflow-x-auto rounded-xl border border-brand-100 shadow-sm">
+                <table class="table-auto w-full text-left">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-brand-50 to-brand-100 text-dark-2">
+                            <th scope="col" class="px-6 py-4 text-sm font-bold rounded-tl-lg">Date</th>
+                            <th scope="col" class="px-6 py-4 text-sm font-bold">User</th>
+                            <th scope="col" class="px-6 py-4 text-sm font-bold">Type</th>
+                            <th scope="col" class="px-6 py-4 text-sm font-bold">Subject</th>
+                            <th scope="col" class="px-6 py-4 text-sm font-bold">Message</th>
+                            <th scope="col" class="px-6 py-4 text-sm font-bold text-center">Rating</th>
+                            <th scope="col" class="px-6 py-4 text-sm font-bold rounded-tr-lg">Attachment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var feedback in Model.Feedbacks)
+                    {
+                        var user = await UserManager.FindByIdAsync(feedback.UserId ?? "");
+                        <tr class="border-b border-brand-100 hover:bg-light-1 transition-colors duration-150">
+                            <td class="px-6 py-4 text-sm" title="@feedback.SubmittedAt.ToLocalTime()">
+                                <div class="flex flex-col">
+                                    <span class="font-medium text-dark-2">@relativeTime(feedback.SubmittedAt)</span>
+                                    <span class="text-xs text-dark-3">@feedback.SubmittedAt.ToLocalTime().ToString("MMM d, h:mm tt")</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                @if (user != null)
+                                {
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-shrink-0 h-9 w-9 rounded-full bg-brand-100 flex items-center justify-center border border-brand-200">
+                                            <span class="text-brand-700 font-bold">@(user.FirstName?.Substring(0, 1)?.ToUpper() ?? "U")</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-dark-1">@user.FirstName @user.LastName</div>
+                                            <div class="text-xs text-dark-3">@user.Email</div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="flex items-center gap-2">
+                                        <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                                            <i data-lucide="user-x" class="h-4 w-4 text-red-500"></i>
+                                        </div>
+                                        <span class="text-sm text-red-600">Unknown User</span>
+                                    </div>
+                                }
+                            </td>
+                            <td class="px-6 py-4">
+                                @{
+                                    var typeColor = feedback.FeedbackType switch {
+                                        "Bug Report" => "bg-red-100 text-red-700",
+                                        "Feature Request" => "bg-blue-100 text-blue-700",
+                                        "Question" => "bg-purple-100 text-purple-700", 
+                                        "Testimonial" => "bg-green-100 text-green-700",
+                                        "Other" => "bg-gray-100 text-gray-700",
+                                        _ => "bg-brand-100 text-brand-700"
+                                    };
+                                }
+                                <span class="px-2.5 py-1 rounded-md text-xs font-medium @typeColor">
+                                    @feedback.FeedbackType
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-dark-2">@feedback.Subject</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-dark-3 max-w-xs max-h-24 overflow-y-auto whitespace-pre-line break-words p-2 bg-light-2 rounded-lg border border-brand-50">
+                                    @feedback.Message
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                @if (feedback.Rating != null)
+                                {
+                                    <div class="inline-flex items-center justify-center gap-1 px-2 py-1 bg-brand-50 rounded-lg border border-brand-100">
+                                        <span class="font-bold text-dark-2">@feedback.Rating</span>
+                                        <span class="text-brand-500">
+                                            @for (var i = 0; i < feedback.Rating; i++)
+                                            {
+                                                <span>★</span>
+                                            }
+                                            @for (var i = feedback.Rating.Value; i < 5; i++)
+                                            {
+                                                <span class="text-brand-200">★</span>
+                                            }
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-xs text-dark-3">No rating</span>
+                                }
+                            </td>
+                            <td class="px-6 py-4">
+                                @if (!string.IsNullOrEmpty(feedback.AttachmentFileName))
+                                {
+                                    <a asp-page="DownloadAttachment" asp-route-id="@feedback.Id" 
+                                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium text-xs bg-white text-brand-600 border border-brand-200 hover:border-brand-500 hover:bg-brand-50 transition-all duration-200"
+                                       title="Download @feedback.AttachmentFileName">
+                                        <i data-lucide="paperclip" class="h-3.5 w-3.5"></i>
+                                        <span class="truncate max-w-xs">@feedback.AttachmentFileName</span>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="p-4 bg-brand-50 rounded-lg border border-brand-100 mt-8">
+                <div class="flex items-start gap-3">
+                    <div class="text-brand-500 mt-0.5">
+                        <i data-lucide="info" class="h-5 w-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-dark-1 mb-1">About Feedback Management</h4>
+                        <p class="text-xs text-dark-3">
+                            User feedback is an important source of information for improving our application. 
+                            Consider responding to users directly through email for questions and feature requests.
+                            Bug reports should be documented in your issue tracking system.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log('Feedback Review script loaded');
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Apply animations
+            document.querySelectorAll('.animate-slide-up').forEach(el => {
+                el.style.opacity = '1';
+            });
+            
+            // Add max-height toggles for message cells                document.querySelectorAll('.max-h-24').forEach(cell => {
+                const originalText = cell.textContent.trim();
+                if (cell.scrollHeight > cell.clientHeight || originalText.length > 100) {
+                    const expandButton = document.createElement('button');
+                    expandButton.className = 'text-xs text-brand-600 font-medium mt-1 hover:underline hover:text-brand-700 focus:outline-none transition-colors duration-200';
+                    expandButton.textContent = 'Show more';
+                    expandButton.addEventListener('click', function() {
+                        if (cell.classList.contains('max-h-24')) {
+                            cell.classList.remove('max-h-24');
+                            cell.classList.add('max-h-96');
+                            this.textContent = 'Show less';
+                        } else {
+                            cell.classList.remove('max-h-96');
+                            cell.classList.add('max-h-24');
+                            this.textContent = 'Show more';
+                        }
+                    });
+                    cell.parentNode.appendChild(expandButton);
+                }
+            });
+        });
+    </script>
+}

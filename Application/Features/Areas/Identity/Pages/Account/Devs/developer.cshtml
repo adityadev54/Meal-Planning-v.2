@@ -1,0 +1,388 @@
+﻿@page
+@model DeveloperIndexModel
+@{
+    ViewData["Title"] = "Developer Canvas";
+}
+
+<style>
+    :root {
+        --gold: #eab308;
+        --gold-dark: #a16207;
+        --gold-light: #fef9c3;
+        --white: #fff;
+        --gray: #f3f4f6;
+        --gray-dark: #374151;
+        --border: #e5e7eb;
+    }
+
+    .canvas-layout {
+        min-height: 100vh;
+        background: var(--white);
+        font-family: 'Segoe UI', 'Inter', Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .canvas-header {
+        padding: 2.5rem 0.5rem 1.5rem 0.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .canvas-title {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: var(--gold-dark);
+        letter-spacing: -1px;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+    .canvas-title-badge {
+        background: var(--gold-light);
+        color: var(--gold-dark);
+        font-size: 0.9rem;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: 0.2em 0.9em;
+        margin-left: 0.5em;
+        letter-spacing: 0.05em;
+    }
+
+    .canvas-desc {
+        color: #78716c;
+        font-size: 1.08rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .canvas-main {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 2rem 0.5rem 2.5rem 0.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 2rem;
+    }
+
+    .canvas-panel {
+        background: var(--gray);
+        border-radius: 14px;
+        box-shadow: 0 2px 12px 0 rgba(234,179,8,0.07);
+        border: 1.5px solid var(--border);
+        padding: 1.5rem 1.3rem 1.2rem 1.3rem;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 220px;
+        position: relative;
+    }
+
+    .canvas-panel-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--gold-dark);
+        margin-bottom: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .canvas-panel-content {
+        flex: 1;
+        min-height: 0;
+    }
+
+    .canvas-dl {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        row-gap: 0.7rem;
+        column-gap: 1.5rem;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .canvas-dt {
+        color: var(--gold-dark);
+        font-weight: 600;
+    }
+
+    .canvas-dd {
+        color: #44403c;
+    }
+
+    .canvas-stat-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .canvas-stat-block {
+        flex: 1;
+        min-width: 100px;
+        background: var(--gold-light);
+        border-radius: 10px;
+        padding: 0.7rem 1rem;
+        text-align: center;
+        box-shadow: 0 1px 4px 0 rgba(234,179,8,0.07);
+    }
+
+    .canvas-stat-label {
+        color: var(--gold-dark);
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+
+    .canvas-stat-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--gold-dark);
+    }
+
+    .canvas-log-viewer {
+        background: #18181b;
+        color: #fde68a;
+        font-family: 'Fira Mono', 'Consolas', monospace;
+        font-size: 0.97rem;
+        border-radius: 8px;
+        padding: 1rem;
+        height: 120px;
+        overflow-y: auto;
+        margin-bottom: 0.5rem;
+        border: 1px solid #27272a;
+    }
+
+    .canvas-btn {
+        background: linear-gradient(90deg, #eab308 0%, #a16207 100%);
+        color: #fff;
+        font-weight: 700;
+        padding: 0.5rem 1.1rem;
+        border-radius: 8px;
+        border: none;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px 0 rgba(234,179,8,0.08);
+        cursor: pointer;
+        display: inline-block;
+    }
+
+        .canvas-btn:hover, .canvas-btn:focus {
+            background: linear-gradient(90deg, #a16207 0%, #eab308 100%);
+            box-shadow: 0 4px 16px 0 rgba(234,179,8,0.13);
+        }
+
+    .canvas-flag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        margin-bottom: 1rem;
+    }
+
+    .canvas-flag-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--white);
+        border-radius: 999px;
+        padding: 0.3em 1em 0.3em 0.7em;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--gold-dark);
+        border: 1px solid var(--border);
+        box-shadow: 0 1px 2px 0 rgba(234,179,8,0.04);
+    }
+
+        .canvas-flag-toggle input[type="checkbox"] {
+            accent-color: var(--gold-dark);
+            width: 1.1em;
+            height: 1.1em;
+        }
+
+    .canvas-note {
+        background: var(--gold-light);
+        border: 1px solid #fde68a;
+        color: var(--gold-dark);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.97rem;
+        margin-top: 1rem;
+        max-width: 500px;
+    }
+
+    .canvas-feature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+        margin-top: 0.5rem;
+    }
+
+    .canvas-feature-card {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 1.1rem 1.2rem;
+        box-shadow: 0 1px 4px 0 rgba(234,179,8,0.07);
+        transition: box-shadow 0.15s;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        cursor: pointer;
+    }
+
+        .canvas-feature-card:hover {
+            box-shadow: 0 4px 16px 0 rgba(234,179,8,0.13);
+            border-color: var(--gold-dark);
+        }
+
+    .canvas-feature-title {
+        font-weight: 700;
+        color: var(--gold-dark);
+        font-size: 1.08rem;
+    }
+
+    .canvas-feature-desc {
+        color: #44403c;
+        font-size: 0.97rem;
+    }
+
+    .canvas-panel-wide {
+        grid-column: span 2;
+    }
+
+    @@media (max-width: 900px) {
+        .canvas-main
+
+    {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+
+    .canvas-feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+        
+
+    }
+</style>
+
+<div class="min-h-screen bg-gray-100 flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900">Developer Canvas</h1>
+            <p class="text-gray-600 mt-1">A modular workspace for diagnostics, controls, and developer tools.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- System Diagnostics -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-800">System Diagnostics</h2>
+                    <dl class="mt-4 space-y-2">
+                        <div class="flex justify-between">
+                            <dt class="text-sm font-medium text-gray-500">App Version</dt>
+                            <dd class="text-sm text-gray-900">@Model.AppVersion</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-sm font-medium text-gray-500">Environment</dt>
+                            <dd class="text-sm text-gray-900">@Model.EnvironmentName</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-sm font-medium text-gray-500">Server Time</dt>
+                            <dd class="text-sm text-gray-900">@Model.ServerTime</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-sm font-medium text-gray-500">Machine Name</dt>
+                            <dd class="text-sm text-gray-900">@System.Environment.MachineName</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-sm font-medium text-gray-500">OS</dt>
+                            <dd class="text-sm text-gray-900">@System.Runtime.InteropServices.RuntimeInformation.OSDescription</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Application Stats -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-800">Application Stats</h2>
+                    <div class="mt-4 grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <p class="text-sm font-medium text-gray-500">Total Users</p>
+                            <p class="text-2xl font-bold text-gray-900">@Model.UserCount</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-sm font-medium text-gray-500">Active Feature Flags</p>
+                            <p class="text-2xl font-bold text-gray-900">@Model.ActiveFeatureFlags</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logs Viewer -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-800">Application Logs</h2>
+                    <div class="mt-4 bg-gray-800 text-yellow-300 p-4 rounded-lg h-48 overflow-y-auto">
+                        @if (Model.RecentLogs != null && Model.RecentLogs.Count > 0)
+                        {
+                            foreach (var line in Model.RecentLogs)
+                            {
+                                <div>@line</div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-gray-400">No logs found.</div>
+                        }
+                    </div>
+                    <form method="post" asp-page-handler="RefreshLogs" class="mt-4">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Refresh Logs</button>
+                    </form>
+                </div>
+
+                <!-- Feature Flags -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-800">Feature Flags</h2>
+                    <form method="post" asp-page-handler="ToggleFeature" class="mt-4 space-y-2">
+                        @foreach (var flag in Model.FeatureFlags)
+                        {
+                            <label class="flex items-center space-x-3">
+                                <input type="checkbox" name="flags" value="@flag.Key" @(flag.Value ? "checked" : "") class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">@flag.Key</span>
+                            </label>
+                        }
+                        <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Update Flags</button>
+                    </form>
+                </div>
+
+                <!-- Developer Tools -->
+                <div class="bg-white shadow rounded-lg p-6 col-span-1 md:col-span-2 lg:col-span-3">
+                    <h2 class="text-lg font-semibold text-gray-800">Developer Tools</h2>
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        @foreach (var feature in Model.DeveloperFeatures)
+                        {
+                            <a asp-page="@feature.Page" class="block bg-gray-100 hover:bg-gray-200 p-4 rounded-lg shadow">
+                                <h3 class="text-sm font-medium text-gray-800">@feature.Name</h3>
+                                <p class="text-sm text-gray-600 mt-1">@feature.Description</p>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
